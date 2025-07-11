@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'common_colors.dart';
-import 'theme.dart';
 
 appBarWidget({
   required String title,
@@ -22,18 +21,21 @@ appBarWidget({
         ? Padding(
             padding: const EdgeInsets.all(10.0),
             child: GestureDetector(
-              onTap: () {
-                Get.back();
-              },
-              child: CircleAvatar(
-                backgroundColor: WHITE_BG_COLOR,
+                onTap: () {
+                  Get.back();
+                },
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: REDAPPTHEME_COLOR,
-                  size: 16,
+                  Icons.keyboard_backspace_rounded,
+                )
+                // CircleAvatar(
+                // backgroundColor: WHITE_BG_COLOR,
+                // child: Icon(
+                //   Icons.keyboard_backspace_rounded,
+                // color: REDAPPTHEME_COLOR,
+                //   size: 16,
+                // ),
+                // ),
                 ),
-              ),
-            ),
           )
         // IconButton(
         //     disabledColor: Colors.amber,

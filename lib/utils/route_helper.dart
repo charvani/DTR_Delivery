@@ -1,10 +1,8 @@
 import 'dart:async';
 
+import '../routes/routes.dart';
+
 Future<String> getInitialRoute() async {
-  String loginScreen = "/login_screen";
-  // String route =
-  //     // Routes.getCartRoute();
-  //     Routes.getWelcomeRoute();
-  return loginScreen;
-  // route;
+  String route = Routes.getLoginRoute();
+  return route;
 }

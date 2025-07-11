@@ -1,3 +1,4 @@
+import 'package:dtr_delivery/features/bottom_bar/presentation/pages/bottombar_screen.dart';
 import 'package:dtr_delivery/features/login/presentation/controller/login_controller.dart';
 import 'package:dtr_delivery/features/login/presentation/widgets/login_widgets.dart';
 import 'package:dtr_delivery/utils/loader.dart';
@@ -139,10 +140,11 @@ class LoginScreen extends StatelessWidget {
                           buttonTitle: "Log in",
                           onTapFun: () {
                             Get.focusScope?.unfocus();
-                            if (_formKey.currentState!.validate()) {
-                              // controller.getSignIn();
-                            }
-                            controller.update();
+                            // if (_formKey.currentState!.validate()) {
+                            // controller.getSignIn();
+                            Get.to(() => BottomBarWidgetPage());
+                            // }
+                            // controller.update();
                           },
                         ),
                 ],

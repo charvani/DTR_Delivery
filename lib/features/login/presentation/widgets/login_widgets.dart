@@ -42,7 +42,7 @@ class CustomTextfieldWidget extends StatelessWidget {
       inputFormatters: inputFormatters,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       //discuss regarding get...
-      style: Get.textTheme.displaySmall,
+      style: Get.textTheme.labelSmall,
       cursorColor: APPTHEME_COLOR,
       maxLength: maxLength,
       maxLengthEnforcement: maxLengthEnforce,
