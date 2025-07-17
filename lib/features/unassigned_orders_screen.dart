@@ -51,10 +51,10 @@ class _UnassignedOrdersScreenState extends State<UnassignedOrdersScreen> {
                       "Order: #123",
                       style: Get.textTheme.labelSmall,
                     ),
-                    Text(
-                      "Invoice: #1234",
-                      style: Get.textTheme.labelSmall,
-                    ),
+                    // Text(
+                    //   "Invoice: #1234",
+                    //   style: Get.textTheme.labelSmall,
+                    // ),
                   ],
                 ),
                 trailing: SizedBox(

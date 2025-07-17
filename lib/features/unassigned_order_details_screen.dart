@@ -78,7 +78,7 @@ class UnassignedOrderDetailsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            Text("Invoice Details", style: Get.textTheme.titleLarge),
+            Text("Order0323 Details", style: Get.textTheme.titleLarge),
             const SizedBox(height: 10),
             _buildInvoiceHeadingRow(),
             const SizedBox(height: 10),

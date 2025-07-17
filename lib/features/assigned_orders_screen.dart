@@ -80,10 +80,10 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
                             "Order: #123",
                             style: Get.textTheme.labelSmall,
                           ),
-                          Text(
-                            "Invoice: #1234",
-                            style: Get.textTheme.labelSmall,
-                          ),
+                          // Text(
+                          //   "Invoice: #1234",
+                          //   style: Get.textTheme.labelSmall,
+                          // ),
                         ],
                       ),
                       trailing: SizedBox(

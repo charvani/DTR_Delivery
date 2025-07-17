@@ -7,7 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'order_details_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
-  const TripDetailsScreen({super.key});
+  final String type;
+  const TripDetailsScreen({super.key, required this.type});
 
   @override
   State<TripDetailsScreen> createState() => _TripDetailsScreenState();
@@ -44,7 +45,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("TRIP ID: #123456", style: Get.textTheme.titleMedium),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("TRIP ID: #123456",
+                          style: Get.textTheme.titleMedium),
+                      (widget.type == "delivered")
+                          ? Image.asset(
+                              "assets/images/delivered.png",
+                              height: 35,
+                            )
+                          : Image.asset(
+                              "assets/images/cancelled_tag.png",
+                              height: 40,
+                            )
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   Text("Vehicle Details:", style: Get.textTheme.titleMedium),
                   const SizedBox(height: 5),
@@ -104,7 +120,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         style: Get.textTheme.titleSmall!
                             .copyWith(color: BLACK_TEXT_COLOR2)),
                     Text("Order: #123", style: Get.textTheme.labelSmall),
-                    Text("Invoice: #1234", style: Get.textTheme.labelSmall),
+                    // Text("Invoice: #1234", style: Get.textTheme.labelSmall),
                   ],
                 ),
                 trailing: SizedBox(

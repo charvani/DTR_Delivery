@@ -5,6 +5,8 @@ import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'help_center_screen.dart';
+
 class UserAccountScreen extends StatelessWidget {
   const UserAccountScreen({super.key});
 
@@ -47,7 +49,7 @@ class UserAccountScreen extends StatelessWidget {
             ),
             Text("Account", style: Get.textTheme.titleLarge),
             profileWidget(
-              icondata: Icons.phone_outlined,
+              icondata: Icons.password_rounded,
               title: "",
               info: "Change Password",
             ),
@@ -73,16 +75,19 @@ class UserAccountScreen extends StatelessWidget {
     );
   }
 
-  Widget profileWidget({
-    required IconData icondata,
-    required String title,
-    required String info,
-  }) {
+  Widget profileWidget(
+      {required IconData icondata,
+      required String title,
+      required String info,
+      Function()? onTapFun}) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (info == "Logout") {
-          Get.offAll(() => LoginScreen());        }
+          Get.offAll(() => LoginScreen());
+        } else {
+          Get.to(() => HelpCenterScreen());
+        }
       },
       child: Row(
         children: [
