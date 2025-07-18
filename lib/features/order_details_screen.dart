@@ -2,14 +2,30 @@ import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:pinput/pinput.dart';
 
 import '../utils/custom_action_button.dart';
 import '../utils/square_action_button.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
 
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  List<String> orderStatus = [
+    "Order Pick Up",
+    "Dispatch",
+    "Out for Delivery",
+    "Delivered"
+  ];
+  String buttonTitle = "Order Pick Up";
+  int index = 0;
+  bool otpSubmit = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,8 +124,18 @@ class OrderDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
             SquareActionButton(
-              buttonTitle: "Order Picked Up",
+              buttonTitle: otpSubmit ? "Delivered" : buttonTitle,
               onTapFun: () {
+                setState(() {
+                  if (orderStatus[index] == "Out for Delivery") {
+                    getOtpCollectFun();
+                  } else {
+                    if (index <= 3) {
+                      index = index + 1;
+                      buttonTitle = orderStatus[index];
+                    }
+                  }
+                });
                 // if (_formKey.currentState!.validate()) {
                 // controller.getSignIn();
                 // }
@@ -117,12 +143,19 @@ class OrderDetailsScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 10),
-            CustomActionButton(
-              buttonTitle: "Call Customer",
-              onTapFun: () {},
-              titleColor: APPTHEME_COLOR,
-              backgroundColor: BUTTON_BG_COLOR,
-            ),
+            orderStatus[index] == "Delivered"
+                ? CustomActionButton(
+                    buttonTitle: "Give Feedback",
+                    onTapFun: () {},
+                    titleColor: APPTHEME_COLOR,
+                    backgroundColor: BUTTON_BG_COLOR,
+                  )
+                : CustomActionButton(
+                    buttonTitle: "Call Customer",
+                    onTapFun: () {},
+                    titleColor: APPTHEME_COLOR,
+                    backgroundColor: BUTTON_BG_COLOR,
+                  ),
           ],
         ),
       ),
@@ -245,5 +278,204 @@ class OrderDetailsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  final FocusNode focusNode = FocusNode();
+  TextEditingController otpController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  getOtpCollectFun() {
+    final defaultPinTheme = PinTheme(
+        width: 56,
+        height: 60,
+        textStyle: const TextStyle(
+            fontSize: 20, color: APPTHEME_COLOR, fontFamily: "Medium"),
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+              color: MEDIUM_BLACKTEXT_COLOR,
+              width: 1.0,
+            )
+            // Border(
+            //   bottom: BorderSide(
+            //     color: MEDIUM_BLACKTEXT_COLOR, // Change to desired color
+            //     width: 1.0, // Change to desired thickness
+            //   ),
+            // ),
+            ));
+    Get.dialog(Dialog(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Text("Enter OTP", style: Get.textTheme.titleLarge),
+            ),
+            Pinput(
+              length: 4,
+              // You can pass your own SmsRetriever implementation based on any package
+              // in this example we are using the SmartAuth
+              // smsRetriever: smsRetriever,
+              controller: otpController,
+              focusNode: focusNode,
+              defaultPinTheme: defaultPinTheme,
+              separatorBuilder: (index) => const SizedBox(width: 8),
+              validator: (value) {
+                // return value == '2222' ? null : 'Pin is incorrect';
+                if (value!.isEmpty) {
+                  return "Please Enter OTP";
+                } else {
+                  return null;
+                }
+              },
+              hapticFeedbackType: HapticFeedbackType.lightImpact,
+              onCompleted: (pin) {
+                debugPrint('onCompleted: $pin');
+                // _timer!.cancel();
+                // controller.getOtpVerifyController();
+              },
+              onChanged: (value) {
+                debugPrint('onChanged: $value');
+              },
+              // cursor: Column(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Container(
+              //       margin: const EdgeInsets.only(bottom: 9),
+              //       width: 1,
+              //       height: 20,
+              //       color: APPTHEME_COLOR,
+              //     ),
+              //   ],
+              // ),
+              focusedPinTheme: defaultPinTheme,
+              // .
+              // copyWith(
+              //   decoration: BoxDecoration(
+              //     border: Border(
+              //       bottom: BorderSide(
+              //         color: APPTHEME_COLOR, // Change to desired color
+              //         width: 1.0, // Change to desired thickness
+              //       ),
+              //     ),
+              //   ),
+              // ),
+
+              // submittedPinTheme: defaultPinTheme.copyWith(
+              //   decoration: defaultPinTheme.decoration!.copyWith(
+              //     color: fillColor,
+              //     borderRadius: BorderRadius.circular(19),
+              //     border: Border.all(color: focusedBorderColor),
+              //   ),
+              // ),
+              errorTextStyle: TextStyle(
+                  fontFamily: "Medium", fontSize: 12, color: INDICATION_COLOR),
+              errorPinTheme: defaultPinTheme.copyWith(
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: INDICATION_COLOR,
+                      width: 1.0,
+                    )
+                    // border: Border(
+
+                    //   bottom: BorderSide(
+                    //     color: INDICATION_COLOR, // Change to desired color
+                    //     width: 1.0, // Change to desired thickness
+                    //   ),
+                    // ),
+                    ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: SquareActionButton(
+                  buttonTitle: "Submit",
+                  onTapFun: () {
+                    if (_formKey.currentState!.validate()) {
+                      Get.back();
+                      setState(() {
+                        otpSubmit = true;
+                      });
+                    }
+                  }),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  double _rating = 0;
+  final TextEditingController _feedbackController = TextEditingController();
+  void _submitFeedback() {
+    final feedback = _feedbackController.text;
+    print("Rating: $_rating");
+    print("Feedback: $feedback");
+
+    // Show success message or send to backend
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Feedback submitted successfully')),
+    );
+
+    // Clear fields after submission
+    setState(() {
+      _rating = 0;
+      _feedbackController.clear();
+    });
+  }
+
+  getFeedbackFun() {
+    Get.dialog(Dialog(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Rate the Delivery Experience",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            RatingBar.builder(
+              initialRating: _rating,
+              minRating: 1,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) =>
+                  Icon(Icons.star, color: Colors.amber),
+              onRatingUpdate: (rating) {
+                setState(() {
+                  _rating = rating;
+                });
+              },
+            ),
+            SizedBox(height: 24),
+            TextField(
+              controller: _feedbackController,
+              maxLines: 5,
+              decoration: InputDecoration(
+                labelText: "Write your feedback",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _submitFeedback,
+              icon: Icon(Icons.send),
+              label: Text("Submit Feedback"),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 }
