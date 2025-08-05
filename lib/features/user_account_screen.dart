@@ -1,11 +1,15 @@
-import 'package:dtr_delivery/features/login/presentation/pages/login_screen.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../config/injector.dart';
 import 'help_center_screen.dart';
+import 'log_in/presentation/pages/login_screen.dart';
+
+var getStore = getIt.get<GetStorage>();
 
 class UserAccountScreen extends StatelessWidget {
   const UserAccountScreen({super.key});
@@ -82,8 +86,11 @@ class UserAccountScreen extends StatelessWidget {
       Function()? onTapFun}) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
+      onTap: () async {
         if (info == "Logout") {
+          await getStore.remove(
+            "accessToken",
+          );
           Get.offAll(() => LoginScreen());
         } else {
           Get.to(() => HelpCenterScreen());

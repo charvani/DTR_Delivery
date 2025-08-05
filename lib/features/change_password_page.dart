@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 
 import '../../../../utils/appbar.dart';
 import '../utils/common_colors.dart';
+import '../utils/common_textform_field.dart';
 import '../utils/space_widget.dart';
 import 'change_password_controller.dart';
-import 'login/presentation/widgets/login_widgets.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});

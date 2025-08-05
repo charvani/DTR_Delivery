@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'common_colors.dart';
@@ -8,20 +9,24 @@ class SnackBarUtil {
     Get.snackbar('Error', msg,
         duration: 3.seconds,
         isDismissible: true,
-        icon: const Icon(
+        icon: Icon(
           Icons.error,
-          size: 20,
+          size: 20.h,
           color: WHITE_COLOR,
         ),
         messageText: Text(
           msg,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 14.sp),
         ),
-        titleText: const Text(
+        titleText: Text(
           "Error",
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 16.sp),
         ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red);
@@ -31,22 +36,26 @@ class SnackBarUtil {
     Get.snackbar('Success', msg,
         duration: 3.seconds,
         isDismissible: true,
-        icon: const Icon(
+        icon: Icon(
           Icons.error,
-          size: 20,
+          size: 20.h,
           color: WHITE_COLOR,
         ),
         messageText: Text(
           msg,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 14.sp),
         ),
-        titleText: const Text(
+        titleText: Text(
           "Success",
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 16.sp),
         ),
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: APPTHEME_COLOR);
+        backgroundColor: GREEN_COLOR);
   }
 }

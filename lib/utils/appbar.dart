@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'common_colors.dart';
@@ -14,12 +15,12 @@ appBarWidget({
 }) {
   return AppBar(
     centerTitle: centerTitle,
-    leadingWidth: !backNavigation ? 0 : 56,
+    leadingWidth: !backNavigation ? 0 : 56.w,
     backgroundColor: color,
     actions: actions,
     leading: backNavigation
         ? Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10.0.h),
             child: GestureDetector(
                 onTap: () {
                   Get.back();
@@ -53,7 +54,10 @@ appBarWidget({
     title: Text(
       title,
       style: TextStyle(
-          color: APPTHEME_COLOR, fontSize: 18, fontFamily: "SemiBold"),
+          color: APPTHEME_COLOR,
+          fontSize: 20.sp,
+          // fontFamily: "SemiBold"fa
+          fontWeight: FontWeight.bold),
     ),
   );
 }

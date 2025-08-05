@@ -1,10 +1,11 @@
-import 'package:dtr_delivery/features/assigned_orders_screen.dart';
+import 'package:dtr_delivery/features/assigned_orders/presentation/pages/assigned_orders_screen.dart';
 import 'package:dtr_delivery/features/trips_screen.dart';
 import 'package:dtr_delivery/features/unassigned_orders_screen.dart';
 import 'package:dtr_delivery/features/user_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:with_opacity/with_opacity.dart';
 
 import '../../../../utils/common_colors.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
@@ -39,7 +40,8 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
           child: BottomNavigationBar(
             useLegacyColorScheme: false,
             backgroundColor: WHITE_COLOR,
-            selectedFontSize: 12,
+            selectedFontSize: 14.sp,
+            unselectedFontSize: 14.sp,
             showUnselectedLabels: true,
             elevation: 0.0,
             enableFeedback: false,
@@ -47,7 +49,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/assigned_order.png",
                     height: 20,
@@ -55,7 +57,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/assigned_order.png",
                     height: 20,
@@ -66,7 +68,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/unassigned_order.png",
                     height: 20,
@@ -74,7 +76,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/unassigned_order.png",
 
@@ -87,7 +89,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/trip.png",
                     height: 20,
@@ -95,7 +97,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/trip.png",
                     height: 20,
@@ -106,7 +108,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/user_account.png",
                     height: 20,
@@ -114,7 +116,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 2.5),
+                  padding: EdgeInsets.only(bottom: 2.5.h),
                   child: Image.asset(
                     "assets/images/user_account.png",
                     height: 20,
@@ -127,8 +129,11 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
             currentIndex: selectedIndex,
             selectedItemColor: APPTHEME_COLOR,
             unselectedItemColor: MEDIUM_BLACKTEXT_COLOR,
-            selectedLabelStyle: Get.textTheme.titleSmall,
-            unselectedLabelStyle: Get.textTheme.labelSmall,
+            selectedLabelStyle:
+                TextStyle(color: APPTHEME_COLOR, fontWeight: FontWeight.w600),
+            unselectedLabelStyle: TextStyle(
+                color: MEDIUM_BLACKTEXT_COLOR.withCustomOpacity(0.4),
+                fontWeight: FontWeight.w600),
             onTap: (int index) {
               if (mounted) {
                 setState(() {

@@ -1,15 +1,15 @@
-import 'package:dtr_delivery/features/bottom_bar/presentation/pages/bottombar_screen.dart';
-import 'package:dtr_delivery/features/login/presentation/controller/login_controller.dart';
-import 'package:dtr_delivery/features/login/presentation/widgets/login_widgets.dart';
 import 'package:dtr_delivery/utils/loader.dart';
 import 'package:dtr_delivery/utils/square_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/appbar.dart';
 import '../../../../utils/common_colors.dart';
+import '../../../../utils/common_textform_field.dart';
 import '../../../../utils/space_widget.dart';
+import '../manager/login_in.controller.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -28,7 +28,7 @@ class LoginScreen extends StatelessWidget {
           centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: EdgeInsets.all(15.0.w),
           child: GetBuilder<LoginController>(builder: (controller) {
             return Form(
               key: _formKey,
@@ -37,12 +37,9 @@ class LoginScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SpaceWidget(
-                    height: 15,
+                    height: 30,
                   ),
 
-                  SpaceWidget(
-                    height: 15,
-                  ),
                   Text(
                     "Your Phone Number *",
                     //discuss regarding context..
@@ -72,6 +69,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                   // !controller.loginWithOtp.value
                   //     ?
+
+                  SpaceWidget(
+                    height: 10,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -86,7 +87,8 @@ class LoginScreen extends StatelessWidget {
                       CustomTextfieldWidget(
                         obscureTextVal:
                             !controller.loginPasswordVisibility.value,
-                        textEditingController: controller.passwordController,
+                        textEditingController:
+                            controller.loginPasswordController,
                         hintText: "Enter your password",
                         keyboardType: TextInputType.name,
                         suffix: InkWell(
@@ -135,15 +137,15 @@ class LoginScreen extends StatelessWidget {
                     height: 55,
                   ),
                   controller.loading.value
-                      ? SizedBox(width: double.infinity, child: LoaderWidget())
+                      ? LoaderWidget()
                       : SquareActionButton(
                           buttonTitle: "Log in",
                           onTapFun: () {
                             Get.focusScope?.unfocus();
-                            // if (_formKey.currentState!.validate()) {
-                            // controller.getSignIn();
-                            Get.to(() => BottomBarWidgetPage());
-                            // }
+                            if (_formKey.currentState!.validate()) {
+                              controller.getLogIn();
+                              // Get.to(() => BottomBarWidgetPage());
+                            }
                             // controller.update();
                           },
                         ),

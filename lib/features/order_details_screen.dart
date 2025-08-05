@@ -1,8 +1,10 @@
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
+import 'package:dtr_delivery/utils/common_outline_button.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
@@ -26,6 +28,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   String buttonTitle = "Order Pick Up";
   int index = 0;
   bool otpSubmit = false;
+  bool returnSelected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +98,30 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            Text("Order Details", style: Get.textTheme.titleLarge),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Order Details", style: Get.textTheme.titleLarge),
+                returnSelected
+                    ? SizedBox(
+                        width: 120.w,
+                        child: RedOutlineButton(
+                          buttonText: "Return",
+                          onTapFun: () {
+                            returnSelected = !returnSelected;
+                            setState(() {});
+                          },
+                        ),
+                      )
+                    : BlackOutlineButton(
+                        buttonText: "Select for Return",
+                        onTapFun: () {
+                          returnSelected = !returnSelected;
+                          setState(() {});
+                        },
+                      )
+              ],
+            ),
             const SizedBox(height: 10),
             _buildInvoiceHeadingRow(),
             const SizedBox(height: 10),
@@ -167,48 +193,129 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
+          Expanded(child: Text("Item", style: Get.textTheme.titleMedium)),
           Expanded(
-              flex: 2, child: Text("Item", style: Get.textTheme.titleMedium)),
-          Expanded(
-              flex: 1,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SpaceWidget(
+                width: 15,
+              ),
+              Expanded(child: Text("qty", style: Get.textTheme.titleMedium)),
+              Expanded(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("qty", style: Get.textTheme.titleMedium),
                   Text("Price", style: Get.textTheme.titleMedium),
                 ],
               )),
+            ],
+          )),
         ],
       ),
     );
   }
 
+  List<String> returnItems = [];
+
   Widget _buildInvoiceRow(String item, int qty, String price) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 2,
-              child: Text(item, style: const TextStyle(color: Colors.grey))),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(qty.toString(),
-                    style: const TextStyle(color: Colors.grey)),
-                RichText(
-                    text: TextSpan(
-                        text: "₹",
-                        style: TextStyle(color: BLACK_TEXT_COLOR),
-                        children: [
-                      TextSpan(text: price, style: Get.textTheme.titleSmall)
-                    ])),
-              ],
+      padding: EdgeInsets.symmetric(vertical: 5.5.h),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          print("ontap ..$returnItems");
+          setState(() {
+            if (!returnItems.contains(item)) {
+              returnItems.add(item);
+            } else {
+              returnItems.remove(item);
+            }
+          });
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 15.w,
+              height: 15.h,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: returnItems.contains(item)
+                          ? INDICATION_COLOR
+                          : APPTHEME_COLOR,
+                      width: 1.3.w),
+                  color: WHITE_COLOR),
+              child: returnItems.contains(item)
+                  ? Center(
+                      child: Container(
+                        width: 8.w,
+                        height: 8.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: INDICATION_COLOR,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
-          ),
-        ],
+            SpaceWidget(
+              width: 15.w,
+            ),
+            Expanded(
+                // flex: 2,
+                child: Text(item,
+                    style: TextStyle(
+                        color: returnItems.contains(item)
+                            ? INDICATION_COLOR
+                            : BLACK_TEXT_COLOR,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500))),
+            Expanded(
+              child: Row(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(qty.toString(),
+                        style: TextStyle(
+                            color: returnItems.contains(item)
+                                ? INDICATION_COLOR
+                                : BLACK_TEXT_COLOR,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500)),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                text: "₹",
+                                style: TextStyle(
+                                    color: returnItems.contains(item)
+                                        ? INDICATION_COLOR
+                                        : BLACK_TEXT_COLOR,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500),
+                                children: [
+                              TextSpan(
+                                  text: price,
+                                  style: TextStyle(
+                                      color: returnItems.contains(item)
+                                          ? INDICATION_COLOR
+                                          : BLACK_TEXT_COLOR,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500))
+                            ])),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

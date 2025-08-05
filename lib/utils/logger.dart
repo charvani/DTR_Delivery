@@ -1,16 +1,15 @@
-// import 'package:logger/logger.dart';
+import 'package:logger/logger.dart';
 
-// logger(Type? type) => Logger(printer: CustomLogger(type.toString()));
+logger(Type? type) => Logger(printer: CustomLogger(type.toString()));
 
-// class CustomLogger extends LogPrinter {
-//   final String className;
-//   CustomLogger(this.className);
-//   @override
-//   List<String> log(LogEvent event) {
-//     final color = PrettyPrinter.defaultLevelColors[event.level];
-//     final emoji = PrettyPrinter.defaultLevelEmojis[event.level];
-//     final message = event.message;
-//     return [color!('$emoji $className: $message')];
-//   }
-
-// }
+class CustomLogger extends LogPrinter {
+  final String className;
+  CustomLogger(this.className);
+  @override
+  List<String> log(LogEvent event) {
+    final color = PrettyPrinter.defaultLevelColors[event.level];
+    final emoji = PrettyPrinter.defaultLevelEmojis[event.level];
+    final message = event.message;
+    return [color!('$emoji $className: $message')];
+  }
+}

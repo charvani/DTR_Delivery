@@ -1,9 +1,9 @@
 //Textfield widget
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../utils/common_colors.dart';
+import 'common_colors.dart';
 
 class CustomTextfieldWidget extends StatelessWidget {
   final String? hintText;
@@ -18,6 +18,7 @@ class CustomTextfieldWidget extends StatelessWidget {
   final Widget? suffix;
   final Function()? onTapFun;
   final bool? readOnly;
+  final TextCapitalization? textCapitalization;
   const CustomTextfieldWidget(
       {super.key,
       this.hintText,
@@ -31,6 +32,7 @@ class CustomTextfieldWidget extends StatelessWidget {
       this.maxLengthEnforce,
       this.onTapFun,
       this.readOnly,
+      this.textCapitalization,
       this.suffix});
 
   @override
@@ -41,17 +43,22 @@ class CustomTextfieldWidget extends StatelessWidget {
       keyboardType: keyboardType ?? TextInputType.name,
       inputFormatters: inputFormatters,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
       //discuss regarding get...
-      style: Get.textTheme.labelSmall,
+
+      style: TextStyle(fontSize: 14.sp, fontFamily: "SemiBold"),
+
       cursorColor: APPTHEME_COLOR,
       maxLength: maxLength,
       maxLengthEnforcement: maxLengthEnforce,
       readOnly: readOnly ?? false,
       decoration: InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.only(bottom: 10.h, left: 15.w),
           hoverColor: APPTHEME_COLOR,
           hintText: hintText ?? "",
           suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: EdgeInsets.only(right: 8.w),
             child: suffix,
           )),
       onChanged: onChangedFun,
