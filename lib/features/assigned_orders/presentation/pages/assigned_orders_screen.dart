@@ -1,11 +1,15 @@
-import 'package:dtr_delivery/features/order_details_screen.dart';
+import 'package:dtr_delivery/features/order_details/presentation/pages/order_details_screen.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
+import 'package:dtr_delivery/utils/common_colors.dart';
+import 'package:dtr_delivery/utils/loader.dart';
+import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/order_widget.dart';
 import '../../../../utils/square_action_button.dart';
+import '../manager/assigned_orders_controller.dart';
 import '../widgets/assigned_orders_widgets.dart';
 
 class AssignedOrdersScreen extends StatefulWidget {
@@ -16,6 +20,19 @@ class AssignedOrdersScreen extends StatefulWidget {
 }
 
 class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
+  final AssignedOrdersController controller =
+      Get.put(AssignedOrdersController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getStatusOfAttandanceController();
+      controller.getAssignedOrdersController();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,44 +41,117 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
             backNavigation: false,
             actions: [],
             centerTitle: true),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.all(8.0.h),
-          child: SquareActionButton(
-            buttonTitle: "Initiate Trip",
-            onTapFun: () {
-              Get.focusScope?.unfocus();
-              // if (_formKey.currentState!.validate()) {
-              // controller.getSignIn();
-              // Get.to(() => BottomBarWidgetPage());
-              // }
-              // controller.update();
-            },
-          ),
-        ),
-        body: Column(
-          children: [
-            MarkAttendanceWidget(
-              title: "Mark Attendance",
-              initialVal: false,
-              controller: ValueNotifier<bool>(false),
-              onChangedFun: (value) {},
-            ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, i) {
-                    return OrderWidget(
-                      onTapFun: () {
-                        Get.to(() => OrderDetailsScreen());
-                      },
-                      customerMobileNumber: "1234567895",
-                      customerName: "chrvan",
-                      order: "14rwe44r",
-                      location: "sfsfsf",
-                    );
-                  }),
-            ),
-          ],
-        ));
+        bottomNavigationBar: Obx(() {
+          return controller.assignedOrders.isEmpty
+              ? SizedBox.shrink()
+              : Padding(
+                  padding: EdgeInsets.all(8.0.h),
+                  child: SquareActionButton(
+                    buttonTitle: "Initiate Trip",
+                    onTapFun: () {
+                      Get.focusScope?.unfocus();
+                      // if (_formKey.currentState!.validate()) {
+                      // controller.getSignIn();
+                      // Get.to(() => BottomBarWidgetPage());
+                      // }
+                      // controller.update();
+                    },
+                  ),
+                );
+        }),
+        body: GetBuilder<AssignedOrdersController>(builder: (controller) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Text(controller.loading.value.toString()),
+              // Text(controller.attandance.toString()),
+              Obx(() {
+                return controller.showAttandanceWidget.value
+                    ? MarkAttendanceWidget(
+                        title: "Mark Attendance",
+                        initialVal: controller.attandanceVal.value,
+                        controller: controller.attandance,
+                        onChangedFun: (value) async {
+                          print("geting va...$value");
+                          if (value == true &&
+                              controller.noFunctionClicked.value == false) {
+                            controller.getPunchInController();
+                          }
+
+                          if (value == false &&
+                              controller.attandanceVal.value == true) {
+                            controller.noFunctionClicked.value = true;
+
+                            attandanceDialogFun(noFunction: () {
+                              Future.delayed(Duration(milliseconds: 500), () {
+                                controller.attandance!.value =
+                                    !controller.attandance!.value;
+                                controller.noFunctionClicked.value = false;
+
+                                controller.update();
+                              });
+                              Get.back();
+                            }, yesFunction: () {
+                              controller.noFunctionClicked.value = false;
+
+                              Get.back();
+                              controller.getPunchOutController();
+                            });
+                            controller.update();
+                          }
+
+                          // controller.noFunctionClicked.value = false;
+                        },
+                        loader: controller.attendanceLoading.value,
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(left: 15.w),
+                        child: Text(
+                          "Note: You've already marked your attendance for today.",
+                          style: TextStyle(
+                              color: INDICATION_COLOR,
+                              fontFamily: "Medium",
+                              fontSize: 14.sp),
+                        ),
+                      );
+              }),
+              SpaceWidget(
+                height: 10,
+              ),
+              controller.ordersLoading.value
+                  ? SizedBox(height: 600.h, child: LoaderWidget())
+                  : controller.assignedOrders.isEmpty
+                      ? SizedBox(
+                          height: 600.h,
+                          child: Center(
+                            child: Text("Assigned Orders not available",
+                                style: Get.textTheme.titleSmall),
+                          ),
+                        )
+                      : Expanded(
+                          child: ListView.builder(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              itemCount: controller.assignedOrders.length,
+                              itemBuilder: (context, i) {
+                                return OrderWidget(
+                                  onTapFun: () {
+                                    Get.to(() => OrderDetailsScreen());
+                                  },
+                                  customerMobileNumber: controller
+                                          .assignedOrders[i]
+                                          .customerMobileNumber ??
+                                      "",
+                                  customerName: controller
+                                          .assignedOrders[i].customerName ??
+                                      "",
+                                  order: controller.assignedOrders[i].id ?? "",
+                                  location:
+                                      "${controller.assignedOrders[i].orderAddress!.address1},${controller.assignedOrders[i].orderAddress!.address2},${controller.assignedOrders[i].orderAddress!.city},${controller.assignedOrders[i].orderAddress!.state},${controller.assignedOrders[i].orderAddress!.postalCode}",
+                                );
+                              }),
+                        ),
+            ],
+          );
+        }));
   }
 }

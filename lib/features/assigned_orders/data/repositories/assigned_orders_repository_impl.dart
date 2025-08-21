@@ -4,6 +4,7 @@ import '../../../../utils/network_info.dart';
 import '../../../../utils/snack_bar.dart';
 import '../../domain/repositories/assigned_orders_repository.dart';
 import '../data_sources/assigned_orders_data_sources.dart';
+import '../models/assigned_orders_response_model.dart';
 import '../models/mark_attandance_response_model.dart';
 
 class AssignedOrdersRepositoryImpl extends AssignedOrdersRepository {
@@ -13,9 +14,7 @@ class AssignedOrdersRepositoryImpl extends AssignedOrdersRepository {
   AssignedOrdersRepositoryImpl(
       this.assignedOrdersDataSource, this.networkInfoImpl);
 
- 
-
-   @override
+  @override
   Future<MarkAttandanceResponseModel> getStatusOfAttandanceResponse() async {
     Logger().i(networkInfoImpl.isConnected);
     Logger().i('networkInfoImpl');
@@ -25,7 +24,8 @@ class AssignedOrdersRepositoryImpl extends AssignedOrdersRepository {
     SnackBarUtil.errorSnackBar("No Internet Connection");
     throw Exception("No Internet Connection");
   }
-   @override
+
+  @override
   Future<MarkAttandanceResponseModel> getPunchInResponse() async {
     Logger().i(networkInfoImpl.isConnected);
     Logger().i('networkInfoImpl');
@@ -42,6 +42,17 @@ class AssignedOrdersRepositoryImpl extends AssignedOrdersRepository {
     Logger().i('networkInfoImpl');
     if (await networkInfoImpl.isConnected) {
       return await assignedOrdersDataSource.getPunchOutDataSource();
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+
+  @override
+  Future<List<AssignedOrdersResponseModel>> getAssignedOrdersRepository() async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await assignedOrdersDataSource.getAssignedOrdersDataSouce();
     }
     SnackBarUtil.errorSnackBar("No Internet Connection");
     throw Exception("No Internet Connection");

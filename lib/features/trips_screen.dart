@@ -1,4 +1,4 @@
-import 'package:dtr_delivery/features/order_details_screen.dart';
+import 'package:dtr_delivery/features/order_details/presentation/pages/order_details_screen.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';

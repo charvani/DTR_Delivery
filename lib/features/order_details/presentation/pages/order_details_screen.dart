@@ -8,8 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
-import '../utils/custom_action_button.dart';
-import '../utils/square_action_button.dart';
+import '../../../../utils/custom_action_button.dart';
+import '../../../../utils/square_action_button.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   const OrderDetailsScreen({super.key});
@@ -45,16 +45,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       //   elevation: 0,
       // ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Order ID: #123456", style: Get.textTheme.titleLarge),
-            const SizedBox(height: 12),
+            SpaceWidget(height: 12),
             Row(
               children: [
-                const CircleAvatar(
-                  radius: 30,
+                CircleAvatar(
+                  radius: 32.r,
                   backgroundColor: LIGHT_BLACK_SHADE_COLOR,
                   child: Icon(
                     Icons.person_2_outlined,
@@ -62,7 +62,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   ),
                   // Replace with actual image asset
                 ),
-                const SizedBox(width: 12),
+                SpaceWidget(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,17 +76,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SpaceWidget(height: 10),
             Row(
               children: [
                 Container(
-                  height: 50,
-                  width: 60,
+                  height: 50.h,
+                  width: 60.w,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                       color: LIGHT_BLACK_SHADE_COLOR),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0.h),
                     child: Icon(Icons.call_outlined),
                   ),
                 ),
@@ -97,7 +97,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     style: Get.textTheme.titleMedium),
               ],
             ),
-            const SizedBox(height: 20),
+            SpaceWidget(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -122,14 +122,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       )
               ],
             ),
-            const SizedBox(height: 10),
+            SpaceWidget(height: 10),
             _buildInvoiceHeadingRow(),
-            const SizedBox(height: 10),
+            SpaceWidget(height: 10),
             _buildInvoiceRow("Ventilator", 150, "5000"),
             _buildInvoiceRow("Dolo Tablets", 100, "2500"),
             _buildInvoiceRow("Tissues", 50, "200"),
-            const Divider(
-              height: 30,
+            Divider(
+              height: 30.h,
               color: LIGHT_BLACK_SHADE_COLOR,
             ),
             _buildSummaryRow("Total Amount", "7500"),
@@ -137,18 +137,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             _discountTotalRow("3000"),
             _buildSummaryRow("Total Before Tax", "4166.67"),
             _buildSummaryRow("Delivery Charges", "Free"),
-            const SizedBox(height: 10),
+            const SpaceWidget(height: 10),
             _orderTotalRow("4500"),
-            const SizedBox(height: 20),
+            const SpaceWidget(height: 20),
 
             // Text("Notes", style: Get.textTheme.titleLarge),
-            // const SizedBox(height: 5),
+            // const SpaceWidget(height: 5),
             // Text(
             //   "Leave at the front door. Ring the doorbell twice.",
             //   style: Get.textTheme.labelSmall,
             // ),
 
-            const SizedBox(height: 20),
+            const SpaceWidget(height: 20),
             SquareActionButton(
               buttonTitle: otpSubmit ? "Delivered" : buttonTitle,
               onTapFun: () {
@@ -168,7 +168,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 // controller.update();
               },
             ),
-            const SizedBox(height: 10),
+            const SpaceWidget(height: 10),
             orderStatus[index] == "Delivered"
                 ? CustomActionButton(
                     buttonTitle: "Give Feedback",
@@ -190,7 +190,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget _buildInvoiceHeadingRow() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         children: [
           Expanded(child: Text("Item", style: Get.textTheme.titleMedium)),
@@ -325,7 +325,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     String amount,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -346,7 +346,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     String amount,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -354,7 +354,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           RichText(
               text: TextSpan(
                   text: "₹",
-                  style: TextStyle(color: BLACK_TEXT_COLOR, fontSize: 16),
+                  style: TextStyle(color: BLACK_TEXT_COLOR, fontSize: 16.sp),
                   children: [
                 TextSpan(text: amount, style: Get.textTheme.headlineMedium)
               ])),
@@ -367,7 +367,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     String amount,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -375,7 +375,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           RichText(
               text: TextSpan(
                   text: "- ₹",
-                  style: TextStyle(color: INDICATION_COLOR, fontSize: 16),
+                  style: TextStyle(color: INDICATION_COLOR, fontSize: 16.sp),
                   children: [
                 TextSpan(
                     text: amount,
@@ -393,16 +393,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   getOtpCollectFun() {
     final defaultPinTheme = PinTheme(
-        width: 56,
-        height: 60,
-        textStyle: const TextStyle(
-            fontSize: 20, color: APPTHEME_COLOR, fontFamily: "Medium"),
+        width: 56.w,
+        height: 60.h,
+        textStyle: TextStyle(
+            fontSize: 20.sp, color: APPTHEME_COLOR, fontFamily: "Medium"),
         decoration: BoxDecoration(
             shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(5.r),
             border: Border.all(
               color: MEDIUM_BLACKTEXT_COLOR,
-              width: 1.0,
+              width: 1.0.w,
             )
             // Border(
             //   bottom: BorderSide(
@@ -418,7 +418,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               child: Text("Enter OTP", style: Get.textTheme.titleLarge),
             ),
             Pinput(
@@ -429,7 +429,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               controller: otpController,
               focusNode: focusNode,
               defaultPinTheme: defaultPinTheme,
-              separatorBuilder: (index) => const SizedBox(width: 8),
+              separatorBuilder: (index) => SpaceWidget(width: 8.w),
               validator: (value) {
                 // return value == '2222' ? null : 'Pin is incorrect';
                 if (value!.isEmpty) {
@@ -479,14 +479,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               //   ),
               // ),
               errorTextStyle: TextStyle(
-                  fontFamily: "Medium", fontSize: 12, color: INDICATION_COLOR),
+                  fontFamily: "Medium",
+                  fontSize: 12.sp,
+                  color: INDICATION_COLOR),
               errorPinTheme: defaultPinTheme.copyWith(
                 decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(5.r),
                     border: Border.all(
                       color: INDICATION_COLOR,
-                      width: 1.0,
+                      width: 1.0.w,
                     )
                     // border: Border(
 
@@ -499,7 +501,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
               child: SquareActionButton(
                   buttonTitle: "Submit",
                   onTapFun: () {
@@ -539,21 +541,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   getFeedbackFun() {
     Get.dialog(Dialog(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               "Rate the Delivery Experience",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            SpaceWidget(height: 16),
             RatingBar.builder(
               initialRating: _rating,
               minRating: 1,
               allowHalfRating: true,
               itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0.h),
               itemBuilder: (context, _) =>
                   Icon(Icons.star, color: Colors.amber),
               onRatingUpdate: (rating) {
@@ -562,7 +564,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 });
               },
             ),
-            SizedBox(height: 24),
+            SpaceWidget(height: 24),
             TextField(
               controller: _feedbackController,
               maxLines: 5,
@@ -571,13 +573,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 24),
+            SpaceWidget(height: 24),
             ElevatedButton.icon(
               onPressed: _submitFeedback,
               icon: Icon(Icons.send),
               label: Text("Submit Feedback"),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: Size(double.infinity, 50.h),
               ),
             ),
           ],

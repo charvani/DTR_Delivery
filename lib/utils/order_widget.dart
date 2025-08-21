@@ -56,27 +56,28 @@ class OrderWidget extends StatelessWidget {
         ],
       ),
       trailing: SizedBox(
-        width: 45.w,
+        width: 50.w,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                makePhoneCall(customerMobileNumber);
-              },
-              child: Icon(
-                Icons.call,
-                size: 20.h,
+            if (customerMobileNumber != "")
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  makePhoneCall(customerMobileNumber);
+                },
+                child: Icon(
+                  Icons.call,
+                  size: 20.h,
+                ),
               ),
-            ),
             SpaceWidget(
-              width: 5,
+              width: 10,
             ),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                locationRoute();
+                locationRoute(location);
               },
               child: Icon(
                 Icons.location_on,
@@ -100,15 +101,20 @@ void makePhoneCall(String phoneNumber) async {
   }
 }
 
-void locationRoute() async {
-  final String origin = "Vizag Railway Station, Visakhapatnam";
-  final String waypoint1 = "Kailasagiri, Visakhapatnam";
-  final String destination = "RK Beach, Visakhapatnam";
+void locationRoute(String totalAddress) async {
+  print("address des ...$totalAddress");
+  // final String origin = "Vizag Railway Station, Visakhapatnam";
+  // final String waypoint1 = "Kailasagiri, Visakhapatnam";
+  // final String destination = "RK Beach, Visakhapatnam";
 
-  final String googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
-      "&origin=${Uri.encodeComponent(origin)}"
-      "&destination=${Uri.encodeComponent(destination)}"
-      "&waypoints=${Uri.encodeComponent(waypoint1)}";
+  // final String googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
+  //     "&origin=${Uri.encodeComponent(origin)}"
+  //     "&destination=${Uri.encodeComponent(destination)}"
+  //     "&waypoints=${Uri.encodeComponent(waypoint1)}";
+
+  final query = Uri.encodeComponent(totalAddress);
+  final googleMapsUrl =
+      "https://www.google.com/maps/search/?api=1&query=$query";
 
   if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
     await launchUrl(Uri.parse(googleMapsUrl),

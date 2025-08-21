@@ -43,7 +43,7 @@ class RedOutlineButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTapFun,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(width: 1.0, color: INDICATION_COLOR), // Border color
+          side: BorderSide(width: 1.0.w, color: INDICATION_COLOR), // Border color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.r), // Rounded corners
           ),

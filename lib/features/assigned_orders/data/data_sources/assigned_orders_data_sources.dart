@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/assigned_orders/data/models/assigned_orders_response_model.dart';
 import 'package:dtr_delivery/features/assigned_orders/data/models/mark_attandance_response_model.dart';
+import 'package:get_storage/get_storage.dart';
+
+import '../../../../config/injector.dart';
 
 class AssignedOrdersDataSource {
   String baseUrl;
@@ -8,26 +12,51 @@ class AssignedOrdersDataSource {
   AssignedOrdersDataSource(this.dio, this.baseUrl);
 
   Future<MarkAttandanceResponseModel> getStatusOfAttandanceDataSource() async {
-    Response response = await dio.get(
-      '$baseUrl/attendance-check',
-    );
-    print("AssignedOrders response ${response.data}");
-    return MarkAttandanceResponseModel.fromJson(response.data);
+    print("acces stoke ...${getIt.get<GetStorage>().read("accessToken")}");
+
+    try {
+      Response response = await dio.get(
+        '$baseUrl/attendance-check',
+      );
+      print("AssignedOrders get punch data response ${response.data}");
+      return MarkAttandanceResponseModel.fromJson(response.data);
+    } catch (e) {
+      print("cache error .... $e");
+      return MarkAttandanceResponseModel(
+        message: "Agent has not punched in.",
+      );
+    }
   }
 
   Future<MarkAttandanceResponseModel> getSPunchInDataSource() async {
-    Response response = await dio.get(
+    Response response = await dio.post(
       '$baseUrl/attendance-punch-in',
     );
-    print("AssignedOrders response ${response.data}");
+    print("AssignedOrders punch in response ${response.data}");
     return MarkAttandanceResponseModel.fromJson(response.data);
   }
 
   Future<MarkAttandanceResponseModel> getPunchOutDataSource() async {
-    Response response = await dio.get(
+    Response response = await dio.put(
       '$baseUrl/attendance-punch-out',
     );
-    print("AssignedOrders response ${response.data}");
+    print("AssignedOrders punch iut response ${response.data}");
     return MarkAttandanceResponseModel.fromJson(response.data);
+  }
+
+  Future<dynamic> getAssignedOrdersDataSouce() async {
+    try {
+      Response response = await dio.get('$baseUrl/get-agent-assigned-orders');
+
+      print("recieved response: $response");
+      List<dynamic> jsonList = response.data;
+      List<AssignedOrdersResponseModel> dataList = [];
+      for (var element in jsonList) {
+        dataList.add(AssignedOrdersResponseModel.fromJson(element));
+      }
+      return dataList;
+    } catch (e) {
+      print("get err >> $e");
+    }
   }
 }

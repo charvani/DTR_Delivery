@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/assigned_orders/data/models/assigned_orders_response_model.dart';
 import 'package:dtr_delivery/features/assigned_orders/data/models/mark_attandance_response_model.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
@@ -40,6 +41,15 @@ class AssignedOrdersUseCase {
   Future<MarkAttandanceResponseModel> getPunchOutUseCase() async {
     try {
       return await assignedOrdersRepository.getPunchOutResponse();
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+  Future<List<AssignedOrdersResponseModel>> getAssignedOrdersUseCase() async {
+    try {
+      return await assignedOrdersRepository.getAssignedOrdersRepository();
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);

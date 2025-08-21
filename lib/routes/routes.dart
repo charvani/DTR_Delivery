@@ -1,11 +1,11 @@
 import 'package:dtr_delivery/features/assigned_orders/presentation/pages/assigned_orders_screen.dart';
 import 'package:dtr_delivery/features/bottom_bar/presentation/pages/bottombar_screen.dart';
 import 'package:dtr_delivery/features/trips_screen.dart';
-import 'package:dtr_delivery/features/unassigned_orders_screen.dart';
 import 'package:dtr_delivery/features/user_account_screen.dart';
 import 'package:get/get.dart';
 
 import '../features/log_in/presentation/pages/login_screen.dart';
+import '../features/unclaimed_orders/presentation/pages/unclaimed_orders_screen.dart';
 
 class Routes {
   static String loginScreen = "/login_screen";
@@ -26,7 +26,7 @@ class Routes {
     GetPage(name: loginScreen, page: () => LoginScreen()),
     GetPage(name: bottomBarScreen, page: () => BottomBarWidgetPage()),
     GetPage(name: assinedOrdersScreen, page: () => AssignedOrdersScreen()),
-    GetPage(name: unAssinedOrdersScreen, page: () => UnassignedOrdersScreen()),
+    GetPage(name: unAssinedOrdersScreen, page: () => UnclaimedOrdersScreen()),
     GetPage(name: tripsScreen, page: () => TripsScreen()),
     GetPage(name: userAccountsScreen, page: () => UserAccountScreen()),
   ];

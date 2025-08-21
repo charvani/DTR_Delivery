@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'order_details_screen.dart';
+import 'order_details/presentation/pages/order_details_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final String type;

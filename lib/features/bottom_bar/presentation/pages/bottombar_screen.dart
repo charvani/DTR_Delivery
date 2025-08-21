@@ -1,6 +1,5 @@
 import 'package:dtr_delivery/features/assigned_orders/presentation/pages/assigned_orders_screen.dart';
 import 'package:dtr_delivery/features/trips_screen.dart';
-import 'package:dtr_delivery/features/unassigned_orders_screen.dart';
 import 'package:dtr_delivery/features/user_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:with_opacity/with_opacity.dart';
 
 import '../../../../utils/common_colors.dart';
+import '../../../unclaimed_orders/presentation/pages/unclaimed_orders_screen.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:medblooms_pharmacy/utils/theme.dart';
 
@@ -24,7 +24,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
   int selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
     AssignedOrdersScreen(),
-    UnassignedOrdersScreen(),
+    UnclaimedOrdersScreen(),
     TripsScreen(),
     UserAccountScreen()
   ];
@@ -85,7 +85,7 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                     // color: REDAPPTHEME_COLOR,
                   ),
                 ),
-                label: "Unassigned\n     Orders",
+                label: "Unclaimed\n    Orders",
               ),
               BottomNavigationBarItem(
                 icon: Padding(
