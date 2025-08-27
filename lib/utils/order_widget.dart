@@ -1,3 +1,4 @@
+import 'package:dtr_delivery/utils/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,12 +13,14 @@ class OrderWidget extends StatelessWidget {
   final Function()? onTapFun;
   final String order;
   final String location;
+  final String statusOfOrder;
   const OrderWidget(
       {super.key,
       required this.customerMobileNumber,
       required this.customerName,
       required this.onTapFun,
       required this.order,
+      required this.statusOfOrder,
       required this.location});
 
   @override
@@ -49,10 +52,11 @@ class OrderWidget extends StatelessWidget {
             "Order: $order",
             style: Get.textTheme.labelSmall,
           ),
-          // Text(
-          //   "Invoice: #1234",
-          //   style: Get.textTheme.labelSmall,
-          // ),
+          if (statusOfOrder!= "")
+            Text(
+              "Status: $statusOfOrder",
+              style: Get.textTheme.labelSmall,
+            ),
         ],
       ),
       trailing: SizedBox(
@@ -97,6 +101,7 @@ void makePhoneCall(String phoneNumber) async {
   if (await canLaunchUrl(callUri)) {
     await launchUrl(callUri);
   } else {
+    SnackBarUtil.errorSnackBar("Unable to call $phoneNumber customer");
     throw 'Could not launch $callUri';
   }
 }

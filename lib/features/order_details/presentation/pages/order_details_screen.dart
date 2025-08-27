@@ -1,6 +1,7 @@
+import 'package:dtr_delivery/features/order_details/presentation/manager/order_details_controller.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
-import 'package:dtr_delivery/utils/common_outline_button.dart';
+import 'package:dtr_delivery/utils/loader.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -9,26 +10,45 @@ import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../utils/custom_action_button.dart';
+import '../../../../utils/order_widget.dart';
 import '../../../../utils/square_action_button.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+  final String orderId;
+  final String fromScreen;
+  const OrderDetailsScreen(
+      {super.key, required this.orderId, required this.fromScreen});
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final OrderDetailsController controller = Get.put(OrderDetailsController());
+
   List<String> orderStatus = [
-    "Order Pick Up",
-    "Dispatch",
-    "Out for Delivery",
-    "Delivered"
+    "Start Order Packing",
+    "Packing completed"
+    // "Dispatch",
+    // "Out for Delivery",
+    // "Delivered"
   ];
-  String buttonTitle = "Order Pick Up";
+  String buttonTitle = "Start Order Packing";
   int index = 0;
   bool otpSubmit = false;
   bool returnSelected = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.orderId = widget.orderId;
+      controller.update();
+      controller.getOrderDetailsController("orderDetailsInit");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,154 +57,245 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           backNavigation: true,
           actions: [],
           centerTitle: true),
-      // appBar: AppBar(
-      //   title: const Text('Order Details'),
-      //   leading: const BackButton(),
-      //   backgroundColor: Colors.white,
-      //   foregroundColor: Colors.black,
-      //   elevation: 0,
-      // ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Order ID: #123456", style: Get.textTheme.titleLarge),
-            SpaceWidget(height: 12),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 32.r,
-                  backgroundColor: LIGHT_BLACK_SHADE_COLOR,
-                  child: Icon(
-                    Icons.person_2_outlined,
-                    color: BLACK_COLOR,
-                  ),
-                  // Replace with actual image asset
-                ),
-                SpaceWidget(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Customer: Sarah Miller",
-                          style: Get.textTheme.titleMedium),
-                      Text("456 Elm Street, Anytown",
-                          style: Get.textTheme.labelSmall),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SpaceWidget(height: 10),
-            Row(
-              children: [
-                Container(
-                  height: 50.h,
-                  width: 60.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      color: LIGHT_BLACK_SHADE_COLOR),
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0.h),
-                    child: Icon(Icons.call_outlined),
-                  ),
-                ),
-                SpaceWidget(
-                  width: 10,
-                ),
-                Text("Contact: +91 8123456789",
-                    style: Get.textTheme.titleMedium),
-              ],
-            ),
-            SpaceWidget(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Order Details", style: Get.textTheme.titleLarge),
-                returnSelected
-                    ? SizedBox(
-                        width: 120.w,
-                        child: RedOutlineButton(
-                          buttonText: "Return",
-                          onTapFun: () {
-                            returnSelected = !returnSelected;
-                            setState(() {});
-                          },
+      body: GetBuilder<OrderDetailsController>(builder: (context) {
+        return controller.loading.value
+            ? LoaderWidget()
+            : SingleChildScrollView(
+                padding: EdgeInsets.all(16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Order ID: ${controller.orderDetailsData.order!.id}",
+                        style: Get.textTheme.titleLarge),
+                    SpaceWidget(height: 12),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 32.r,
+                          backgroundColor: LIGHT_BLACK_SHADE_COLOR,
+                          child: Icon(
+                            Icons.person_2_outlined,
+                            color: BLACK_COLOR,
+                          ),
+                          // Replace with actual image asset
                         ),
-                      )
-                    : BlackOutlineButton(
-                        buttonText: "Select for Return",
-                        onTapFun: () {
-                          returnSelected = !returnSelected;
-                          setState(() {});
-                        },
-                      )
-              ],
-            ),
-            SpaceWidget(height: 10),
-            _buildInvoiceHeadingRow(),
-            SpaceWidget(height: 10),
-            _buildInvoiceRow("Ventilator", 150, "5000"),
-            _buildInvoiceRow("Dolo Tablets", 100, "2500"),
-            _buildInvoiceRow("Tissues", 50, "200"),
-            Divider(
-              height: 30.h,
-              color: LIGHT_BLACK_SHADE_COLOR,
-            ),
-            _buildSummaryRow("Total Amount", "7500"),
-            // _buildSummaryRow("Discount (40%)", "3000"),
-            _discountTotalRow("3000"),
-            _buildSummaryRow("Total Before Tax", "4166.67"),
-            _buildSummaryRow("Delivery Charges", "Free"),
-            const SpaceWidget(height: 10),
-            _orderTotalRow("4500"),
-            const SpaceWidget(height: 20),
+                        SpaceWidget(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  "Customer: ${controller.orderDetailsData.user!.firstName} ${controller.orderDetailsData.user!.lastName}",
+                                  style: Get.textTheme.titleMedium),
+                              Text(
+                                  "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}.",
+                                  style: Get.textTheme.labelSmall),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SpaceWidget(height: 10),
+                    Row(
+                      children: [
+                        Container(
+                          height: 50.h,
+                          width: 60.w,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.r),
+                              color: LIGHT_BLACK_SHADE_COLOR),
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0.h),
+                            child: Icon(Icons.call_outlined),
+                          ),
+                        ),
+                        SpaceWidget(
+                          width: 10,
+                        ),
+                        Text(
+                            "Contact: +91 ${controller.orderDetailsData.user!.mobileNumber}",
+                            style: Get.textTheme.titleMedium),
+                      ],
+                    ),
+                    SpaceWidget(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Order Details", style: Get.textTheme.titleLarge),
+                        // returnSelected
+                        //     ? SizedBox(
+                        //         width: 120.w,
+                        //         child: RedOutlineButton(
+                        //           buttonText: "Return",
+                        //           onTapFun: () {
+                        //             returnSelected = !returnSelected;
+                        //             setState(() {});
+                        //           },
+                        //         ),
+                        //       )
+                        //     : BlackOutlineButton(
+                        //         buttonText: "Select for Return",
+                        //         onTapFun: () {
+                        //           returnSelected = !returnSelected;
+                        //           setState(() {});
+                        //         },
+                        //       )
+                      ],
+                    ),
+                    SpaceWidget(height: 10),
+                    _buildInvoiceHeadingRow(),
+                    SpaceWidget(height: 10),
+                    for (int i = 0;
+                        i < controller.orderDetailsData.orderDetails!.length;
+                        i++)
+                      _buildInvoiceRow(
+                          controller
+                              .orderDetailsData.orderDetails![i].productName!,
+                          controller
+                              .orderDetailsData.orderDetails![i].quantity!,
+                          controller.orderDetailsData.orderDetails![i].price!),
 
-            // Text("Notes", style: Get.textTheme.titleLarge),
-            // const SpaceWidget(height: 5),
-            // Text(
-            //   "Leave at the front door. Ring the doorbell twice.",
-            //   style: Get.textTheme.labelSmall,
-            // ),
+                    Divider(
+                      height: 30.h,
+                      color: LIGHT_BLACK_SHADE_COLOR,
+                    ),
+                    _buildSummaryRow(
+                        "Total Amount", controller.totalWithoutGst),
+                    _buildSummaryRow("Gst",
+                        controller.totalWithGst - controller.totalWithoutGst),
+                    _discountTotalRow(controller.discountAmount,
+                        controller.discountPercentage),
+                    // _buildSummaryRow("Total Before Tax", "4166.67"),
+                    _buildSummaryRow("Delivery Charges", "Free"),
+                    SpaceWidget(height: 10),
+                    _orderTotalRow(controller.totalWithGst),
+                    SpaceWidget(height: 20),
 
-            const SpaceWidget(height: 20),
-            SquareActionButton(
-              buttonTitle: otpSubmit ? "Delivered" : buttonTitle,
-              onTapFun: () {
-                setState(() {
-                  if (orderStatus[index] == "Out for Delivery") {
-                    getOtpCollectFun();
-                  } else {
-                    if (index <= 3) {
-                      index = index + 1;
-                      buttonTitle = orderStatus[index];
-                    }
-                  }
-                });
-                // if (_formKey.currentState!.validate()) {
-                // controller.getSignIn();
-                // }
-                // controller.update();
-              },
-            ),
-            const SpaceWidget(height: 10),
-            orderStatus[index] == "Delivered"
-                ? CustomActionButton(
-                    buttonTitle: "Give Feedback",
-                    onTapFun: () {},
-                    titleColor: APPTHEME_COLOR,
-                    backgroundColor: BUTTON_BG_COLOR,
-                  )
-                : CustomActionButton(
-                    buttonTitle: "Call Customer",
-                    onTapFun: () {},
-                    titleColor: APPTHEME_COLOR,
-                    backgroundColor: BUTTON_BG_COLOR,
-                  ),
-          ],
-        ),
-      ),
+                    // Text("Notes", style: Get.textTheme.titleLarge),
+                    // const SpaceWidget(height: 5),
+                    // Text(
+                    //   "Leave at the front door. Ring the doorbell twice.",
+                    //   style: Get.textTheme.labelSmall,
+                    // ),
+
+                    SpaceWidget(height: 20),
+                    if (widget.fromScreen == "assigned_orders")
+                      Column(
+                        children: [
+                          Card(
+                            color: APPTHEME_COLOR,
+                            margin: EdgeInsets.all(0),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadiusGeometry.circular(3.r)),
+                            child: Padding(
+                              padding: EdgeInsets.all(12.h),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Order Status:",
+                                      style: Get.textTheme.headlineMedium!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: WHITE_COLOR)),
+                                  Text(
+                                      controller.orderDetailsData.order!.status!
+                                                      .toLowerCase() ==
+                                                  "ordered" &&
+                                              controller.orderDetailsData.order!
+                                                      .isInspectionStarted !=
+                                                  null
+                                          ? "Packing Started"
+                                          : "${controller.orderDetailsData.order!.status}"
+                                              .capitalizeFirst!,
+                                      style: Get.textTheme.headlineMedium!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: WHITE_COLOR))
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (controller.orderDetailsData.order!.status !=
+                              "dispatched")
+                            Column(
+                              children: [
+                                SpaceWidget(height: 20),
+                                Obx(() {
+                                  return controller.packingLoading.value
+                                      ? LoaderWidget()
+                                      : SquareActionButton(
+                                          buttonTitle: controller
+                                                          .orderDetailsData
+                                                          .order!
+                                                          .status!
+                                                          .toLowerCase() ==
+                                                      "ordered" &&
+                                                  controller
+                                                          .orderDetailsData
+                                                          .order!
+                                                          .isInspectionStarted ==
+                                                      null
+                                              ? "Start Order Packing"
+                                              : "Packing Completed",
+                                          onTapFun: () {
+                                            controller.getPackOrderController(
+                                                controller.orderDetailsData
+                                                                .order!.status!
+                                                                .toLowerCase() ==
+                                                            "ordered" &&
+                                                        controller
+                                                                .orderDetailsData
+                                                                .order!
+                                                                .isInspectionStarted ==
+                                                            null
+                                                    ? true
+                                                    : false);
+                                          },
+                                        );
+                                }),
+                              ],
+                            ),
+                          SpaceWidget(height: 10),
+                          orderStatus[index] == "Delivered"
+                              ? CustomActionButton(
+                                  buttonTitle: "Give Feedback",
+                                  onTapFun: () {},
+                                  titleColor: APPTHEME_COLOR,
+                                  backgroundColor: BUTTON_BG_COLOR,
+                                )
+                              : CustomActionButton(
+                                  buttonTitle: "Call Customer",
+                                  onTapFun: () {
+                                    makePhoneCall(controller.orderDetailsData
+                                            .user!.mobileNumber ??
+                                        "");
+                                  },
+                                  titleColor: APPTHEME_COLOR,
+                                  backgroundColor: BUTTON_BG_COLOR,
+                                ),
+                        ],
+                      ),
+                    if (widget.fromScreen == "unclaimed_orders")
+                      Obx(() {
+                        return controller.claimLoading.value
+                            ? LoaderWidget()
+                            : Column(
+                                children: [
+                                  SquareActionButton(
+                                    buttonTitle: "Assign To Me",
+                                    onTapFun: () {
+                                      controller.getClaimOrderController();
+                                    },
+                                  ),
+                                ],
+                              );
+                      })
+                  ],
+                ),
+              );
+      }),
     );
   }
 
@@ -217,7 +328,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   List<String> returnItems = [];
 
-  Widget _buildInvoiceRow(String item, int qty, String price) {
+  Widget _buildInvoiceRow(String item, int qty, num price) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.5.h),
       child: GestureDetector(
@@ -300,7 +411,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     fontWeight: FontWeight.w500),
                                 children: [
                               TextSpan(
-                                  text: price,
+                                  text: price.toStringAsFixed(2),
                                   style: TextStyle(
                                       color: returnItems.contains(item)
                                           ? INDICATION_COLOR
@@ -322,7 +433,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget _buildSummaryRow(
     String label,
-    String amount,
+    dynamic amount,
   ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -335,7 +446,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   text: label.contains("Delivery") ? "" : "₹",
                   style: TextStyle(color: BLACK_TEXT_COLOR),
                   children: [
-                TextSpan(text: amount, style: Get.textTheme.titleSmall)
+                TextSpan(
+                    text: label.contains("Delivery")
+                        ? amount
+                        : amount.toStringAsFixed(2),
+                    style: Get.textTheme.titleSmall)
               ])),
         ],
       ),
@@ -343,42 +458,46 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   }
 
   Widget _orderTotalRow(
-    String amount,
+    num amount,
   ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Order Total", style: Get.textTheme.headlineMedium),
+          Text("Order Total",
+              style: Get.textTheme.headlineMedium!
+                  .copyWith(fontWeight: FontWeight.bold)),
           RichText(
               text: TextSpan(
                   text: "₹",
                   style: TextStyle(color: BLACK_TEXT_COLOR, fontSize: 16.sp),
                   children: [
-                TextSpan(text: amount, style: Get.textTheme.headlineMedium)
+                TextSpan(
+                    text: amount.toStringAsFixed(2),
+                    style: Get.textTheme.headlineMedium!
+                        .copyWith(fontWeight: FontWeight.bold))
               ])),
         ],
       ),
     );
   }
 
-  Widget _discountTotalRow(
-    String amount,
-  ) {
+  Widget _discountTotalRow(num amount, num percentage) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Discount (40%)", style: Get.textTheme.titleMedium),
+          Text("Discount (${percentage.toStringAsFixed(2)}%)",
+              style: Get.textTheme.titleMedium),
           RichText(
               text: TextSpan(
                   text: "- ₹",
                   style: TextStyle(color: INDICATION_COLOR, fontSize: 16.sp),
                   children: [
                 TextSpan(
-                    text: amount,
+                    text: amount.toStringAsFixed(2),
                     style: Get.textTheme.titleMedium!
                         .copyWith(color: INDICATION_COLOR))
               ])),

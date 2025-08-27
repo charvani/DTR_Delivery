@@ -2,13 +2,14 @@ import 'package:dtr_delivery/features/order_details/presentation/pages/order_det
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
+import 'package:dtr_delivery/utils/snack_bar.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../main.dart';
 import '../../../../utils/order_widget.dart';
-import '../../../../utils/square_action_button.dart';
 import '../manager/assigned_orders_controller.dart';
 import '../widgets/assigned_orders_widgets.dart';
 
@@ -41,24 +42,24 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
             backNavigation: false,
             actions: [],
             centerTitle: true),
-        bottomNavigationBar: Obx(() {
-          return controller.assignedOrders.isEmpty
-              ? SizedBox.shrink()
-              : Padding(
-                  padding: EdgeInsets.all(8.0.h),
-                  child: SquareActionButton(
-                    buttonTitle: "Initiate Trip",
-                    onTapFun: () {
-                      Get.focusScope?.unfocus();
-                      // if (_formKey.currentState!.validate()) {
-                      // controller.getSignIn();
-                      // Get.to(() => BottomBarWidgetPage());
-                      // }
-                      // controller.update();
-                    },
-                  ),
-                );
-        }),
+        // bottomNavigationBar: Obx(() {
+        //   return controller.assignedOrders.isEmpty
+        //       ? SizedBox.shrink()
+        //       : Padding(
+        //           padding: EdgeInsets.all(8.0.h),
+        //           child: SquareActionButton(
+        //             buttonTitle: "Initiate Trip",
+        //             onTapFun: () {
+        //               Get.focusScope?.unfocus();
+        //               // if (_formKey.currentState!.validate()) {
+        //               // controller.getSignIn();
+        //               // Get.to(() => BottomBarWidgetPage());
+        //               // }
+        //               // controller.update();
+        //             },
+        //           ),
+        //         );
+        // }),
         body: GetBuilder<AssignedOrdersController>(builder: (controller) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,8 +135,32 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
                               itemCount: controller.assignedOrders.length,
                               itemBuilder: (context, i) {
                                 return OrderWidget(
-                                  onTapFun: () {
-                                    Get.to(() => OrderDetailsScreen());
+                                  statusOfOrder: controller.assignedOrders[i]
+                                                  .orderStatus!
+                                                  .toLowerCase() ==
+                                              "ordered" &&
+                                          controller.assignedOrders[i]
+                                                  .isInspectionStarted !=
+                                              null
+                                      ? "Packing Started"
+                                      : controller.assignedOrders[i].orderStatus
+                                          .toString()
+                                          .capitalizeFirst!,
+                                  onTapFun: () async {
+                                    dynamic val = await getStore.read(
+                                      "punch",
+                                    );
+                                    print("punn....$val");
+                                    if (val == "notpunched") {
+                                      SnackBarUtil.errorSnackBar(
+                                          "Please punch in");
+                                    } else {
+                                      Get.to(() => OrderDetailsScreen(
+                                            orderId: controller
+                                                .assignedOrders[i].id!,
+                                            fromScreen: "assigned_orders",
+                                          ));
+                                    }
                                   },
                                   customerMobileNumber: controller
                                           .assignedOrders[i]

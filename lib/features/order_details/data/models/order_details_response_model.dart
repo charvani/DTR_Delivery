@@ -8,31 +8,31 @@ class OrderDetailsResponseModel {
       {this.order, this.orderDetails, this.address, this.user});
 
   OrderDetailsResponseModel.fromJson(Map<String, dynamic> json) {
-    order = json['order'] != null ? new Order.fromJson(json['order']) : null;
+    order = json['order'] != null ? Order.fromJson(json['order']) : null;
     if (json['orderDetails'] != null) {
       orderDetails = <OrderDetails>[];
       json['orderDetails'].forEach((v) {
-        orderDetails!.add(new OrderDetails.fromJson(v));
+        orderDetails!.add(OrderDetails.fromJson(v));
       });
     }
     address =
-        json['address'] != null ? new Address.fromJson(json['address']) : null;
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+        json['address'] != null ? Address.fromJson(json['address']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.order != null) {
-      data['order'] = this.order!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (order != null) {
+      data['order'] = order!.toJson();
     }
-    if (this.orderDetails != null) {
-      data['orderDetails'] = this.orderDetails!.map((v) => v.toJson()).toList();
+    if (orderDetails != null) {
+      data['orderDetails'] = orderDetails!.map((v) => v.toJson()).toList();
     }
-    if (this.address != null) {
-      data['address'] = this.address!.toJson();
+    if (address != null) {
+      data['address'] = address!.toJson();
     }
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
     return data;
   }
@@ -44,30 +44,31 @@ class Order {
   String? updatedAt;
   int? userId;
   int? addressId;
-  double? total;
-  Null? razorpayOrderId;
-  Null? expectedDeliveryDate;
+  num? total;
+  dynamic razorpayOrderId;
+  dynamic expectedDeliveryDate;
   String? paymentMode;
-  Null? paymentStatus;
+  dynamic paymentStatus;
   String? expiresAt;
   bool? isPaymentCompleted;
-  Null? paidAmount;
+  dynamic paidAmount;
   int? checkoutDiscount;
-  Null? paymentGatewayStatus;
+  dynamic paymentGatewayStatus;
   bool? hasFetchedPaymentData;
   bool? paidInFull;
-  Null? refundedAmount;
-  Null? paymentReferenceNumber;
-  Null? paymentReferenceUrl;
+  dynamic refundedAmount;
+  dynamic paymentReferenceNumber;
+  dynamic paymentReferenceUrl;
   bool? hasCancels;
-  Null? cancellationAmount;
+  dynamic cancellationAmount;
   String? status;
   bool? hasProcessedByPincode;
   bool? cannotAssign;
-  Null? reason;
+  dynamic reason;
   bool? deliveryByThirdParty;
-  Null? tripOrderId;
-  Null? providerId;
+  dynamic tripOrderId;
+  dynamic providerId;
+  dynamic isInspectionStarted;
 
   Order(
       {this.id,
@@ -97,6 +98,7 @@ class Order {
       this.cannotAssign,
       this.reason,
       this.deliveryByThirdParty,
+      this.isInspectionStarted,
       this.tripOrderId,
       this.providerId});
 
@@ -130,48 +132,49 @@ class Order {
     deliveryByThirdParty = json['deliveryByThirdParty'];
     tripOrderId = json['tripOrderId'];
     providerId = json['providerId'];
+    isInspectionStarted = json['isInspectionStarted'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['userId'] = this.userId;
-    data['addressId'] = this.addressId;
-    data['total'] = this.total;
-    data['razorpayOrderId'] = this.razorpayOrderId;
-    data['expectedDeliveryDate'] = this.expectedDeliveryDate;
-    data['paymentMode'] = this.paymentMode;
-    data['paymentStatus'] = this.paymentStatus;
-    data['expiresAt'] = this.expiresAt;
-    data['isPaymentCompleted'] = this.isPaymentCompleted;
-    data['paidAmount'] = this.paidAmount;
-    data['checkoutDiscount'] = this.checkoutDiscount;
-    data['paymentGatewayStatus'] = this.paymentGatewayStatus;
-    data['hasFetchedPaymentData'] = this.hasFetchedPaymentData;
-    data['paidInFull'] = this.paidInFull;
-    data['refundedAmount'] = this.refundedAmount;
-    data['paymentReferenceNumber'] = this.paymentReferenceNumber;
-    data['paymentReferenceUrl'] = this.paymentReferenceUrl;
-    data['hasCancels'] = this.hasCancels;
-    data['cancellationAmount'] = this.cancellationAmount;
-    data['status'] = this.status;
-    data['hasProcessedByPincode'] = this.hasProcessedByPincode;
-    data['cannotAssign'] = this.cannotAssign;
-    data['reason'] = this.reason;
-    data['deliveryByThirdParty'] = this.deliveryByThirdParty;
-    data['tripOrderId'] = this.tripOrderId;
-    data['providerId'] = this.providerId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['userId'] = userId;
+    data['addressId'] = addressId;
+    data['total'] = total;
+    data['razorpayOrderId'] = razorpayOrderId;
+    data['expectedDeliveryDate'] = expectedDeliveryDate;
+    data['paymentMode'] = paymentMode;
+    data['paymentStatus'] = paymentStatus;
+    data['expiresAt'] = expiresAt;
+    data['isPaymentCompleted'] = isPaymentCompleted;
+    data['paidAmount'] = paidAmount;
+    data['checkoutDiscount'] = checkoutDiscount;
+    data['paymentGatewayStatus'] = paymentGatewayStatus;
+    data['hasFetchedPaymentData'] = hasFetchedPaymentData;
+    data['paidInFull'] = paidInFull;
+    data['refundedAmount'] = refundedAmount;
+    data['paymentReferenceNumber'] = paymentReferenceNumber;
+    data['paymentReferenceUrl'] = paymentReferenceUrl;
+    data['hasCancels'] = hasCancels;
+    data['cancellationAmount'] = cancellationAmount;
+    data['status'] = status;
+    data['hasProcessedByPincode'] = hasProcessedByPincode;
+    data['cannotAssign'] = cannotAssign;
+    data['reason'] = reason;
+    data['deliveryByThirdParty'] = deliveryByThirdParty;
+    data['tripOrderId'] = tripOrderId;
+    data['providerId'] = providerId;
     return data;
   }
 }
 
 class OrderDetails {
-  int? price;
+  num? price;
   int? quantity;
   int? productId;
-  int? itemMrp;
+  num? itemMrp;
   int? productQuantity;
   String? productName;
   bool? isCancelled;
@@ -217,21 +220,21 @@ class OrderDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['price'] = this.price;
-    data['quantity'] = this.quantity;
-    data['productId'] = this.productId;
-    data['item_mrp'] = this.itemMrp;
-    data['product_quantity'] = this.productQuantity;
-    data['productName'] = this.productName;
-    data['isCancelled'] = this.isCancelled;
-    data['isDamaged'] = this.isDamaged;
-    data['cgst'] = this.cgst;
-    data['igst'] = this.igst;
-    data['sgst'] = this.sgst;
-    data['packageSize'] = this.packageSize;
-    data['metric'] = this.metric;
-    data['images'] = this.images;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['price'] = price;
+    data['quantity'] = quantity;
+    data['productId'] = productId;
+    data['item_mrp'] = itemMrp;
+    data['product_quantity'] = productQuantity;
+    data['productName'] = productName;
+    data['isCancelled'] = isCancelled;
+    data['isDamaged'] = isDamaged;
+    data['cgst'] = cgst;
+    data['igst'] = igst;
+    data['sgst'] = sgst;
+    data['packageSize'] = packageSize;
+    data['metric'] = metric;
+    data['images'] = images;
     return data;
   }
 }
@@ -246,8 +249,8 @@ class Address {
   String? city;
   String? state;
   String? postalCode;
-  Null? latitude;
-  Null? longitude;
+  Null latitude;
+  Null longitude;
   bool? status;
 
   Address(
@@ -280,19 +283,19 @@ class Address {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['userId'] = this.userId;
-    data['address1'] = this.address1;
-    data['address2'] = this.address2;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['postalCode'] = this.postalCode;
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['userId'] = userId;
+    data['address1'] = address1;
+    data['address2'] = address2;
+    data['city'] = city;
+    data['state'] = state;
+    data['postalCode'] = postalCode;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
+    data['status'] = status;
     return data;
   }
 }
@@ -306,7 +309,7 @@ class User {
   String? mobileNumber;
   String? countryCode;
   String? password;
-  Null? photo;
+  Null photo;
   String? otp;
   bool? isDocumentsVerified;
   bool? status;
@@ -314,7 +317,7 @@ class User {
   bool? notificationOne;
   bool? notificationTwo;
   String? fcmToken;
-  Null? gstNumber;
+  Null gstNumber;
   String? createdAt;
   String? updatedAt;
 
@@ -362,26 +365,26 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['company'] = this.company;
-    data['email'] = this.email;
-    data['mobileNumber'] = this.mobileNumber;
-    data['countryCode'] = this.countryCode;
-    data['password'] = this.password;
-    data['photo'] = this.photo;
-    data['otp'] = this.otp;
-    data['isDocumentsVerified'] = this.isDocumentsVerified;
-    data['status'] = this.status;
-    data['allNotification'] = this.allNotification;
-    data['notificationOne'] = this.notificationOne;
-    data['notificationTwo'] = this.notificationTwo;
-    data['fcmToken'] = this.fcmToken;
-    data['gstNumber'] = this.gstNumber;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['company'] = company;
+    data['email'] = email;
+    data['mobileNumber'] = mobileNumber;
+    data['countryCode'] = countryCode;
+    data['password'] = password;
+    data['photo'] = photo;
+    data['otp'] = otp;
+    data['isDocumentsVerified'] = isDocumentsVerified;
+    data['status'] = status;
+    data['allNotification'] = allNotification;
+    data['notificationOne'] = notificationOne;
+    data['notificationTwo'] = notificationTwo;
+    data['fcmToken'] = fcmToken;
+    data['gstNumber'] = gstNumber;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
     return data;
   }
 }

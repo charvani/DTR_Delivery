@@ -20,6 +20,7 @@ class UnclaimedOrdersController extends GetxController {
   RxBool paginationLoading = false.obs;
   RxInt paginationPage = 0.obs;
   List<Orders> unclaimedOrdersList = [];
+  String punch = "";
 
   getUnclaimedOrdersController() async {
     print("heree paginationPage...${paginationPage.value}");

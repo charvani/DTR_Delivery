@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'order_details/presentation/pages/order_details_screen.dart';
+import '../../../order_details/presentation/pages/order_details_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final String type;
@@ -99,7 +99,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             delegate: SliverChildBuilderDelegate(
               childCount: 3,
               (context, i) => ListTile(
-                onTap: () => Get.to(() => OrderDetailsScreen()),
+                onTap: () => Get.to(() => OrderDetailsScreen(
+                      orderId: "",
+                      fromScreen: "trips",
+                    )),
                 leading: Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   height: 50,

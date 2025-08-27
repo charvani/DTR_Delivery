@@ -18,6 +18,7 @@ class AssignedOrdersController extends GetxController {
   Rx<bool> noFunctionClicked = false.obs;
   RxList<AssignedOrdersResponseModel> assignedOrders =
       <AssignedOrdersResponseModel>[].obs;
+
   getStatusOfAttandanceController() async {
     try {
       attendanceLoading.value = true;
@@ -31,13 +32,16 @@ class AssignedOrdersController extends GetxController {
           attandance = ValueNotifier(false);
           attandanceVal.value = false;
           SnackBarUtil.errorSnackBar(value.message!);
+          getStore.write("punch", "notpunched");
         } else if ((value.punchOutTime == "" || value.punchOutTime == null) &&
             (value.punchInTime != "" || value.punchInTime != null)) {
           showAttandanceWidget.value = true;
           attandance = ValueNotifier(true);
           attandanceVal.value = true;
+          getStore.write("punch", "punchin");
         } else {
           showAttandanceWidget.value = false;
+          getStore.write("punch", "punchout");
         }
         // if (value.message != null) {
         //   SnackBarUtil.successSnackBar(value.message!);
@@ -64,6 +68,7 @@ class AssignedOrdersController extends GetxController {
           attandance = ValueNotifier(true);
           attandanceVal.value = true;
           showAttandanceWidget.value = true;
+          getStore.write("punch", "punchin");
         }
         if (value.message != null) {
           SnackBarUtil.successSnackBar(value.message!);
@@ -88,6 +93,7 @@ class AssignedOrdersController extends GetxController {
           attandance = ValueNotifier(false);
           attandanceVal.value = false;
           showAttandanceWidget.value = false;
+          getStore.write("punch", "punchout");
         }
         if (value.message != null) {
           SnackBarUtil.successSnackBar(value.message!);

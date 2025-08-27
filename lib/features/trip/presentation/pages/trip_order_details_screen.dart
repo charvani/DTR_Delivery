@@ -4,8 +4,9 @@ import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../utils/custom_action_button.dart';
-import '../utils/square_action_button.dart';
+import '../../../../utils/custom_action_button.dart';
+import '../../../../utils/square_action_button.dart';
+
 
 class TripOrderDetailsScreen extends StatelessWidget {
   const TripOrderDetailsScreen({super.key});

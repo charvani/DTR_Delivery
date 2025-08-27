@@ -1,10 +1,10 @@
 import 'package:dtr_delivery/features/assigned_orders/presentation/pages/assigned_orders_screen.dart';
 import 'package:dtr_delivery/features/bottom_bar/presentation/pages/bottombar_screen.dart';
-import 'package:dtr_delivery/features/trips_screen.dart';
 import 'package:dtr_delivery/features/user_account_screen.dart';
 import 'package:get/get.dart';
 
 import '../features/log_in/presentation/pages/login_screen.dart';
+import '../features/trip/presentation/pages/trips_screen.dart';
 import '../features/unclaimed_orders/presentation/pages/unclaimed_orders_screen.dart';
 
 class Routes {

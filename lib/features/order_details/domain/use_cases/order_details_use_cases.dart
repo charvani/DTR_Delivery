@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/order_details/data/models/pack_order_request_model.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 
@@ -22,7 +23,31 @@ class OrderDetailsUseCase {
       OrderDetailsRequestModel orderDetailsRequestModel) async {
     try {
       return await orderDetailsRepository
-          .getOrderDetailsResponseRepository(orderDetailsRequestModel);
+          .getOrderDetailsRepository(orderDetailsRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getClaimOrderUseCase(
+      OrderDetailsRequestModel orderDetailsRequestModel) async {
+    try {
+      return await orderDetailsRepository
+          .getClaimOrderRepository(orderDetailsRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getPackingUseCase(
+      PackOrderRequestModel packOrderRequestModel) async {
+    try {
+      return await orderDetailsRepository
+          .getPackingRepository(packOrderRequestModel);
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);

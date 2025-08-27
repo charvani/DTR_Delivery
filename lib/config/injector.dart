@@ -15,6 +15,10 @@ import '../features/order_details/data/data_sources/order_details_data_sources.d
 import '../features/order_details/data/repositories/order_details_repository_impl.dart';
 import '../features/order_details/domain/repositories/order_details_repository.dart';
 import '../features/order_details/domain/use_cases/order_details_use_cases.dart';
+import '../features/trip/data/data_sources/trip_data_sources.dart';
+import '../features/trip/data/repositories/trip_repository_impl.dart';
+import '../features/trip/domain/repositories/trip_repository.dart';
+import '../features/trip/domain/use_cases/trip_use_cases.dart';
 import '../features/unclaimed_orders/data/data_sources/unclaimed_orders_data_sources.dart';
 import '../features/unclaimed_orders/data/repositories/unclaimed_orders_repository_impl.dart';
 import '../features/unclaimed_orders/domain/repositories/unclaimed_orders_repository.dart';
@@ -70,6 +74,17 @@ OrderDetails Dependency Injection
       () => OrderDetailsUseCase(getIt.get<OrderDetailsRepository>()));
   getIt.registerLazySingleton<OrderDetailsRepository>(
       () => OrderDetailsRepositoryImpl(getIt(), getIt()));
+
+
+  /*
+Trips Dependency Injection
+*/
+  getIt.registerLazySingleton<TripDataSources>(
+      () => TripDataSources(dio, getIt.get<AppConfig>().baseUrl));
+  getIt.registerLazySingleton<TripUseCase>(
+      () => TripUseCase(getIt.get<TripRepository>()));
+  getIt.registerLazySingleton<TripRepository>(
+      () => TripRepositoryImpl(getIt(), getIt()));     
 
 /*
     Project Network Info Impl

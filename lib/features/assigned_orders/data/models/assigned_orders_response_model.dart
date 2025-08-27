@@ -7,6 +7,7 @@ class AssignedOrdersResponseModel {
   String? orderDate;
   String? orderStatus;
   String? orderPaymentMode;
+  dynamic isInspectionStarted;
   List<OrderDetails>? orderDetails;
 
   AssignedOrdersResponseModel(
@@ -18,6 +19,7 @@ class AssignedOrdersResponseModel {
       this.orderDate,
       this.orderStatus,
       this.orderPaymentMode,
+      this.isInspectionStarted,
       this.orderDetails});
 
   AssignedOrdersResponseModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class AssignedOrdersResponseModel {
     orderDate = json['orderDate'];
     orderStatus = json['orderStatus'];
     orderPaymentMode = json['orderPaymentMode'];
+    isInspectionStarted = json['isInspectionStarted'];
     if (json['orderDetails'] != null) {
       orderDetails = <OrderDetails>[];
       json['orderDetails'].forEach((v) {

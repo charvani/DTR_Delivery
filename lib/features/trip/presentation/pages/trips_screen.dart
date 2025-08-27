@@ -1,12 +1,16 @@
 import 'package:dtr_delivery/features/order_details/presentation/pages/order_details_screen.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
+import 'package:dtr_delivery/utils/loader.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:dtr_delivery/utils/square_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../main.dart';
+import '../../../../utils/snack_bar.dart';
+import '../manager/trip_controller.dart';
 import 'trip_details_screen.dart';
 
 class TripsScreen extends StatefulWidget {
@@ -18,6 +22,23 @@ class TripsScreen extends StatefulWidget {
 
 class _TripsScreenState extends State<TripsScreen> {
   bool previousTrips = false;
+  final TripController controller = Get.put(TripController());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      dynamic val = await getStore.read(
+        "punch",
+      );
+      print("punn....$val");
+      controller.punch = val;
+      controller.update();
+      if (val == "notpunched") {
+        SnackBarUtil.errorSnackBar("Please punch in");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,26 +47,46 @@ class _TripsScreenState extends State<TripsScreen> {
             title: "Trips",
             backNavigation: false,
             actions: [
-              OutlinedButton(
-                onPressed: () {
-                  setState(() {
-                    previousTrips = !previousTrips;
-                  });
-                },
-                style: ButtonStyle(
-                    minimumSize: WidgetStatePropertyAll(Size(120, 30)),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(8))),
-                    padding: WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 5, vertical: 0))),
-                child: Text("Previous Trips"),
-              ),
+              Obx(() {
+                return controller.loading.value
+                    ? LoaderWidget()
+                    : controller.punch != "notpunched"
+                        ? OutlinedButton(
+                            onPressed: () {
+                              setState(() {
+                                previousTrips = !previousTrips;
+                              });
+                            },
+                            style: ButtonStyle(
+                                minimumSize:
+                                    WidgetStatePropertyAll(Size(120, 30)),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(8))),
+                                padding: WidgetStatePropertyAll(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 0))),
+                            child: Text("Previous Trips"),
+                          )
+                        : SizedBox.shrink();
+              }),
               SpaceWidget(
                 width: 5,
               )
             ],
             centerTitle: true),
-        body: previousTrips ? previousTripsWidget() : tripWidget());
+        body: GetBuilder<TripController>(builder: (context) {
+          return controller.punch == "notpunched"
+              ? Center(
+                  child: Text("Please punch In",
+                      style: Get.textTheme.titleSmall!
+                          .copyWith(color: INDICATION_COLOR)),
+                )
+              : previousTrips
+                  ? previousTripsWidget()
+                  : tripWidget();
+        }));
   }
 
   previousTripsWidget() {
@@ -161,7 +202,10 @@ class _TripsScreenState extends State<TripsScreen> {
           delegate: SliverChildBuilderDelegate(
             childCount: 3,
             (context, i) => ListTile(
-              onTap: () => Get.to(() => OrderDetailsScreen()),
+              onTap: () => Get.to(() => OrderDetailsScreen(
+                    orderId: "",
+                    fromScreen: "trips",
+                  )),
               leading: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 height: 50,

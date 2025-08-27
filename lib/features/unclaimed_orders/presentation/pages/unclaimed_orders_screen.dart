@@ -4,7 +4,10 @@ import 'package:dtr_delivery/utils/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../main.dart';
+import '../../../../utils/common_colors.dart';
 import '../../../../utils/order_widget.dart';
+import '../../../../utils/snack_bar.dart';
 import '../../../order_details/presentation/pages/order_details_screen.dart';
 
 class UnclaimedOrdersScreen extends StatefulWidget {
@@ -22,9 +25,19 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getUnclaimedOrdersController();
-      getUncalimedOrdersScrollListener();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      dynamic val = await getStore.read(
+        "punch",
+      );
+      print("punn....$val");
+      controller.punch = val;
+      controller.update();
+      if (val == "notpunched") {
+        SnackBarUtil.errorSnackBar("Please punch in");
+      } else {
+        controller.getUnclaimedOrdersController();
+        getUncalimedOrdersScrollListener();
+      }
     });
   }
 
@@ -54,45 +67,67 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
         body: GetBuilder<UnclaimedOrdersController>(builder: (context) {
           return controller.loading.value
               ? LoaderWidget()
-              : controller.unclaimedOrdersList.isEmpty
+              : controller.punch == "notpunched"
                   ? Center(
-                      child: Text("Unclaimed Orders not available",
-                          style: Get.textTheme.titleSmall),
+                      child: Text("Please punch In",
+                          style: Get.textTheme.titleSmall!
+                              .copyWith(color: INDICATION_COLOR)),
                     )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                              controller: controller
-                                  .unclaimedOrdersListScrollController,
-                              physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: controller.unclaimedOrdersList.length,
-                              itemBuilder: (context, i) {
-                                return OrderWidget(
-                                  onTapFun: () {
-                                    Get.to(() => OrderDetailsScreen());
-                                  },
-                                  customerMobileNumber: controller
-                                          .unclaimedOrdersList[i]
-                                          .customerMobileNumber ??
-                                      "",
-                                  customerName: controller
-                                          .unclaimedOrdersList[i]
-                                          .customerName ??
-                                      "",
-                                  order: controller
-                                          .unclaimedOrdersList[i].orderId ??
-                                      "",
-                                  location:
-                                      "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
-                                );
-                              }),
-                        ),
-                        controller.paginationLoading.value
-                            ? LoaderWidget()
-                            : SizedBox.shrink()
-                      ],
-                    );
+                  : controller.unclaimedOrdersList.isEmpty
+                      ? Center(
+                          child: Text("Unclaimed Orders not available",
+                              style: Get.textTheme.titleSmall),
+                        )
+                      : Column(
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
+                                  controller: controller
+                                      .unclaimedOrdersListScrollController,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  itemCount:
+                                      controller.unclaimedOrdersList.length,
+                                  itemBuilder: (context, i) {
+                                    return OrderWidget(
+                                      statusOfOrder: "",
+                                      onTapFun: () async {
+                                        dynamic val = await getStore.read(
+                                          "punch",
+                                        );
+                                        print("punn....$val");
+                                        if (val == "notpunched") {
+                                          SnackBarUtil.errorSnackBar(
+                                              "Please punch in");
+                                        } else {
+                                          Get.to(() => OrderDetailsScreen(
+                                                orderId: controller
+                                                    .unclaimedOrdersList[i]
+                                                    .orderId!,
+                                                fromScreen: "unclaimed_orders",
+                                              ));
+                                        }
+                                      },
+                                      customerMobileNumber: controller
+                                              .unclaimedOrdersList[i]
+                                              .customerMobileNumber ??
+                                          "",
+                                      customerName: controller
+                                              .unclaimedOrdersList[i]
+                                              .customerName ??
+                                          "",
+                                      order: controller
+                                              .unclaimedOrdersList[i].orderId ??
+                                          "",
+                                      location:
+                                          "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
+                                    );
+                                  }),
+                            ),
+                            controller.paginationLoading.value
+                                ? LoaderWidget()
+                                : SizedBox.shrink()
+                          ],
+                        );
         }));
   }
 }
