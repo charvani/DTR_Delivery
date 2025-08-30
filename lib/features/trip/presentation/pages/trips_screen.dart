@@ -32,10 +32,26 @@ class _TripsScreenState extends State<TripsScreen> {
         "punch",
       );
       print("punn....$val");
-      controller.punch = val;
+      controller.punch.value = val;
       controller.update();
       if (val == "notpunched") {
         SnackBarUtil.errorSnackBar("Please punch in");
+      } else {
+        getUncalimedOrdersScrollListener();
+      }
+    });
+  }
+
+  getUncalimedOrdersScrollListener() {
+    print("at listnerqqqqq");
+
+    controller.previousTripsListScrollController.addListener(() {
+      print("at listner");
+      if (controller.previousTripsListScrollController.position.pixels ==
+          controller
+              .previousTripsListScrollController.position.maxScrollExtent) {
+        print("at listner 333333");
+        controller.getPreviousTripsController();
       }
     });
   }
@@ -50,7 +66,7 @@ class _TripsScreenState extends State<TripsScreen> {
               Obx(() {
                 return controller.loading.value
                     ? LoaderWidget()
-                    : controller.punch != "notpunched"
+                    : controller.punch.value != "notpunched"
                         ? OutlinedButton(
                             onPressed: () {
                               setState(() {
@@ -77,7 +93,7 @@ class _TripsScreenState extends State<TripsScreen> {
             ],
             centerTitle: true),
         body: GetBuilder<TripController>(builder: (context) {
-          return controller.punch == "notpunched"
+          return controller.punch.value == "notpunched"
               ? Center(
                   child: Text("Please punch In",
                       style: Get.textTheme.titleSmall!
@@ -90,67 +106,88 @@ class _TripsScreenState extends State<TripsScreen> {
   }
 
   previousTripsWidget() {
-    return ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, i) {
-          return ListTile(
-            onTap: () {
-              Get.to(() => TripDetailsScreen(
-                    type: i.isEven ? "delivered" : "",
-                  ));
-            },
-            leading: Container(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  color: LIGHT_BLACK_SHADE_COLOR),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Image.asset(
-                  "assets/images/trip2.png",
-                ),
-              ),
-            ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Obx(() {
+      return controller.loading.value
+          ? LoaderWidget()
+          : Column(
               children: [
-                Text(
-                  "Vehicle Name: Bike",
-                  style: Get.textTheme.titleSmall!
-                      .copyWith(color: BLACK_TEXT_COLOR2),
-                ),
-                Text(
-                  "Trip Id: #123",
-                  style: Get.textTheme.labelSmall,
-                ),
-                Text(
-                  "Orders Count: 10",
-                  style: Get.textTheme.labelSmall,
-                ),
-                Text(
-                  "Delivered Count: 3",
-                  style: Get.textTheme.labelSmall,
-                ),
+                controller.previousTripsList.isEmpty
+                    ? Center(
+                        child: Text("Unclaimed Orders not available",
+                            style: Get.textTheme.titleSmall),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                            controller:
+                                controller.previousTripsListScrollController,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: controller.previousTripsList.length,
+                            itemBuilder: (context, i) {
+                              return ListTile(
+                                onTap: () {
+                                  Get.to(() => TripDetailsScreen(
+                                        type: i.isEven ? "delivered" : "",
+                                      ));
+                                },
+                                leading: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 8),
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3),
+                                      color: LIGHT_BLACK_SHADE_COLOR),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Image.asset(
+                                      "assets/images/trip2.png",
+                                    ),
+                                  ),
+                                ),
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Vehicle Name: ${controller.previousTripsList[i].vehicleName}",
+                                      style: Get.textTheme.titleSmall!
+                                          .copyWith(color: BLACK_TEXT_COLOR2),
+                                    ),
+                                    Text(
+                                      "Trip Id: ${controller.previousTripsList[i].tripId}",
+                                      style: Get.textTheme.labelSmall,
+                                    ),
+                                    Text(
+                                      "Orders Count: ${controller.previousTripsList[i].totalOrders}",
+                                      style: Get.textTheme.labelSmall,
+                                    ),
+                                    Text(
+                                      "Delivered Count: ${controller.previousTripsList[i].totalOrdersDelivered}",
+                                      style: Get.textTheme.labelSmall,
+                                    ),
+                                  ],
+                                ),
+                                trailing: SizedBox(
+                                  width: 45,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 18,
+                                        color: LIGHT_LINE_COLOR,
+                                        // color: GREEN_COLOR,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      ),
+                controller.paginationLoading.value
+                    ? LoaderWidget()
+                    : SizedBox.shrink()
               ],
-            ),
-            trailing: SizedBox(
-              width: 45,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 18,
-                    color: LIGHT_LINE_COLOR,
-                    // color: GREEN_COLOR,
-                  )
-                ],
-              ),
-            ),
-          );
-        });
+            );
+    });
   }
 
   tripWidget() {
