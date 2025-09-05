@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/previous_trips_response_model.dart';
+import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
 import 'package:logger/logger.dart';
 
 import '../../../../utils/logger.dart';
@@ -21,6 +23,28 @@ class TripUseCase {
     try {
       return await tripRepository
           .getPrevioustripsRepository(unclaimedOrdersRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<List<CurrentTripResponseModel>> getCurrentTripUseCase() async {
+    try {
+      return await tripRepository.getCurrentTripRepository();
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getReachedLocationUseCase(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    try {
+      return await tripRepository
+          .getReachedLocationRepository(reachedLocationRequestModel);
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);

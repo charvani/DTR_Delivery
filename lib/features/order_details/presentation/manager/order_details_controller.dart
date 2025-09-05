@@ -25,7 +25,6 @@ class OrderDetailsController extends GetxController {
       <AssignedOrdersResponseModel>[].obs;
   num totalWithoutGst = 0;
   num totalWithGst = 0;
-
   num totalCgst = 0;
   num totalIgst = 0;
   num totalSgst = 0;

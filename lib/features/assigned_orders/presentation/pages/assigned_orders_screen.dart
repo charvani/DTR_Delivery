@@ -67,54 +67,57 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
               // Text(controller.loading.value.toString()),
               // Text(controller.attandance.toString()),
               Obx(() {
-                return controller.showAttandanceWidget.value
-                    ? MarkAttendanceWidget(
-                        title: "Mark Attendance",
-                        initialVal: controller.attandanceVal.value,
-                        controller: controller.attandance,
-                        onChangedFun: (value) async {
-                          print("geting va...$value");
-                          if (value == true &&
-                              controller.noFunctionClicked.value == false) {
-                            controller.getPunchInController();
-                          }
+                return controller.attendanceLoading.value
+                    ? LoaderWidget()
+                    : controller.showAttandanceWidget.value
+                        ? MarkAttendanceWidget(
+                            title: "Mark Attendance",
+                            initialVal: controller.attandanceVal.value,
+                            controller: controller.attandance,
+                            onChangedFun: (value) async {
+                              print("geting va...$value");
+                              if (value == true &&
+                                  controller.noFunctionClicked.value == false) {
+                                controller.getPunchInController();
+                              }
 
-                          if (value == false &&
-                              controller.attandanceVal.value == true) {
-                            controller.noFunctionClicked.value = true;
+                              if (value == false &&
+                                  controller.attandanceVal.value == true) {
+                                controller.noFunctionClicked.value = true;
 
-                            attandanceDialogFun(noFunction: () {
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                controller.attandance!.value =
-                                    !controller.attandance!.value;
-                                controller.noFunctionClicked.value = false;
+                                attandanceDialogFun(noFunction: () {
+                                  Future.delayed(Duration(milliseconds: 500),
+                                      () {
+                                    controller.attandance!.value =
+                                        !controller.attandance!.value;
+                                    controller.noFunctionClicked.value = false;
 
+                                    controller.update();
+                                  });
+                                  Get.back();
+                                }, yesFunction: () {
+                                  controller.noFunctionClicked.value = false;
+
+                                  Get.back();
+                                  controller.getPunchOutController();
+                                });
                                 controller.update();
-                              });
-                              Get.back();
-                            }, yesFunction: () {
-                              controller.noFunctionClicked.value = false;
+                              }
 
-                              Get.back();
-                              controller.getPunchOutController();
-                            });
-                            controller.update();
-                          }
-
-                          // controller.noFunctionClicked.value = false;
-                        },
-                        loader: controller.attendanceLoading.value,
-                      )
-                    : Padding(
-                        padding: EdgeInsets.only(left: 15.w),
-                        child: Text(
-                          "Note: You've already marked your attendance for today.",
-                          style: TextStyle(
-                              color: INDICATION_COLOR,
-                              fontFamily: "Medium",
-                              fontSize: 14.sp),
-                        ),
-                      );
+                              // controller.noFunctionClicked.value = false;
+                            },
+                            loader: controller.attendanceLoading.value,
+                          )
+                        : Padding(
+                            padding: EdgeInsets.only(left: 15.w),
+                            child: Text(
+                              "Note: You've already marked your attendance for today.",
+                              style: TextStyle(
+                                  color: INDICATION_COLOR,
+                                  fontFamily: "Medium",
+                                  fontSize: 14.sp),
+                            ),
+                          );
               }),
               SpaceWidget(
                 height: 10,

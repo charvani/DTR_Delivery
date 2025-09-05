@@ -7,7 +7,7 @@ import 'common_colors.dart';
 class SnackBarUtil {
   static void errorSnackBar(String msg) {
     Get.snackbar('Error', msg,
-        duration: 3.seconds,
+        duration: 2.seconds,
         isDismissible: true,
         icon: Icon(
           Icons.error,
@@ -34,7 +34,7 @@ class SnackBarUtil {
 
   static void successSnackBar(String msg) {
     Get.snackbar('Success', msg,
-        duration: 3.seconds,
+        duration: 2.seconds,
         isDismissible: true,
         icon: Icon(
           Icons.error,
