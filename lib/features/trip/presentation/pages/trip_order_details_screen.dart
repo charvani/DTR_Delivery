@@ -1,6 +1,7 @@
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
+import 'package:dtr_delivery/utils/snack_bar.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -222,17 +223,32 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                                   ? LoaderWidget()
                                   : SquareActionButton(
                                       buttonTitle: tripController
-                                                  .selectedTripDetails.status
-                                                  .toLowerCase() ==
-                                              "out for delivery"
+                                                  .selectedTripDetails
+                                                  .reachedTime ==
+                                              null
                                           ? "Reached Location"
                                           : "Collect OTP",
-                                      onTapFun: () {
-                                        tripController
-                                            .getReachedloactionController(
-                                                tripController
-                                                    .selectedTripDetails
-                                                    .tripOrderId);
+                                      onTapFun: () async {
+                                        if (tripController.selectedTripDetails
+                                                .reachedTime ==
+                                            null) {
+                                          tripController
+                                              .getReachedloactionController(
+                                                  tripController
+                                                      .selectedTripDetails
+                                                      .tripOrderId);
+                                        } else {
+                                          await tripController
+                                              .getSendOtpController(
+                                                  tripController
+                                                      .selectedTripDetails
+                                                      .tripOrderId);
+                                          if (tripController
+                                                  .selectedTripDetails.otp !=
+                                              null) {
+                                            getOtpCollectFun();
+                                          }
+                                        }
                                       },
                                     );
                             }),
@@ -478,8 +494,8 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
 
   getOtpCollectFun() {
     final defaultPinTheme = PinTheme(
-        width: 56.w,
-        height: 60.h,
+        width: 40.w,
+        height: 40.h,
         textStyle: TextStyle(
             fontSize: 20.sp, color: APPTHEME_COLOR, fontFamily: "Medium"),
         decoration: BoxDecoration(
@@ -507,7 +523,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
               child: Text("Enter OTP", style: Get.textTheme.titleLarge),
             ),
             Pinput(
-              length: 4,
+              length: 6,
               // You can pass your own SmsRetriever implementation based on any package
               // in this example we are using the SmartAuth
               // smsRetriever: smsRetriever,
@@ -591,10 +607,15 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                   buttonTitle: "Submit",
                   onTapFun: () {
                     if (_formKey.currentState!.validate()) {
-                      Get.back();
-                      setState(() {
-                        otpSubmit = true;
-                      });
+                      if (tripController.selectedTripDetails.otp ==
+                          otpController.text) {
+                        Get.back();
+                      } else {
+                        SnackBarUtil.errorSnackBar("Please Enter Valid OTP");
+                      }
+                      // setState(() {
+                      //   otpSubmit = true;
+                      // });
                     }
                   }),
             ),

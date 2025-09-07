@@ -93,4 +93,23 @@ class TripDataSources {
       print("unexpected error >>> $e");
     }
   }
+
+  Future<dynamic> getSendOtpDataSource(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    print("Krushna...");
+    print("acces stoke ...${getIt.get<GetStorage>().read("accessToken")}");
+    try {
+      Map bodyData = {"tripOrderId": reachedLocationRequestModel.tripOrderId};
+
+      Response response =
+          await dio.post('$baseUrl/otp-sending', data: bodyData);
+      print("recieved otp-sending: $response");
+
+      print("recieved otp-sending: ${response.data}");
+      return response.data['message'];
+    } catch (e) {
+      // Any other error
+      print("unexpected error >>> $e");
+    }
+  }
 }

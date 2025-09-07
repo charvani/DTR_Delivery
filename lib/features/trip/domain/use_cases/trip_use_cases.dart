@@ -51,4 +51,16 @@ class TripUseCase {
       throw Exception(e);
     }
   }
+
+  Future<dynamic> getSendOtpUseCase(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    try {
+      return await tripRepository
+          .getSendOtpRepository(reachedLocationRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
 }

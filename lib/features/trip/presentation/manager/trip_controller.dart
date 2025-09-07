@@ -109,7 +109,7 @@ class TripController extends GetxController {
           .getReachedLocationUseCase(reachedLocationRequestModel)
           .then((value) async {
         print("contro....$value");
-        await getOrderDetailsController();
+        await getTripOrderDetailsController(orderId);
         buttonLoading.value = false;
         update();
       });
@@ -117,12 +117,6 @@ class TripController extends GetxController {
       print("get cont e.. $e");
       buttonLoading.value = false;
     }
-  }
-
-  Future<void> getOrderDetailsController() async {
-    print("hiii");
-    await orderDetailsController.getOrderDetailsController("packing");
-    print("hiii3333");
   }
 
   getTripOrderDetailsController(orderId) async {
@@ -210,6 +204,26 @@ class TripController extends GetxController {
     } catch (e) {
       print("get cont e.. $e");
       orderDetailsLoading.value = false;
+    }
+  }
+
+  getSendOtpController(tripOrderId) async {
+    try {
+      buttonLoading.value = true;
+      final reachedLocationRequestModel =
+          ReachedLocationRequestModel(tripOrderId: tripOrderId);
+      update();
+      await tripsUseCase
+          .getSendOtpUseCase(reachedLocationRequestModel)
+          .then((value) async {
+        print("contro....$value");
+        await getTripOrderDetailsController(orderId);
+        buttonLoading.value = false;
+        update();
+      });
+    } catch (e) {
+      print("get cont e.. $e");
+      buttonLoading.value = false;
     }
   }
 }

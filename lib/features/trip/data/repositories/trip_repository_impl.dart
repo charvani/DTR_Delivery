@@ -51,4 +51,17 @@ class TripRepositoryImpl extends TripRepository {
     SnackBarUtil.errorSnackBar("No Internet Connection");
     throw Exception("No Internet Connection");
   }
+
+  @override
+      Future<dynamic> getSendOtpRepository(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource
+          .getSendOtpDataSource(reachedLocationRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
 }

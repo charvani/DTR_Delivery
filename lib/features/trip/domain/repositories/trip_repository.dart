@@ -10,4 +10,6 @@ abstract class TripRepository {
   Future<List<CurrentTripResponseModel>> getCurrentTripRepository();
   Future<dynamic> getReachedLocationRepository(
       ReachedLocationRequestModel reachedLocationRequestModel);
+       Future<dynamic> getSendOtpRepository(
+      ReachedLocationRequestModel reachedLocationRequestModel);
 }

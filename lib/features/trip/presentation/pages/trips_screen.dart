@@ -228,7 +228,9 @@ class _TripsScreenState extends State<TripsScreen> {
                             Text(
                                 "Order: ${controller.currentTripList[i].orderId}",
                                 style: Get.textTheme.labelSmall),
-                            // Text("Invoice: #1234", style: Get.textTheme.labelSmall),
+                            Text(
+                                "Status: ${controller.currentTripList[i].status.toString().capitalizeFirst}",
+                                style: Get.textTheme.labelSmall),
                           ],
                         ),
                         trailing: SizedBox(
