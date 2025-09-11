@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/previous_trips_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
@@ -57,6 +58,18 @@ class TripUseCase {
     try {
       return await tripRepository
           .getSendOtpRepository(reachedLocationRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getCompleteDeliveryUseCase(
+      CompleteDeliveryRequestModel completeDeliveryRequestModel) async {
+    try {
+      return await tripRepository
+          .getCompleteDeliveryRepository(completeDeliveryRequestModel);
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
 import 'package:dtr_delivery/features/unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
@@ -107,6 +108,36 @@ class TripDataSources {
 
       print("recieved otp-sending: ${response.data}");
       return response.data['message'];
+    } catch (e) {
+      // Any other error
+      print("unexpected error >>> $e");
+    }
+  }
+
+  Future<dynamic> getCompleteDataSource(
+      CompleteDeliveryRequestModel completeDeliveryRequestModel) async {
+    print("Krushna...");
+    print("acces stoke ...${getIt.get<GetStorage>().read("accessToken")}");
+    try {
+      Map bodyData = {
+        "tripOrderId": completeDeliveryRequestModel.tripOrderId,
+        "otp": completeDeliveryRequestModel.otp
+      };
+      print("body data .....$bodyData");
+      Response response =
+          await dio.post('$baseUrl/order-delivery', data: bodyData);
+      print("recieved otp-sending: $response");
+      print("recieved otp-sending: ${response.data}");
+      return response.data['message'];
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return e.message;
     } catch (e) {
       // Any other error
       print("unexpected error >>> $e");

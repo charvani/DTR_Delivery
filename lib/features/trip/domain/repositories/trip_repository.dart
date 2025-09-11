@@ -2,6 +2,7 @@ import 'package:dtr_delivery/features/trip/data/models/current_trip_response_mod
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
 
 import '../../../unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
+import '../../data/models/complete_delivery_request_model.dart';
 import '../../data/models/previous_trips_response_model.dart';
 
 abstract class TripRepository {
@@ -12,4 +13,6 @@ abstract class TripRepository {
       ReachedLocationRequestModel reachedLocationRequestModel);
        Future<dynamic> getSendOtpRepository(
       ReachedLocationRequestModel reachedLocationRequestModel);
+       Future<dynamic> getCompleteDeliveryRepository(
+      CompleteDeliveryRequestModel completeDeliveryRequestModel);
 }

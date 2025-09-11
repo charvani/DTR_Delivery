@@ -1,3 +1,4 @@
+import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
 import 'package:dtr_delivery/features/unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
@@ -35,6 +36,10 @@ class TripController extends GetxController {
   num totalSgst = 0;
   num discountAmount = 0;
   num discountPercentage = 0;
+  TextEditingController otpController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  RxBool enableOtpWidget = false.obs;
+
   getPreviousTripsController() async {
     print("heree paginationPage...${paginationPage.value}");
 
@@ -217,7 +222,32 @@ class TripController extends GetxController {
           .getSendOtpUseCase(reachedLocationRequestModel)
           .then((value) async {
         print("contro....$value");
-        await getTripOrderDetailsController(orderId);
+        enableOtpWidget.value = true;
+        // await getTripOrderDetailsController(orderId);
+        buttonLoading.value = false;
+        update();
+      });
+    } catch (e) {
+      print("get cont e.. $e");
+      buttonLoading.value = false;
+    }
+  }
+
+  getCompleteDeliveryController({required tripOrderId, required otp}) async {
+    print("at complete");
+    try {
+      buttonLoading.value = true;
+      final completeDeliveryRequestModel =
+          CompleteDeliveryRequestModel(tripOrderId: tripOrderId, otp: otp);
+      update();
+      await tripsUseCase
+          .getCompleteDeliveryUseCase(completeDeliveryRequestModel)
+          .then((value) async {
+        print("contro..complete..$value");
+        if (value != null) {
+          enableOtpWidget.value = false;
+          await getTripOrderDetailsController(orderId);
+        }
         buttonLoading.value = false;
         update();
       });

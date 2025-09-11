@@ -43,6 +43,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("order id ...${widget.orderId}");
       controller.orderId = widget.orderId;
       controller.update();
       controller.getOrderDetailsController("orderDetailsInit");
@@ -65,7 +66,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Order ID: ${controller.orderDetailsData.order!.id}",
+                    Text(
+                        controller.orderDetailsData.order != null
+                            ? "Order ID: ${controller.orderDetailsData.order!.id}"
+                            : "",
                         style: Get.textTheme.titleLarge),
                     SpaceWidget(height: 12),
                     Row(
@@ -85,7 +89,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  "Customer: ${controller.orderDetailsData.user!.firstName} ${controller.orderDetailsData.user!.lastName}",
+                                  controller.orderDetailsData.user != null
+                                      ? "Customer: ${controller.orderDetailsData.user!.firstName} ${controller.orderDetailsData.user!.lastName}"
+                                      : "",
                                   style: Get.textTheme.titleMedium),
                               Text(
                                   "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}.",

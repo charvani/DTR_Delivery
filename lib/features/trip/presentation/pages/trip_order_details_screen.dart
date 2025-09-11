@@ -1,19 +1,18 @@
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
-import 'package:dtr_delivery/utils/snack_bar.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:pinput/pinput.dart';
 
 import '../../../../utils/common_outline_button.dart';
 import '../../../../utils/custom_action_button.dart';
 import '../../../../utils/order_widget.dart';
 import '../../../../utils/square_action_button.dart';
 import '../manager/trip_controller.dart';
+import '../widgets/trips_widgets.dart';
 
 class TripOrderDetailsScreen extends StatefulWidget {
   final String orderId;
@@ -188,6 +187,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
 
                     SpaceWidget(height: 20),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Card(
                           color: APPTHEME_COLOR,
@@ -215,45 +215,76 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             ),
                           ),
                         ),
-                        Column(
-                          children: [
-                            SpaceWidget(height: 20),
-                            Obx(() {
-                              return tripController.buttonLoading.value
-                                  ? LoaderWidget()
-                                  : SquareActionButton(
-                                      buttonTitle: tripController
-                                                  .selectedTripDetails
+                        if (tripController.enableOtpWidget.value)
+                          OtpCollectionWidget(
+                            formKey: tripController.formKey,
+                            otpController: tripController.otpController,
+                          ),
+                        if (tripController.selectedTripDetails.status
+                                .toString()
+                                .toLowerCase() !=
+                            "delivered")
+                          Column(
+                            children: [
+                              SpaceWidget(height: 20),
+                              Obx(() {
+                                return tripController.buttonLoading.value
+                                    ? LoaderWidget()
+                                    : SquareActionButton(
+                                        buttonTitle: tripController
+                                                    .selectedTripDetails
+                                                    .reachedTime ==
+                                                null
+                                            ? "Reached Location"
+                                            : (tripController
+                                                            .selectedTripDetails
+                                                            .otpVerifiedAt ==
+                                                        null &&
+                                                    tripController
+                                                            .enableOtpWidget
+                                                            .value ==
+                                                        false)
+                                                ? "Collect OTP"
+                                                : "Complete Delivery",
+                                        onTapFun: () async {
+                                          if (tripController.selectedTripDetails
                                                   .reachedTime ==
-                                              null
-                                          ? "Reached Location"
-                                          : "Collect OTP",
-                                      onTapFun: () async {
-                                        if (tripController.selectedTripDetails
-                                                .reachedTime ==
-                                            null) {
-                                          tripController
-                                              .getReachedloactionController(
-                                                  tripController
-                                                      .selectedTripDetails
-                                                      .tripOrderId);
-                                        } else {
-                                          await tripController
-                                              .getSendOtpController(
-                                                  tripController
-                                                      .selectedTripDetails
-                                                      .tripOrderId);
-                                          if (tripController
-                                                  .selectedTripDetails.otp !=
                                               null) {
-                                            getOtpCollectFun();
+                                            tripController
+                                                .getReachedloactionController(
+                                                    tripController
+                                                        .selectedTripDetails
+                                                        .tripOrderId);
+                                          } else if (tripController
+                                                      .selectedTripDetails
+                                                      .otpVerifiedAt ==
+                                                  null &&
+                                              tripController
+                                                      .enableOtpWidget.value ==
+                                                  false) {
+                                            await tripController
+                                                .getSendOtpController(
+                                                    tripController
+                                                        .selectedTripDetails
+                                                        .tripOrderId);
+                                          } else {
+                                            if (tripController
+                                                .formKey.currentState!
+                                                .validate()) {
+                                              tripController
+                                                  .getCompleteDeliveryController(
+                                                      tripOrderId: tripController
+                                                          .selectedTripDetails
+                                                          .tripOrderId,
+                                                      otp: tripController
+                                                          .otpController.text);
+                                            }
                                           }
-                                        }
-                                      },
-                                    );
-                            }),
-                          ],
-                        ),
+                                        },
+                                      );
+                              }),
+                            ],
+                          ),
                         SpaceWidget(height: 10),
                         orderStatus[index] == "Delivered"
                             ? CustomActionButton(
@@ -488,141 +519,12 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
     );
   }
 
-  final FocusNode focusNode = FocusNode();
-  TextEditingController otpController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
   getOtpCollectFun() {
-    final defaultPinTheme = PinTheme(
-        width: 40.w,
-        height: 40.h,
-        textStyle: TextStyle(
-            fontSize: 20.sp, color: APPTHEME_COLOR, fontFamily: "Medium"),
-        decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(5.r),
-            border: Border.all(
-              color: MEDIUM_BLACKTEXT_COLOR,
-              width: 1.0.w,
-            )
-            // Border(
-            //   bottom: BorderSide(
-            //     color: MEDIUM_BLACKTEXT_COLOR, // Change to desired color
-            //     width: 1.0, // Change to desired thickness
-            //   ),
-            // ),
-            ));
     Get.dialog(Dialog(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h),
-              child: Text("Enter OTP", style: Get.textTheme.titleLarge),
-            ),
-            Pinput(
-              length: 6,
-              // You can pass your own SmsRetriever implementation based on any package
-              // in this example we are using the SmartAuth
-              // smsRetriever: smsRetriever,
-              controller: otpController,
-              focusNode: focusNode,
-              defaultPinTheme: defaultPinTheme,
-              separatorBuilder: (index) => SpaceWidget(width: 8.w),
-              validator: (value) {
-                // return value == '2222' ? null : 'Pin is incorrect';
-                if (value!.isEmpty) {
-                  return "Please Enter OTP";
-                } else {
-                  return null;
-                }
-              },
-              hapticFeedbackType: HapticFeedbackType.lightImpact,
-              onCompleted: (pin) {
-                debugPrint('onCompleted: $pin');
-                // _timer!.cancel();
-                // orderDetailsController.getOtpVerifyController();
-              },
-              onChanged: (value) {
-                debugPrint('onChanged: $value');
-              },
-              // cursor: Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Container(
-              //       margin: const EdgeInsets.only(bottom: 9),
-              //       width: 1,
-              //       height: 20,
-              //       color: APPTHEME_COLOR,
-              //     ),
-              //   ],
-              // ),
-              focusedPinTheme: defaultPinTheme,
-              // .
-              // copyWith(
-              //   decoration: BoxDecoration(
-              //     border: Border(
-              //       bottom: BorderSide(
-              //         color: APPTHEME_COLOR, // Change to desired color
-              //         width: 1.0, // Change to desired thickness
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-              // submittedPinTheme: defaultPinTheme.copyWith(
-              //   decoration: defaultPinTheme.decoration!.copyWith(
-              //     color: fillColor,
-              //     borderRadius: BorderRadius.circular(19),
-              //     border: Border.all(color: focusedBorderColor),
-              //   ),
-              // ),
-              errorTextStyle: TextStyle(
-                  fontFamily: "Medium",
-                  fontSize: 12.sp,
-                  color: INDICATION_COLOR),
-              errorPinTheme: defaultPinTheme.copyWith(
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(5.r),
-                    border: Border.all(
-                      color: INDICATION_COLOR,
-                      width: 1.0.w,
-                    )
-                    // border: Border(
-
-                    //   bottom: BorderSide(
-                    //     color: INDICATION_COLOR, // Change to desired color
-                    //     width: 1.0, // Change to desired thickness
-                    //   ),
-                    // ),
-                    ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
-              child: SquareActionButton(
-                  buttonTitle: "Submit",
-                  onTapFun: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (tripController.selectedTripDetails.otp ==
-                          otpController.text) {
-                        Get.back();
-                      } else {
-                        SnackBarUtil.errorSnackBar("Please Enter Valid OTP");
-                      }
-                      // setState(() {
-                      //   otpSubmit = true;
-                      // });
-                    }
-                  }),
-            ),
-          ],
-        ),
-      ),
-    ));
+        child: OtpCollectionWidget(
+      formKey: tripController.formKey,
+      otpController: tripController.otpController,
+    )));
   }
 
   double _rating = 0;
