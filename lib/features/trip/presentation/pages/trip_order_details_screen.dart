@@ -1,4 +1,5 @@
 import 'package:dtr_delivery/utils/appbar.dart';
+import 'package:dtr_delivery/utils/close_widget.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../utils/common_outline_button.dart';
 import '../../../../utils/custom_action_button.dart';
+import '../../../../utils/multiLineTextField.dart';
 import '../../../../utils/order_widget.dart';
 import '../../../../utils/square_action_button.dart';
 import '../manager/trip_controller.dart';
@@ -28,12 +30,6 @@ class TripOrderDetailsScreen extends StatefulWidget {
 class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
   final TripController tripController = Get.put(TripController());
 
-  List<String> orderStatus = ["Start Order Packing", "Packing completed"];
-  String buttonTitle = "Start Order Packing";
-  int index = 0;
-  bool otpSubmit = false;
-  bool returnSelected = true;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -41,6 +37,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       tripController.orderId = widget.orderId;
       print("order id ...${widget.orderId}");
+      tripController.otpController.clear();
       tripController.update();
       tripController.getTripOrderDetailsController(widget.orderId);
     });
@@ -123,24 +120,30 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Order Details", style: Get.textTheme.titleLarge),
-                        returnSelected
-                            ? SizedBox(
-                                width: 120.w,
-                                child: RedOutlineButton(
-                                  buttonText: "Return",
-                                  onTapFun: () {
-                                    returnSelected = !returnSelected;
-                                    setState(() {});
-                                  },
-                                ),
-                              )
-                            : BlackOutlineButton(
-                                buttonText: "Select for Return",
-                                onTapFun: () {
-                                  returnSelected = !returnSelected;
-                                  setState(() {});
-                                },
-                              )
+                        // returnSelected
+                        //     ?
+                        if (tripController.enableReturnOrderWidget.value &&
+                            tripController.selectedTripDetails.status !=
+                                "delivered")
+                          SizedBox(
+                            width: 120.w,
+                            child: RedOutlineButton(
+                              buttonText: "Return All",
+                              onTapFun: () {
+                                getReturnFun(
+                                    titleText: "Return All Items",
+                                    id: tripController
+                                        .selectedTripDetails.orderId);
+                              },
+                            ),
+                          )
+                        // : BlackOutlineButton(
+                        //     buttonText: "Select for Return",
+                        //     onTapFun: () {
+                        //       returnSelected = !returnSelected;
+                        //       setState(() {});
+                        //     },
+                        //   )
                       ],
                     ),
                     SpaceWidget(height: 10),
@@ -158,7 +161,11 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             tripController
                                 .selectedTripDetails.orderDetails![i].quantity!,
                             tripController.selectedTripDetails.orderDetails![i]
-                                .pricePerUnit!),
+                                .pricePerUnit!,
+                            tripController.selectedTripDetails.orderDetails![i]
+                                .orderDetailId!,
+                            tripController.selectedTripDetails.orderDetails![i]
+                                .isCancelled!),
 
                     Divider(
                       height: 30.h,
@@ -170,10 +177,18 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                         "Gst",
                         tripController.totalWithGst -
                             tripController.totalWithoutGst),
-                    _discountTotalRow(tripController.discountAmount,
-                        tripController.discountPercentage),
+                    _discountTotalRow(
+                        tripController.discountAmount,
+                        // tripController.discountPercentage
+                        "Discount"),
                     // _buildSummaryRow("Total Before Tax", "4166.67"),
                     _buildSummaryRow("Delivery Charges", "Free"),
+                    _discountTotalRow(
+                      num.parse(
+                          tripController.selectedTripDetails.checkoutDiscount!),
+                      // tripController.discountPercentage
+                      "Online Payment Discount",
+                    ),
                     SpaceWidget(height: 10),
                     _orderTotalRow(tripController.totalWithGst),
                     SpaceWidget(height: 20),
@@ -221,9 +236,13 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             otpController: tripController.otpController,
                           ),
                         if (tripController.selectedTripDetails.status
-                                .toString()
-                                .toLowerCase() !=
-                            "delivered")
+                                    .toString()
+                                    .toLowerCase() !=
+                                "delivered" &&
+                            tripController.selectedTripDetails.status
+                                    .toString()
+                                    .toLowerCase() !=
+                                "cancelled")
                           Column(
                             children: [
                               SpaceWidget(height: 20),
@@ -286,23 +305,27 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             ],
                           ),
                         SpaceWidget(height: 10),
-                        orderStatus[index] == "Delivered"
-                            ? CustomActionButton(
-                                buttonTitle: "Give Feedback",
-                                onTapFun: () {},
-                                titleColor: APPTHEME_COLOR,
-                                backgroundColor: BUTTON_BG_COLOR,
-                              )
-                            : CustomActionButton(
-                                buttonTitle: "Call Customer",
-                                onTapFun: () {
-                                  makePhoneCall(tripController
-                                          .selectedTripDetails.customerPhone ??
-                                      "");
-                                },
-                                titleColor: APPTHEME_COLOR,
-                                backgroundColor: BUTTON_BG_COLOR,
-                              ),
+                        CustomActionButton(
+                          buttonTitle: "Call Customer",
+                          onTapFun: () {
+                            makePhoneCall(tripController
+                                    .selectedTripDetails.customerPhone ??
+                                "");
+                          },
+                          titleColor: APPTHEME_COLOR,
+                          backgroundColor: BUTTON_BG_COLOR,
+                        ),
+                        SpaceWidget(height: 10),
+                        if (tripController.selectedTripDetails.status ==
+                                "cancelled" ||
+                            tripController.selectedTripDetails.status ==
+                                "delivered")
+                          CustomActionButton(
+                            buttonTitle: "Give Feedback",
+                            onTapFun: () {},
+                            titleColor: BUTTON_BG_COLOR,
+                            backgroundColor: APPTHEME_COLOR,
+                          ),
                       ],
                     ),
                   ],
@@ -320,20 +343,31 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
           Expanded(child: Text("Item", style: Get.textTheme.titleMedium)),
           Expanded(
               child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SpaceWidget(
-                width: 15,
-              ),
               Expanded(child: Text("qty", style: Get.textTheme.titleMedium)),
               Expanded(
                   child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Price", style: Get.textTheme.titleMedium),
                 ],
               )),
             ],
           )),
+          SpaceWidget(
+            width: 5,
+          ),
+          if (tripController.selectedTripDetails.status != "delivered" &&
+              tripController.selectedTripDetails.status != "cancelled")
+            SizedBox(
+                height: 25,
+                child: ReturnButton(
+                    color: Colors.transparent,
+                    onTapFun: () {},
+                    buttonTitle: tripController.enableReturnOrderWidget.value
+                        ? "Return"
+                        : "Return Completed"))
         ],
       ),
     );
@@ -341,9 +375,15 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
 
   List<String> returnItems = [];
 
-  Widget _buildInvoiceRow(String item, int qty, num price) {
+  Widget _buildInvoiceRow(
+    String item,
+    int qty,
+    num price,
+    String id,
+    int returnEnable,
+  ) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.5.h),
+      padding: EdgeInsets.symmetric(vertical: 4.4.h),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
@@ -358,33 +398,33 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
         },
         child: Row(
           children: [
-            Container(
-              width: 15.w,
-              height: 15.h,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: returnItems.contains(item)
-                          ? INDICATION_COLOR
-                          : APPTHEME_COLOR,
-                      width: 1.3.w),
-                  color: WHITE_COLOR),
-              child: returnItems.contains(item)
-                  ? Center(
-                      child: Container(
-                        width: 8.w,
-                        height: 8.h,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: INDICATION_COLOR,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            SpaceWidget(
-              width: 15.w,
-            ),
+            // Container(
+            //   width: 15.w,
+            //   height: 15.h,
+            //   decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       border: Border.all(
+            //           color: returnItems.contains(item)
+            //               ? INDICATION_COLOR
+            //               : APPTHEME_COLOR,
+            //           width: 1.3.w),
+            //       color: WHITE_COLOR),
+            //   child: returnItems.contains(item)
+            //       ? Center(
+            //           child: Container(
+            //             width: 8.w,
+            //             height: 8.h,
+            //             decoration: BoxDecoration(
+            //               shape: BoxShape.circle,
+            //               color: INDICATION_COLOR,
+            //             ),
+            //           ),
+            //         )
+            //       : null,
+            // ),
+            // SpaceWidget(
+            //   width: 15.w,
+            // ),
             Expanded(
                 // flex: 2,
                 child: Text(item,
@@ -394,12 +434,15 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             : BLACK_TEXT_COLOR,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500))),
+            SpaceWidget(
+              width: 5,
+            ),
             Expanded(
               child: Row(
-                // crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    flex: 1,
+                    // flex: 1,
                     child: Text(qty.toString(),
                         style: TextStyle(
                             color: returnItems.contains(item)
@@ -409,9 +452,9 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             fontWeight: FontWeight.w500)),
                   ),
                   Expanded(
-                    flex: 1,
+                    // flex: 1,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         RichText(
                             text: TextSpan(
@@ -438,6 +481,25 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                 ],
               ),
             ),
+            SpaceWidget(
+              width: 5,
+            ),
+            if (tripController.selectedTripDetails.status != "delivered" &&
+                tripController.selectedTripDetails.status != "cancelled")
+              (returnEnable == 0)
+                  ? SizedBox(
+                      height: 25,
+                      child: ReturnButton(
+                          onTapFun: () {
+                            getReturnFun(titleText: "Return $item", id: id);
+                          },
+                          buttonTitle: "Return"))
+                  : SizedBox(
+                      height: 25,
+                      child: ReturnButton(
+                          color: APPTHEME_COLOR,
+                          onTapFun: () {},
+                          buttonTitle: "Return Completed")),
           ],
         ),
       ),
@@ -496,13 +558,17 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
     );
   }
 
-  Widget _discountTotalRow(num amount, num percentage) {
+  Widget _discountTotalRow(
+      num amount,
+      //  num percentage
+      String text) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Discount (${percentage.toStringAsFixed(2)}%)",
+          Text(text,
+              // (${percentage.toStringAsFixed(2)}%)",
               style: Get.textTheme.titleMedium),
           RichText(
               text: TextSpan(
@@ -594,5 +660,118 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
         ),
       ),
     ));
+  }
+
+  final _formKey = GlobalKey<FormState>();
+
+  getReturnFun({required titleText, required id}) {
+    tripController.reasonTextEditingController.clear();
+    tripController.isDamagedVal.value = false;
+    tripController.returnLoading.value = false;
+    Get.dialog(
+        barrierDismissible: false,
+        Dialog(
+          backgroundColor: WHITE_BG_COLOR,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(3.r)),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 25..h),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          titleText,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: APPTHEME_COLOR,
+                              fontSize: 20.sp,
+                              fontFamily: "SemiBold"),
+                        ),
+                        CloseWidget(closeFun: () {
+                          Get.back();
+                        })
+                      ],
+                    ),
+                    SpaceWidget(height: 20),
+                    Text(
+                      "Reason",
+                      style: TextStyle(
+                          color: APPTHEME_COLOR,
+                          fontSize: 14.sp,
+                          fontFamily: "Medium"),
+                    ),
+                    SpaceWidget(height: 13),
+                    Multilinetextfield(
+                        textEditingController:
+                            tripController.reasonTextEditingController,
+                        maxlines: 7,
+                        keyboardType: TextInputType.multiline,
+                        validationFun: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter reason";
+                          } else {
+                            return null;
+                          }
+                        }),
+                    SpaceWidget(height: 13),
+                    Obx(() {
+                      return tripController.loading.value
+                          ? SizedBox.shrink()
+                          : Row(
+                              children: [
+                                Checkbox(
+                                  side: BorderSide(
+                                    color: LIGHT_LINE_COLOR,
+                                    width: 1.5,
+                                  ),
+                                  value: tripController.isDamagedVal.value,
+                                  onChanged: (bool? value) {
+                                    print("chek ...$value");
+                                    tripController.isDamagedVal.value =
+                                        value ?? false;
+                                    tripController.update();
+                                  },
+                                ),
+                                // SpaceWidget(
+                                //   width: 8,
+                                // ),
+                                Text(
+                                  "Is damaged?",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12.sp),
+                                )
+                              ],
+                            );
+                    }),
+                    SpaceWidget(height: 10),
+                    Obx(() {
+                      return tripController.returnLoading.value
+                          ? SizedBox(height: 40, child: LoaderWidget())
+                          : CustomActionButton(
+                              buttonTitle: "SUBMIT",
+                              onTapFun: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                if (_formKey.currentState!.validate()) {
+                                  if (titleText.toString().contains("All")) {
+                                    tripController.getReturnOrderController(
+                                        returnId: id);
+                                  } else {
+                                    tripController.getReturnItemController(
+                                        returnId: id);
+                                  }
+                                }
+                              });
+                    })
+                  ],
+                ),
+              )),
+        ));
   }
 }

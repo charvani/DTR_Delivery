@@ -226,3 +226,31 @@ class OtpCollectionWidget extends StatelessWidget {
     );
   }
 }
+
+class ReturnButton extends StatelessWidget {
+  final void Function()? onTapFun;
+  final String buttonTitle;
+  final Color? color;
+
+  const ReturnButton(
+      {super.key,
+      required this.onTapFun,
+      required this.buttonTitle,
+      this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: onTapFun,
+      style: ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(color ?? INDICATION_COLOR),
+        padding: WidgetStatePropertyAll(EdgeInsets.all(4.w)),
+        minimumSize: WidgetStatePropertyAll(Size(55.w, 10.h)),
+      ),
+      child: Text(
+        buttonTitle,
+        style: TextStyle(color: WHITE_COLOR, fontSize: 13.sp),
+      ),
+    );
+  }
+}

@@ -173,6 +173,10 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
                                           .assignedOrders[i].customerName ??
                                       "",
                                   order: controller.assignedOrders[i].id ?? "",
+                                  latitude: controller
+                                      .assignedOrders[i].orderAddress!.latitude,
+                                  longitude: controller.assignedOrders[i]
+                                      .orderAddress!.longitude,
                                   location:
                                       "${controller.assignedOrders[i].orderAddress!.address1},${controller.assignedOrders[i].orderAddress!.address2},${controller.assignedOrders[i].orderAddress!.city},${controller.assignedOrders[i].orderAddress!.state},${controller.assignedOrders[i].orderAddress!.postalCode}",
                                 );

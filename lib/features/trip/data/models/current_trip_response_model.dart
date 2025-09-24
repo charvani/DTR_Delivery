@@ -1,3 +1,5 @@
+import '../../../assigned_orders/data/models/assigned_orders_response_model.dart';
+
 class CurrentTripResponseModel {
   dynamic tripOrderId;
   dynamic tripId;
@@ -26,12 +28,14 @@ class CurrentTripResponseModel {
   dynamic deliveredOrder;
   dynamic otp;
   dynamic otpVerifiedAt;
+  String? checkoutDiscount;
   bool? isCancelled;
-  Address? address;
+  OrderAddress? address;
   List<OrderDetails>? orderDetails;
 
   CurrentTripResponseModel(
       {this.tripOrderId,
+      this.checkoutDiscount,
       this.tripId,
       this.totalOrders,
       this.orderId,
@@ -65,12 +69,13 @@ class CurrentTripResponseModel {
   CurrentTripResponseModel.fromJson(Map<String, dynamic> json) {
     tripOrderId = json['tripOrderId'];
     tripId = json['tripId'];
+    checkoutDiscount = json['checkoutDiscount'];
     totalOrders = json['totalOrders'];
     orderId = json['orderId'];
     orderTotal = json['orderTotal'];
     status = json['status'];
     orderAmountCollected = json['orderAmountCollected'];
-    amountCollected = json['amountCollected'];
+    amountCollected = json['amountCollected'] ?? "0";
     customerName = json['customerName'];
     customerPhone = json['customerPhone'];
     agentId = json['agentId'];
@@ -92,7 +97,7 @@ class CurrentTripResponseModel {
     otpVerifiedAt = json['otpVerifiedAt'];
     isCancelled = json['isCancelled'];
     address =
-        json['address'] != null ? Address.fromJson(json['address']) : null;
+        json['address'] != null ? OrderAddress.fromJson(json['address']) : null;
     if (json['orderDetails'] != null) {
       orderDetails = <OrderDetails>[];
       json['orderDetails'].forEach((v) {
@@ -170,15 +175,18 @@ class Address {
 }
 
 class OrderDetails {
-  dynamic cgst;
-  dynamic igst;
-  dynamic sgst;
+  String? cgst;
+  String? igst;
+  String? sgst;
   List<String>? images;
   int? quantity;
+  int? isDamaged;
   int? productId;
-  dynamic productName;
-  num? pricePerUnit;
-  num? originalPrice;
+  int? isCancelled;
+  String? productName;
+  int? pricePerUnit;
+  String? orderDetailId;
+  int? originalPrice;
 
   OrderDetails(
       {this.cgst,
@@ -186,9 +194,12 @@ class OrderDetails {
       this.sgst,
       this.images,
       this.quantity,
+      this.isDamaged,
       this.productId,
+      this.isCancelled,
       this.productName,
       this.pricePerUnit,
+      this.orderDetailId,
       this.originalPrice});
 
   OrderDetails.fromJson(Map<String, dynamic> json) {
@@ -197,9 +208,12 @@ class OrderDetails {
     sgst = json['sgst'];
     images = json['images'].cast<String>();
     quantity = json['quantity'];
+    isDamaged = json['isDamaged'];
     productId = json['productId'];
+    isCancelled = json['isCancelled'];
     productName = json['productName'];
     pricePerUnit = json['pricePerUnit'];
+    orderDetailId = json['orderDetailId'];
     originalPrice = json['originalPrice'];
   }
 
@@ -210,9 +224,13 @@ class OrderDetails {
     data['sgst'] = sgst;
     data['images'] = images;
     data['quantity'] = quantity;
+    data['isDamaged'] = isDamaged;
     data['productId'] = productId;
+    data['isCancelled'] = isCancelled;
     data['productName'] = productName;
     data['pricePerUnit'] = pricePerUnit;
+    data['orderDetailId'] = orderDetailId;
+    data['originalPrice'] = originalPrice;
     return data;
   }
 }

@@ -118,8 +118,17 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
                                       order: controller
                                               .unclaimedOrdersList[i].orderId ??
                                           "",
+                                      latitude: controller
+                                          .unclaimedOrdersList[i]
+                                          .orderAddress!
+                                          .latitude,
+                                      longitude: controller
+                                          .unclaimedOrdersList[i]
+                                          .orderAddress!
+                                          .longitude,
                                       location:
                                           "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
+                                    
                                     );
                                   }),
                             ),

@@ -3,6 +3,7 @@ import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/previous_trips_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
+import 'package:dtr_delivery/features/trip/data/models/return_order_request_model.dart';
 import 'package:logger/logger.dart';
 
 import '../../../../utils/logger.dart';
@@ -70,6 +71,42 @@ class TripUseCase {
     try {
       return await tripRepository
           .getCompleteDeliveryRepository(completeDeliveryRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<List<CurrentTripResponseModel>> getPreviousTripDetailsUseCase(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    try {
+      return await tripRepository
+          .getPrevioustTripDetailsRepository(reachedLocationRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getReturnOrderUseCase(
+      ReturnOrderRequestModel returnOrderRequestModel) async {
+    try {
+      return await tripRepository
+          .getReturnOrderRepository(returnOrderRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getReturnItemUseCase(
+      ReturnOrderRequestModel returnOrderRequestModel) async {
+    try {
+      return await tripRepository
+          .getReturnItemRepository(returnOrderRequestModel);
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);

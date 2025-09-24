@@ -52,7 +52,7 @@ class Order {
   String? expiresAt;
   bool? isPaymentCompleted;
   dynamic paidAmount;
-  int? checkoutDiscount;
+  String? checkoutDiscount;
   dynamic paymentGatewayStatus;
   bool? hasFetchedPaymentData;
   bool? paidInFull;
@@ -98,9 +98,9 @@ class Order {
       this.cannotAssign,
       this.reason,
       this.deliveryByThirdParty,
-      this.isInspectionStarted,
       this.tripOrderId,
-      this.providerId});
+      this.providerId,
+      this.isInspectionStarted});
 
   Order.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -166,6 +166,7 @@ class Order {
     data['deliveryByThirdParty'] = deliveryByThirdParty;
     data['tripOrderId'] = tripOrderId;
     data['providerId'] = providerId;
+    data['isInspectionStarted'] = isInspectionStarted;
     return data;
   }
 }
@@ -182,8 +183,8 @@ class OrderDetails {
   String? cgst;
   String? igst;
   String? sgst;
-  String? packageSize;
-  String? metric;
+  dynamic packageSize;
+  dynamic metric;
   List<String>? images;
 
   OrderDetails(
@@ -249,8 +250,8 @@ class Address {
   String? city;
   String? state;
   String? postalCode;
-  Null latitude;
-  Null longitude;
+  dynamic latitude;
+  dynamic longitude;
   bool? status;
 
   Address(
@@ -309,7 +310,7 @@ class User {
   String? mobileNumber;
   String? countryCode;
   String? password;
-  Null photo;
+  dynamic photo;
   String? otp;
   bool? isDocumentsVerified;
   bool? status;
@@ -317,9 +318,10 @@ class User {
   bool? notificationOne;
   bool? notificationTwo;
   String? fcmToken;
-  Null gstNumber;
+  dynamic gstNumber;
   String? createdAt;
   String? updatedAt;
+  bool? hasExported;
 
   User(
       {this.id,
@@ -340,7 +342,8 @@ class User {
       this.fcmToken,
       this.gstNumber,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.hasExported});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -362,6 +365,7 @@ class User {
     gstNumber = json['gstNumber'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    hasExported = json['hasExported'];
   }
 
   Map<String, dynamic> toJson() {
@@ -385,6 +389,7 @@ class User {
     data['gstNumber'] = gstNumber;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
+    data['hasExported'] = hasExported;
     return data;
   }
 }

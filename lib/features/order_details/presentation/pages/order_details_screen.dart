@@ -94,7 +94,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       : "",
                                   style: Get.textTheme.titleMedium),
                               Text(
-                                  "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}.",
+                                  controller.orderDetailsData.address != null
+                                      ? "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}."
+                                      : "",
                                   style: Get.textTheme.labelSmall),
                             ],
                           ),
@@ -119,7 +121,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           width: 10,
                         ),
                         Text(
-                            "Contact: +91 ${controller.orderDetailsData.user!.mobileNumber}",
+                            controller.orderDetailsData.user != null
+                                ? "Contact: +91 ${controller.orderDetailsData.user!.mobileNumber}"
+                                : "",
                             style: Get.textTheme.titleMedium),
                       ],
                     ),
@@ -151,15 +155,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     SpaceWidget(height: 10),
                     _buildInvoiceHeadingRow(),
                     SpaceWidget(height: 10),
-                    for (int i = 0;
-                        i < controller.orderDetailsData.orderDetails!.length;
-                        i++)
-                      _buildInvoiceRow(
-                          controller
-                              .orderDetailsData.orderDetails![i].productName!,
-                          controller
-                              .orderDetailsData.orderDetails![i].quantity!,
-                          controller.orderDetailsData.orderDetails![i].price!),
+                    if (controller.orderDetailsData.orderDetails != null)
+                      for (int i = 0;
+                          i < controller.orderDetailsData.orderDetails!.length;
+                          i++)
+                        _buildInvoiceRow(
+                            controller
+                                .orderDetailsData.orderDetails![i].productName!,
+                            controller
+                                .orderDetailsData.orderDetails![i].quantity!,
+                            controller
+                                .orderDetailsData.orderDetails![i].price!),
 
                     Divider(
                       height: 30.h,
@@ -169,12 +175,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         "Total Amount", controller.totalWithoutGst),
                     _buildSummaryRow("Gst",
                         controller.totalWithGst - controller.totalWithoutGst),
-                    _discountTotalRow(controller.discountAmount,
-                        controller.discountPercentage),
+                    _discountTotalRow(
+                      "Discount", controller.discountAmount,
+                      // controller.discountPercentage
+                    ),
                     // _buildSummaryRow("Total Before Tax", "4166.67"),
                     _buildSummaryRow("Delivery Charges", "Free"),
+                    _discountTotalRow(
+                        "Online Payment Discount",
+                        num.parse(controller
+                            .orderDetailsData.order!.checkoutDiscount!)),
                     SpaceWidget(height: 10),
-                    _orderTotalRow(controller.totalWithGst),
+
+                    _orderTotalRow(controller.orderDetailsData.order!.total!
+                        // controller.totalWithGst
+                        ),
                     SpaceWidget(height: 20),
 
                     // Text("Notes", style: Get.textTheme.titleLarge),
@@ -205,64 +220,70 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           .copyWith(
                                               fontWeight: FontWeight.bold,
                                               color: WHITE_COLOR)),
-                                  Text(
-                                      controller.orderDetailsData.order!.status!
-                                                      .toLowerCase() ==
-                                                  "ordered" &&
-                                              controller.orderDetailsData.order!
-                                                      .isInspectionStarted !=
-                                                  null
-                                          ? "Packing Started"
-                                          : "${controller.orderDetailsData.order!.status}"
-                                              .capitalizeFirst!,
-                                      style: Get.textTheme.headlineMedium!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: WHITE_COLOR))
+                                  if (controller.orderDetailsData.order != null)
+                                    Text(
+                                        (controller.orderDetailsData.order!
+                                                        .status!
+                                                        .toLowerCase() ==
+                                                    "ordered") &&
+                                                (controller
+                                                        .orderDetailsData
+                                                        .order!
+                                                        .isInspectionStarted !=
+                                                    null)
+                                            ? "Packing Started"
+                                            : "${controller.orderDetailsData.order!.status}"
+                                                .capitalizeFirst!,
+                                        style: Get.textTheme.headlineMedium!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: WHITE_COLOR))
                                 ],
                               ),
                             ),
                           ),
-                          if (controller.orderDetailsData.order!.status !=
-                              "dispatched")
-                            Column(
-                              children: [
-                                SpaceWidget(height: 20),
-                                Obx(() {
-                                  return controller.packingLoading.value
-                                      ? LoaderWidget()
-                                      : SquareActionButton(
-                                          buttonTitle: controller
-                                                          .orderDetailsData
-                                                          .order!
-                                                          .status!
-                                                          .toLowerCase() ==
-                                                      "ordered" &&
-                                                  controller
-                                                          .orderDetailsData
-                                                          .order!
-                                                          .isInspectionStarted ==
-                                                      null
-                                              ? "Start Order Packing"
-                                              : "Packing Completed",
-                                          onTapFun: () {
-                                            controller.getPackOrderController(
-                                                controller.orderDetailsData
-                                                                .order!.status!
-                                                                .toLowerCase() ==
-                                                            "ordered" &&
-                                                        controller
-                                                                .orderDetailsData
-                                                                .order!
-                                                                .isInspectionStarted ==
-                                                            null
-                                                    ? true
-                                                    : false);
-                                          },
-                                        );
-                                }),
-                              ],
-                            ),
+                          if (controller.orderDetailsData.order != null)
+                            if (controller.orderDetailsData.order!.status !=
+                                "dispatched")
+                              Column(
+                                children: [
+                                  SpaceWidget(height: 20),
+                                  Obx(() {
+                                    return controller.packingLoading.value
+                                        ? LoaderWidget()
+                                        : SquareActionButton(
+                                            buttonTitle: controller
+                                                            .orderDetailsData
+                                                            .order!
+                                                            .status!
+                                                            .toLowerCase() ==
+                                                        "ordered" &&
+                                                    controller
+                                                            .orderDetailsData
+                                                            .order!
+                                                            .isInspectionStarted ==
+                                                        null
+                                                ? "Start Order Packing"
+                                                : "Packing Completed",
+                                            onTapFun: () {
+                                              controller.getPackOrderController(controller
+                                                              .orderDetailsData
+                                                              .order!
+                                                              .status!
+                                                              .toLowerCase() ==
+                                                          "ordered" &&
+                                                      controller
+                                                              .orderDetailsData
+                                                              .order!
+                                                              .isInspectionStarted ==
+                                                          null
+                                                  ? true
+                                                  : false);
+                                            },
+                                          );
+                                  }),
+                                ],
+                              ),
                           SpaceWidget(height: 10),
                           orderStatus[index] == "Delivered"
                               ? CustomActionButton(
@@ -314,9 +335,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Expanded(
               child: Row(
             children: [
-              SpaceWidget(
-                width: 15,
-              ),
+              // SpaceWidget(
+              //   width: 15,
+              // ),
               Expanded(child: Text("qty", style: Get.textTheme.titleMedium)),
               Expanded(
                   child: Row(
@@ -351,33 +372,33 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         },
         child: Row(
           children: [
-            Container(
-              width: 15.w,
-              height: 15.h,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: returnItems.contains(item)
-                          ? INDICATION_COLOR
-                          : APPTHEME_COLOR,
-                      width: 1.3.w),
-                  color: WHITE_COLOR),
-              child: returnItems.contains(item)
-                  ? Center(
-                      child: Container(
-                        width: 8.w,
-                        height: 8.h,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: INDICATION_COLOR,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            SpaceWidget(
-              width: 15.w,
-            ),
+            // Container(
+            //   width: 15.w,
+            //   height: 15.h,
+            //   decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       border: Border.all(
+            //           color: returnItems.contains(item)
+            //               ? INDICATION_COLOR
+            //               : APPTHEME_COLOR,
+            //           width: 1.3.w),
+            //       color: WHITE_COLOR),
+            //   child: returnItems.contains(item)
+            //       ? Center(
+            //           child: Container(
+            //             width: 8.w,
+            //             height: 8.h,
+            //             decoration: BoxDecoration(
+            //               shape: BoxShape.circle,
+            //               color: INDICATION_COLOR,
+            //             ),
+            //           ),
+            //         )
+            //       : null,
+            // ),
+            // SpaceWidget(
+            //   width: 15.w,
+            // ),
             Expanded(
                 // flex: 2,
                 child: Text(item,
@@ -489,13 +510,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _discountTotalRow(num amount, num percentage) {
+  Widget _discountTotalRow(
+    String text,
+    num amount,
+    // num percentage
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Discount (${percentage.toStringAsFixed(2)}%)",
+          Text(text,
+              // (${percentage.toStringAsFixed(2)}%)",
               style: Get.textTheme.titleMedium),
           RichText(
               text: TextSpan(

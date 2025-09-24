@@ -13,6 +13,8 @@ class OrderWidget extends StatelessWidget {
   final Function()? onTapFun;
   final String order;
   final String location;
+  final dynamic latitude;
+  final dynamic longitude;
   final String statusOfOrder;
   const OrderWidget(
       {super.key,
@@ -20,6 +22,8 @@ class OrderWidget extends StatelessWidget {
       required this.customerName,
       required this.onTapFun,
       required this.order,
+      required this.latitude,
+      required this.longitude,
       required this.statusOfOrder,
       required this.location});
 
@@ -52,7 +56,7 @@ class OrderWidget extends StatelessWidget {
             "Order: $order",
             style: Get.textTheme.labelSmall,
           ),
-          if (statusOfOrder!= "")
+          if (statusOfOrder != "")
             Text(
               "Status: $statusOfOrder",
               style: Get.textTheme.labelSmall,
@@ -81,7 +85,10 @@ class OrderWidget extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                locationRoute(location);
+                locationRoute(
+                    totalAddress: location,
+                    latitude: latitude,
+                    longitude: longitude);
               },
               child: Icon(
                 Icons.location_on,
@@ -106,7 +113,8 @@ void makePhoneCall(String phoneNumber) async {
   }
 }
 
-void locationRoute(String totalAddress) async {
+void locationRoute(
+    {required totalAddress, required latitude, required longitude}) async {
   print("address des ...$totalAddress");
   // final String origin = "Vizag Railway Station, Visakhapatnam";
   // final String waypoint1 = "Kailasagiri, Visakhapatnam";
@@ -116,15 +124,26 @@ void locationRoute(String totalAddress) async {
   //     "&origin=${Uri.encodeComponent(origin)}"
   //     "&destination=${Uri.encodeComponent(destination)}"
   //     "&waypoints=${Uri.encodeComponent(waypoint1)}";
+  if (latitude != null && longitude != null) {
+    final googleMapsUrl =
+        "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
 
-  final query = Uri.encodeComponent(totalAddress);
-  final googleMapsUrl =
-      "https://www.google.com/maps/search/?api=1&query=$query";
-
-  if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-    await launchUrl(Uri.parse(googleMapsUrl),
-        mode: LaunchMode.externalApplication);
+    final uri = Uri.parse(googleMapsUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
   } else {
-    throw 'Could not launch Google Maps';
+    final query = Uri.encodeComponent(totalAddress);
+    final googleMapsUrl =
+        "https://www.google.com/maps/search/?api=1&query=$query";
+
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(Uri.parse(googleMapsUrl),
+          mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
   }
 }

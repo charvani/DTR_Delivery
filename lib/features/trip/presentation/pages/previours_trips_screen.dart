@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../manager/trip_controller.dart';
-import 'trip_order_details_screen.dart';
+import 'previous_trips_details_screen.dart';
 
 class PrevioursTripsScreen extends StatefulWidget {
   const PrevioursTripsScreen({super.key});
@@ -79,9 +79,10 @@ class _PrevioursTripsScreenState extends State<PrevioursTripsScreen> {
                             itemBuilder: (context, i) {
                               return ListTile(
                                 onTap: () {
-                                  Get.to(() => TripOrderDetailsScreen(
-                                        // type: i.isEven ? "delivered" : "",
-                                        orderId: "",
+                                  Get.to(() => PreviousTripsDetailsScreen(
+                                        tripId: controller
+                                                .previousTripsList[i].tripId ??
+                                            "",
                                       ));
                                 },
                                 leading: Container(

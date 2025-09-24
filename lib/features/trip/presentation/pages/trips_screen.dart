@@ -2,6 +2,7 @@ import 'package:dtr_delivery/features/trip/presentation/pages/previours_trips_sc
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
+import 'package:dtr_delivery/utils/order_widget.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
 import 'package:dtr_delivery/utils/square_action_button.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../main.dart';
 import '../../../../utils/snack_bar.dart';
+import '../../../../utils/trip_route.dart';
 import '../manager/trip_controller.dart';
 import '../widgets/trips_widgets.dart';
 import 'trip_order_details_screen.dart';
@@ -38,7 +40,7 @@ class _TripsScreenState extends State<TripsScreen> {
       if (val == "notpunched") {
         SnackBarUtil.errorSnackBar("Please punch in");
       } else {
-        controller.getCurrentTripController();
+        await controller.getCurrentTripController();
         // getPreviousTripsScrollListener();
       }
     });
@@ -171,9 +173,8 @@ class _TripsScreenState extends State<TripsScreen> {
                                       .toString()),
                               buildInvoiceRow(
                                   "Amount Collected",
-                                  controller
-                                          .currentTripList[0].amountCollected ??
-                                      "0"),
+                                  controller.currentTripList[0].amountCollected
+                                      .toString()),
                             ],
                           ),
                           SpaceWidget(
@@ -200,53 +201,77 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      childCount: controller.currentTripList.length,
-                      (context, i) => ListTile(
-                        onTap: () => Get.to(() => TripOrderDetailsScreen(
-                              orderId: controller.currentTripList[i].orderId!,
-                            )),
-                        leading: Container(
-                          margin: EdgeInsets.symmetric(vertical: 8.h),
-                          height: 50.h,
-                          width: 50.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3.r),
-                            color: LIGHT_BLACK_SHADE_COLOR,
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(10.0.h),
-                            child: Image.asset("assets/images/order_box.png"),
-                          ),
+                        childCount: controller.currentTripList.length,
+                        (context, i) => OrderWidget(
+                              customerMobileNumber:
+                                  controller.currentTripList[i].customerPhone,
+                              customerName:
+                                  controller.currentTripList[i].customerName,
+                              onTapFun: () {
+                                Get.to(() => TripOrderDetailsScreen(
+                                      orderId: controller
+                                          .currentTripList[i].orderId!,
+                                    ));
+                              },
+                              order: controller.currentTripList[i].orderId,
+                              statusOfOrder: controller
+                                  .currentTripList[i].status
+                                  .toString()
+                                  .capitalizeFirst!,
+                              latitude: controller
+                                  .currentTripList[i].address!.latitude,
+                              longitude: controller
+                                  .currentTripList[i].address!.longitude,
+                              location:
+                                  "${controller.currentTripList[i].address!.address1},${controller.currentTripList[i].address!.address2},${controller.currentTripList[i].address!.city},${controller.currentTripList[i].address!.state},${controller.currentTripList[i].address!.postalCode}",
+                            )
+
+                        // ListTile(
+                        //   onTap: () => Get.to(() => TripOrderDetailsScreen(
+                        //         orderId: controller.currentTripList[i].orderId!,
+                        //       )),
+                        //   leading: Container(
+                        //     margin: EdgeInsets.symmetric(vertical: 8.h),
+                        //     height: 50.h,
+                        //     width: 50.w,
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(3.r),
+                        //       color: LIGHT_BLACK_SHADE_COLOR,
+                        //     ),
+                        //     child: Padding(
+                        //       padding: EdgeInsets.all(10.0.h),
+                        //       child: Image.asset("assets/images/order_box.png"),
+                        //     ),
+                        //   ),
+                        //   title: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(
+                        //           "Customer: ${controller.currentTripList[i].customerName}",
+                        //           style: Get.textTheme.titleSmall!
+                        //               .copyWith(color: BLACK_TEXT_COLOR2)),
+                        //       Text(
+                        //           "Order: ${controller.currentTripList[i].orderId}",
+                        //           style: Get.textTheme.labelSmall),
+                        //       Text(
+                        //           "Status: ${controller.currentTripList[i].status.toString().capitalizeFirst}",
+                        //           style: Get.textTheme.labelSmall),
+                        //     ],
+                        //   ),
+                        //   trailing: SizedBox(
+                        //     width: 45.w,
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.end,
+                        //       children: [
+                        //         Icon(Icons.call, size: 20.h),
+                        //         SpaceWidget(width: 5),
+                        //         Icon(Icons.location_on,
+                        //             size: 20.h, color: GREEN_COLOR),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Customer: ${controller.currentTripList[i].customerName}",
-                                style: Get.textTheme.titleSmall!
-                                    .copyWith(color: BLACK_TEXT_COLOR2)),
-                            Text(
-                                "Order: ${controller.currentTripList[i].orderId}",
-                                style: Get.textTheme.labelSmall),
-                            Text(
-                                "Status: ${controller.currentTripList[i].status.toString().capitalizeFirst}",
-                                style: Get.textTheme.labelSmall),
-                          ],
-                        ),
-                        trailing: SizedBox(
-                          width: 45.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Icon(Icons.call, size: 20.h),
-                              SpaceWidget(width: 5),
-                              Icon(Icons.location_on,
-                                  size: 20.h, color: GREEN_COLOR),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -309,31 +334,13 @@ class _TripsScreenState extends State<TripsScreen> {
                           //   ),
                           // ],
                           SpaceWidget(height: 20),
-                          SquareActionButton(
-                            buttonTitle: "Trip Route",
-                            onTapFun: () async {
-                              final String origin =
-                                  "Vizag Railway Station, Visakhapatnam";
-                              final String waypoint1 =
-                                  "Kailasagiri, Visakhapatnam";
-                              final String destination =
-                                  "RK Beach, Visakhapatnam";
-
-                              final String googleMapsUrl =
-                                  "https://www.google.com/maps/dir/?api=1"
-                                  "&origin=${Uri.encodeComponent(origin)}"
-                                  "&destination=${Uri.encodeComponent(destination)}"
-                                  "&waypoints=${Uri.encodeComponent(waypoint1)}";
-
-                              if (await canLaunchUrl(
-                                  Uri.parse(googleMapsUrl))) {
-                                await launchUrl(Uri.parse(googleMapsUrl),
-                                    mode: LaunchMode.externalApplication);
-                              } else {
-                                throw 'Could not launch Google Maps';
-                              }
-                            },
-                          ),
+                          if (controller.currentTripList.length >= 2)
+                            SquareActionButton(
+                              buttonTitle: "Trip Route",
+                              onTapFun: () {
+                                tripRouteFun();
+                              },
+                            ),
                           SpaceWidget(height: 30),
                         ],
                       ),
@@ -341,5 +348,55 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 ],
               );
+  }
+
+  tripRouteFun() async {
+    List<LocationPoint> points = [
+      LocationPoint(
+          latitude: null,
+          longitude: null,
+          address: "Vizag Railway Station, Visakhapatnam")
+    ];
+    for (int i = 0; i < controller.currentTripList.length; i++) {
+      if (controller.currentTripList[i].status == "out for delivery") {
+        points.add(LocationPoint(
+          latitude: controller.currentTripList[i].address!.latitude,
+          longitude: controller.currentTripList[i].address!.longitude,
+          address:
+              "${controller.currentTripList[i].address!.address1} ${controller.currentTripList[i].address!.address2} ${controller.currentTripList[i].address!.city} ${controller.currentTripList[i].address!.state} ${controller.currentTripList[i].address!.postalCode}",
+        ));
+      }
+    }
+    points.add(LocationPoint(
+        latitude: null, longitude: null, address: "RK Beach, Visakhapatnam"));
+    print("points ....$points");
+    openRouteInGoogleMaps(points);
+    // openRouteInGoogleMaps(
+    //   [
+    //   LocationPoint(address: "Vizag Railway Station, Visakhapatnam"),
+    //   LocationPoint(latitude: 17.736, longitude: 83.319),
+    //   LocationPoint(address: "MVP Colony, Visakhapatnam"),
+    //   LocationPoint(latitude: 17.751, longitude: 83.385),
+    //   LocationPoint(address: "RK Beach, Visakhapatnam"),
+    // ]
+    // );
+  }
+
+  exampleTripRoute() async {
+    final String origin = "Vizag Railway Station, Visakhapatnam";
+    final String waypoint1 = "Kailasagiri, Visakhapatnam";
+    final String destination = "RK Beach, Visakhapatnam";
+
+    final String googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
+        "&origin=${Uri.encodeComponent(origin)}"
+        "&destination=${Uri.encodeComponent(destination)}"
+        "&waypoints=${Uri.encodeComponent(waypoint1)}";
+
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(Uri.parse(googleMapsUrl),
+          mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
   }
 }

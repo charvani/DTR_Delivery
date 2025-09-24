@@ -67,9 +67,17 @@ class OrderAddress {
   String? city;
   String? state;
   String? postalCode;
+  dynamic latitude;
+  dynamic longitude;
 
   OrderAddress(
-      {this.address1, this.address2, this.city, this.state, this.postalCode});
+      {this.address1,
+      this.address2,
+      this.city,
+      this.state,
+      this.postalCode,
+      this.latitude,
+      this.longitude});
 
   OrderAddress.fromJson(Map<String, dynamic> json) {
     address1 = json['address1'];
@@ -77,6 +85,8 @@ class OrderAddress {
     city = json['city'];
     state = json['state'];
     postalCode = json['postalCode'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
@@ -86,6 +96,8 @@ class OrderAddress {
     data['city'] = city;
     data['state'] = state;
     data['postalCode'] = postalCode;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
     return data;
   }
 }

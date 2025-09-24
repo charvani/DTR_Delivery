@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'common_colors.dart';
 
@@ -12,12 +13,12 @@ class CloseWidget extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: closeFun,
       child: CircleAvatar(
-        backgroundColor: WHITE_COLOR,
-        radius: 10,
+        backgroundColor: Colors.transparent,
+        radius: 15.r,
         child: Icon(
           Icons.close,
-          size: 15,
-          color: REDAPPTHEME_COLOR,
+          size: 20.h,
+          color: APPTHEME_COLOR,
         ),
       ),
     );

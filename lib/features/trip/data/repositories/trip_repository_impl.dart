@@ -9,6 +9,7 @@ import '../models/complete_delivery_request_model.dart';
 import '../models/current_trip_response_model.dart';
 import '../models/previous_trips_response_model.dart';
 import '../models/reached_location_request_model.dart';
+import '../models/return_order_request_model.dart';
 
 class TripRepositoryImpl extends TripRepository {
   final NetworkInfoImpl networkInfoImpl;
@@ -74,6 +75,45 @@ class TripRepositoryImpl extends TripRepository {
     if (await networkInfoImpl.isConnected) {
       return await tripDataSource
           .getCompleteDataSource(completeDeliveryRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+
+  @override
+  Future<List<CurrentTripResponseModel>> getPrevioustTripDetailsRepository(
+      ReachedLocationRequestModel reachedLocationRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource
+          .getPrevioustTripDetailsDataSource(reachedLocationRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+
+  @override
+  Future<dynamic> getReturnOrderRepository(
+      ReturnOrderRequestModel returnOrderRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource
+          .getReturnOrderDataSource(returnOrderRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+
+  @override
+  Future<dynamic> getReturnItemRepository(
+      ReturnOrderRequestModel returnOrderRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource
+          .getReturnItemDataSource(returnOrderRequestModel);
     }
     SnackBarUtil.errorSnackBar("No Internet Connection");
     throw Exception("No Internet Connection");
