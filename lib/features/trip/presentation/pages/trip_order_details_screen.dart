@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:with_opacity/with_opacity.dart';
 
 import '../../../../utils/common_outline_button.dart';
 import '../../../../utils/custom_action_button.dart';
@@ -39,7 +40,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
       print("order id ...${widget.orderId}");
       tripController.otpController.clear();
       tripController.update();
-      tripController.getTripOrderDetailsController(widget.orderId);
+      tripController.getTripOrderDetailsController(widget.orderId, "init");
     });
   }
 
@@ -51,7 +52,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
           backNavigation: true,
           actions: [],
           centerTitle: true),
-      body: GetBuilder<TripController>(builder: (context) {
+      body: GetBuilder<TripController>(builder: (controller) {
         return tripController.orderDetailsLoading.value
             ? LoaderWidget()
             : SingleChildScrollView(
@@ -316,13 +317,18 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                           backgroundColor: BUTTON_BG_COLOR,
                         ),
                         SpaceWidget(height: 10),
-                        if (tripController.selectedTripDetails.status ==
-                                "cancelled" ||
-                            tripController.selectedTripDetails.status ==
-                                "delivered")
+                        if ((tripController.selectedTripDetails.status ==
+                                    "cancelled" ||
+                                tripController.selectedTripDetails.status ==
+                                    "delivered") &&
+                            tripController
+                                    .selectedTripDetails.isFeedbackGiven ==
+                                0)
                           CustomActionButton(
                             buttonTitle: "Give Feedback",
-                            onTapFun: () {},
+                            onTapFun: () {
+                              getFeedbackFun(context);
+                            },
                             titleColor: BUTTON_BG_COLOR,
                             backgroundColor: APPTHEME_COLOR,
                           ),
@@ -333,6 +339,127 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
               );
       }),
     );
+  }
+
+  final _formKey2 = GlobalKey<FormState>();
+
+  getFeedbackFun(BuildContext context) {
+    tripController.providerId = 0;
+    tripController.tripOrderId = "";
+    tripController.rating = 1;
+    tripController.feedbackController.clear();
+    Get.dialog(
+        barrierDismissible: false,
+        Dialog(
+          backgroundColor: WHITE_BG_COLOR,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(3.r)),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 25..h),
+            child: Obx(() {
+              return tripController.returnLoading.value
+                  ? SizedBox(
+                      height: 200,
+                    )
+                  : Form(
+                      key: _formKey2,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          CloseWidget(closeFun: () {
+                            Get.back();
+                          }),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "How was your overall\norder expericence?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: APPTHEME_COLOR,
+                                    fontSize: 20.sp,
+                                    fontFamily: "SemiBold"),
+                              ),
+                            ],
+                          ),
+                          SpaceWidget(height: 15),
+                          Center(
+                            child: RatingBar.builder(
+                              initialRating: tripController.rating,
+                              minRating: 1,
+                              allowHalfRating: false,
+                              itemSize: 27.h,
+                              itemCount: 5,
+                              unratedColor:
+                                  Color(0xff63706F).withCustomOpacity(0.3),
+                              itemPadding:
+                                  EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) =>
+                                  Icon(Icons.star, color: ORANGE_COLOR),
+                              onRatingUpdate: (rating) {
+                                tripController.rating = rating;
+                                tripController.update();
+                              },
+                            ),
+                          ),
+                          SpaceWidget(height: 21),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Overall Feedback *",
+                                  style: TextStyle(
+                                      color: Color(0xff63706F),
+                                      fontSize: 14.sp,
+                                      fontFamily: "Medium"),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SpaceWidget(height: 13),
+                          Multilinetextfield(
+                              textEditingController:
+                                  tripController.feedbackController,
+                              maxlines: 5,
+                              keyboardType: TextInputType.multiline,
+                              validationFun: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please write your feedback";
+                                } else {
+                                  return null;
+                                }
+                              }),
+                          SpaceWidget(height: 10),
+                          Obx(() {
+                            return tripController.addFeedbackLoading.value
+                                ? LoaderWidget()
+                                : CustomActionButton(
+                                    buttonTitle: "SUBMIT",
+                                    onTapFun: () {
+                                      // FocusScope.of(context).unfocus();
+                                      if (_formKey2.currentState!.validate()) {
+                                        Get.focusScope?.unfocus();
+                                        print("feedback fun");
+                                        tripController.getAddFeedbackController(
+                                            tripOrderId: tripController
+                                                .selectedTripDetails
+                                                .tripOrderId,
+                                            providerId: tripController
+                                                .selectedTripDetails.userId,
+                                            from: "currenttrips");
+                                      }
+                                    });
+                          })
+                        ],
+                      ),
+                    );
+            }),
+          ),
+        ));
   }
 
   Widget _buildInvoiceHeadingRow() {
@@ -612,55 +739,55 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
     });
   }
 
-  getFeedbackFun() {
-    Get.dialog(Dialog(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Rate the Delivery Experience",
-              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-            ),
-            SpaceWidget(height: 16),
-            RatingBar.builder(
-              initialRating: _rating,
-              minRating: 1,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0.h),
-              itemBuilder: (context, _) =>
-                  Icon(Icons.star, color: Colors.amber),
-              onRatingUpdate: (rating) {
-                setState(() {
-                  _rating = rating;
-                });
-              },
-            ),
-            SpaceWidget(height: 24),
-            TextField(
-              controller: _feedbackController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                labelText: "Write your feedback",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SpaceWidget(height: 24),
-            ElevatedButton.icon(
-              onPressed: _submitFeedback,
-              icon: Icon(Icons.send),
-              label: Text("Submit Feedback"),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50.h),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
+  // getFeedbackFun() {
+  //   Get.dialog(Dialog(
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Text(
+  //             "Rate the Delivery Experience",
+  //             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+  //           ),
+  //           SpaceWidget(height: 16),
+  //           RatingBar.builder(
+  //             initialRating: _rating,
+  //             minRating: 1,
+  //             allowHalfRating: true,
+  //             itemCount: 5,
+  //             itemPadding: EdgeInsets.symmetric(horizontal: 4.0.h),
+  //             itemBuilder: (context, _) =>
+  //                 Icon(Icons.star, color: Colors.amber),
+  //             onRatingUpdate: (rating) {
+  //               setState(() {
+  //                 _rating = rating;
+  //               });
+  //             },
+  //           ),
+  //           SpaceWidget(height: 24),
+  //           TextField(
+  //             controller: _feedbackController,
+  //             maxLines: 5,
+  //             decoration: InputDecoration(
+  //               labelText: "Write your feedback",
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //           SpaceWidget(height: 24),
+  //           ElevatedButton.icon(
+  //             onPressed: _submitFeedback,
+  //             icon: Icon(Icons.send),
+  //             label: Text("Submit Feedback"),
+  //             style: ElevatedButton.styleFrom(
+  //               minimumSize: Size(double.infinity, 50.h),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   ));
+  // }
 
   final _formKey = GlobalKey<FormState>();
 

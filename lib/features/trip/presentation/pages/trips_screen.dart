@@ -164,13 +164,15 @@ class _TripsScreenState extends State<TripsScreen> {
                                   controller.currentTripList.length.toString()),
                               tripDetailsRow(
                                   "Delivered Count",
-                                  controller
-                                          .currentTripList[0].deliveredOrder ??
+                                  controller.currentTripList[0].ordersDelivered
+                                          .toString() ??
                                       "0"),
                               buildInvoiceRow(
                                   "Order Total",
-                                  controller.currentTripList[0].orderTotal
-                                      .toString()),
+                                  // controller.currentTripList[0].orderTotal
+                                  double.parse(controller.currentTripOrderTotal
+                                          .toString())
+                                      .toStringAsFixed(2)),
                               buildInvoiceRow(
                                   "Amount Collected",
                                   controller.currentTripList[0].amountCollected

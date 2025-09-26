@@ -37,7 +37,7 @@ class _PreviousTripOrderDetailsScreenOldState
       tripController.orderId = widget.orderId;
       print("order id ...${widget.orderId}");
       tripController.update();
-      tripController.getTripOrderDetailsController(widget.orderId);
+      tripController.getTripOrderDetailsController(widget.orderId, "previous");
     });
   }
 

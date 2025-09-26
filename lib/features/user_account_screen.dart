@@ -11,8 +11,28 @@ import 'log_in/presentation/pages/login_screen.dart';
 
 var getStore = getIt.get<GetStorage>();
 
-class UserAccountScreen extends StatelessWidget {
+class UserAccountScreen extends StatefulWidget {
   const UserAccountScreen({super.key});
+
+  @override
+  State<UserAccountScreen> createState() => _UserAccountScreenState();
+}
+
+class _UserAccountScreenState extends State<UserAccountScreen> {
+  String riderFullName = "";
+  String riderMobileNumber = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      riderFullName =
+          await getStore.read("firstName") + await getStore.read("lastName");
+
+      riderMobileNumber = await getStore.read("contactNumber");
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +56,18 @@ class UserAccountScreen extends StatelessWidget {
             profileWidget(
               icondata: Icons.person_outline_rounded,
               title: "Rider Name",
-              info: "Charvani Boyi",
+              info: riderFullName,
             ),
             profileWidget(
               icondata: Icons.phone_outlined,
               title: "Contact",
-              info: "+91 8123456789",
+              info: "+91 $riderMobileNumber",
             ),
-            profileWidget(
-              icondata: Icons.motorcycle,
-              title: "Vehicle Details",
-              info: "Honda Civic, 2018",
-            ),
+            // profileWidget(
+            //   icondata: Icons.motorcycle,
+            //   title: "Vehicle Details",
+            //   info: "Honda Civic, 2018",
+            // ),
             SpaceWidget(
               height: 15,
             ),

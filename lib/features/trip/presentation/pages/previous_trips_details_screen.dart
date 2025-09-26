@@ -120,13 +120,14 @@ class _PreviousTripsDetailsScreenState
                               tripDetailsRow(
                                   "Delivered Count",
                                   controller.previousTripOrdersList[0]
-                                          .deliveredOrder ??
+                                          .ordersDelivered
+                                          .toString() ??
                                       "0"),
                               buildInvoiceRow(
                                   "Order Total",
-                                  controller
-                                      .previousTripOrdersList[0].orderTotal
-                                      .toString()),
+                                  double.parse(controller.previousTripOrderTotal
+                                          .toString())
+                                      .toStringAsFixed(2)),
                               buildInvoiceRow(
                                   "Amount Collected",
                                   controller

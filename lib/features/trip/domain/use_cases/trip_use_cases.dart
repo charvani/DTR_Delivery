@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 import '../../../../utils/logger.dart';
 import '../../../../utils/snack_bar.dart';
 import '../../../unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
+import '../../data/models/addfeedback_request_model.dart';
 import '../repositories/trip_repository.dart';
 
 class TripUseCase {
@@ -110,6 +111,20 @@ class TripUseCase {
     } on DioException catch (e) {
       Logger().i(e);
       SnackBarUtil.errorSnackBar(e.response!.data['message']);
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getAddFeedbackUseCase(
+      AddFeedbackRequestModel addFeedbackRequestModel) async {
+    try {
+      return await tripRepository
+          .getAddFeedbackRequestRepo(addFeedbackRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      smartLogger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+
       throw Exception(e);
     }
   }

@@ -4,6 +4,7 @@ class CurrentTripResponseModel {
   dynamic tripOrderId;
   dynamic tripId;
   num? totalOrders;
+  int? userId;
   dynamic orderId;
   num? orderTotal;
   dynamic status;
@@ -29,12 +30,15 @@ class CurrentTripResponseModel {
   dynamic otp;
   dynamic otpVerifiedAt;
   String? checkoutDiscount;
+  int? isFeedbackGiven;
+
   bool? isCancelled;
   OrderAddress? address;
   List<OrderDetails>? orderDetails;
 
   CurrentTripResponseModel(
       {this.tripOrderId,
+      this.userId,
       this.checkoutDiscount,
       this.tripId,
       this.totalOrders,
@@ -63,12 +67,14 @@ class CurrentTripResponseModel {
       this.otp,
       this.otpVerifiedAt,
       this.isCancelled,
+      this.isFeedbackGiven,
       this.address,
       this.orderDetails});
 
   CurrentTripResponseModel.fromJson(Map<String, dynamic> json) {
     tripOrderId = json['tripOrderId'];
     tripId = json['tripId'];
+    userId = json['userId'] ?? 22;
     checkoutDiscount = json['checkoutDiscount'];
     totalOrders = json['totalOrders'];
     orderId = json['orderId'];
@@ -96,6 +102,7 @@ class CurrentTripResponseModel {
     otp = json['otp'];
     otpVerifiedAt = json['otpVerifiedAt'];
     isCancelled = json['isCancelled'];
+    isFeedbackGiven = json['isFeedbackGiven'];
     address =
         json['address'] != null ? OrderAddress.fromJson(json['address']) : null;
     if (json['orderDetails'] != null) {

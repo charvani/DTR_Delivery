@@ -35,6 +35,7 @@ class LoginController extends GetxController {
         getStore.write("accessToken", value.accessToken);
         getStore.write("contactNumber", value.contactNumber);
         getStore.write("firstName", value.firstName);
+        getStore.write("lastName", value.lastName);
         // getStore.write("appLogin", "Yes");
         if (value.accessToken != null) {
           SnackBarUtil.successSnackBar("Succesfully Login");

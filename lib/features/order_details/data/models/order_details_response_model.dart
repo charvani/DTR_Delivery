@@ -69,6 +69,7 @@ class Order {
   dynamic tripOrderId;
   dynamic providerId;
   dynamic isInspectionStarted;
+  int? isFeedbackGiven;
 
   Order(
       {this.id,
@@ -100,6 +101,7 @@ class Order {
       this.deliveryByThirdParty,
       this.tripOrderId,
       this.providerId,
+      this.isFeedbackGiven,
       this.isInspectionStarted});
 
   Order.fromJson(Map<String, dynamic> json) {
@@ -132,6 +134,7 @@ class Order {
     deliveryByThirdParty = json['deliveryByThirdParty'];
     tripOrderId = json['tripOrderId'];
     providerId = json['providerId'];
+    isFeedbackGiven = json['isFeedbackGiven'];
     isInspectionStarted = json['isInspectionStarted'];
   }
 

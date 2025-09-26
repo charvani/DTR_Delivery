@@ -8,6 +8,7 @@ import 'package:dtr_delivery/utils/snack_bar.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../../config/injector.dart';
+import '../models/addfeedback_request_model.dart';
 import '../models/previous_trips_response_model.dart';
 
 class TripDataSources {
@@ -243,6 +244,41 @@ class TripDataSources {
     } catch (e) {
       // Any other error
       print("unexpected error >>> $e");
+    }
+  }
+
+  Future<dynamic> getAddFeedbackDataSouce(
+      AddFeedbackRequestModel addFeedbackRequestModel) async {
+    try {
+      // Map<String, dynamic> mapData = {
+      //   "providerId": addFeedbackRequestModel.providerId,
+      //   "tripOrderId": jsonEncode(addFeedbackRequestModel.tripOrderId),
+      //   "rating": jsonEncode(addFeedbackRequestModel.rating.toString()),
+      //   "feedback": jsonEncode(addFeedbackRequestModel.feedback)
+      // };
+      Map<String, dynamic> mapData = {
+        "providerId": addFeedbackRequestModel.providerId,
+        "tripOrderId": addFeedbackRequestModel.tripOrderId,
+        "rating": addFeedbackRequestModel.rating.toString(),
+        "feedback": addFeedbackRequestModel.feedback
+      };
+      print("body data...$mapData");
+      Response response =
+          await dio.post('$baseUrl/create-user-feedback', data: mapData);
+      print("recieved response: $response");
+
+      return response.data;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return e.message;
+    } catch (e) {
+      print("get error >>> $e");
     }
   }
 }

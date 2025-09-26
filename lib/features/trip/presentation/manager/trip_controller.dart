@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../config/injector.dart';
 import '../../../../utils/snack_bar.dart';
 import '../../../order_details/presentation/manager/order_details_controller.dart';
+import '../../data/models/addfeedback_request_model.dart';
 import '../../data/models/previous_trips_response_model.dart';
 import '../../domain/use_cases/trip_use_cases.dart';
 
@@ -18,6 +19,8 @@ class TripController extends GetxController {
   RxBool orderDetailsLoading = false.obs;
   RxBool buttonLoading = false.obs;
   RxBool returnLoading = false.obs;
+  RxBool addFeedbackLoading = false.obs;
+
   RxBool isDamagedVal = false.obs;
   var getStore = getIt.get<GetStorage>();
   var tripsUseCase = getIt.get<TripUseCase>();
@@ -27,6 +30,8 @@ class TripController extends GetxController {
   RxInt paginationPage = 0.obs;
   List<Trips> previousTripsList = [];
   List<CurrentTripResponseModel> currentTripList = [];
+  num currentTripOrderTotal = 0;
+  num previousTripOrderTotal = 0;
   List<CurrentTripResponseModel> previousTripOrdersList = [];
   CurrentTripResponseModel selectedTripDetails = CurrentTripResponseModel();
   RxString punch = "".obs;
@@ -47,7 +52,10 @@ class TripController extends GetxController {
   final formKey = GlobalKey<FormState>();
   RxBool enableOtpWidget = false.obs;
   RxBool enableReturnOrderWidget = false.obs;
-
+  double rating = 1;
+  dynamic providerId = 1;
+  dynamic tripOrderId = "1";
+  final TextEditingController feedbackController = TextEditingController();
   getPreviousTripsController() async {
     print("heree paginationPage...${paginationPage.value}");
 
@@ -95,6 +103,7 @@ class TripController extends GetxController {
     try {
       loading.value = true;
       enableOtpWidget.value = false;
+      currentTripOrderTotal = 0;
       currentTripList.clear();
       update();
       await tripsUseCase.getCurrentTripUseCase().then((value) async {
@@ -103,8 +112,9 @@ class TripController extends GetxController {
         if (value.isNotEmpty) {
           for (var item in value) {
             currentTripList.add(item);
-
-            
+            currentTripOrderTotal =
+                currentTripOrderTotal + num.parse(item.orderTotal.toString());
+            print("order t... $currentTripOrderTotal");
           }
         }
         loading.value = false;
@@ -125,7 +135,7 @@ class TripController extends GetxController {
           .getReachedLocationUseCase(reachedLocationRequestModel)
           .then((value) async {
         print("contro....$value");
-        await getTripOrderDetailsController(orderId);
+        await getTripOrderDetailsController(orderId, "init");
         buttonLoading.value = false;
         update();
       });
@@ -135,7 +145,7 @@ class TripController extends GetxController {
     }
   }
 
-  getTripOrderDetailsController(orderId) async {
+  getTripOrderDetailsController(orderId, from) async {
     try {
       totalWithoutGst = 0.0;
       totalWithGst = 0;
@@ -144,13 +154,22 @@ class TripController extends GetxController {
       totalSgst = 0.0;
       discountAmount = 0;
       discountPercentage = 0;
-      orderDetailsLoading.value = true;
+      if (from == "init") {
+        orderDetailsLoading.value = true;
+      }
       enableReturnOrderWidget.value = false;
       update();
       print("order iddd..$orderId");
       num subTotalVal = 0.0;
       num salePrice = 0;
+
       await getCurrentTripController();
+      if (selectedTripDetails.orderDetails != null) {
+        if (selectedTripDetails.orderDetails!.isNotEmpty) {
+          selectedTripDetails.orderDetails!.clear();
+          selectedTripDetails.orderDetails = [];
+        }
+      }
       for (int i = 0; i < currentTripList.length; i++) {
         if (currentTripList[i].orderId == orderId) {
           selectedTripDetails = currentTripList[i];
@@ -263,7 +282,8 @@ class TripController extends GetxController {
         if (value != null) {
           if (value.toString().toLowerCase() != "invalid otp") {
             enableOtpWidget.value = false;
-            await getTripOrderDetailsController(orderId);
+            await getTripOrderDetailsController(orderId, "init");
+            getCurrentTripController();
           } else {
             enableOtpWidget.value = true;
           }
@@ -281,6 +301,8 @@ class TripController extends GetxController {
     try {
       loading.value = true;
       previousTripOrdersList.clear();
+      previousTripOrderTotal = 0;
+
       final reachedLocationRequestModel =
           ReachedLocationRequestModel(tripOrderId: tripId);
       update();
@@ -292,6 +314,9 @@ class TripController extends GetxController {
         if (value.isNotEmpty) {
           for (var item in value) {
             previousTripOrdersList.add(item);
+            previousTripOrderTotal =
+                previousTripOrderTotal + num.parse(item.orderTotal.toString());
+            print("order t... $previousTripOrderTotal");
           }
         }
         loading.value = false;
@@ -319,7 +344,7 @@ class TripController extends GetxController {
           Get.back();
 
           SnackBarUtil.successSnackBar("Order return successfully");
-          getTripOrderDetailsController(orderId);
+          getTripOrderDetailsController(orderId, "init");
         } else {
           SnackBarUtil.errorSnackBar(value);
         }
@@ -349,7 +374,7 @@ class TripController extends GetxController {
 
           SnackBarUtil.successSnackBar("Order return successfully");
 
-          getTripOrderDetailsController(orderId);
+          getTripOrderDetailsController(orderId, "init");
         } else {
           SnackBarUtil.errorSnackBar(value);
         }
@@ -358,6 +383,48 @@ class TripController extends GetxController {
       });
     } catch (e) {
       loading.value = false;
+    }
+  }
+
+  Future<dynamic> getAddFeedbackController(
+      {required providerId, required tripOrderId, required from}) async {
+    try {
+      addFeedbackLoading.value = true;
+      update();
+      print("ad fed ...at ${addFeedbackLoading.value}");
+      print("ad val1 ...$providerId");
+      print("ad val2 ...$tripOrderId");
+      print("ad val3 ...$rating");
+      print("ad val4 ...${feedbackController.text}");
+
+      final AddFeedbackRequestModel addFeedbackRequestModel =
+          AddFeedbackRequestModel(
+              providerId: providerId,
+              tripOrderId: tripOrderId.toString(),
+              rating: rating.toInt(),
+              feedback: feedbackController.text.trim());
+      print("ad fed ...$addFeedbackRequestModel");
+      dynamic value =
+          await tripsUseCase.getAddFeedbackUseCase(addFeedbackRequestModel);
+      // .then((value) async {
+      print("contro....$value");
+      if (value != null) {
+        if (value.toString().contains("success")) {
+          Get.back();
+          SnackBarUtil.successSnackBar("Successfully submited your feedback.");
+        }
+      } else {
+        SnackBarUtil.errorSnackBar("Please try again..");
+      }
+      if (from == "currenttrips") {
+        getTripOrderDetailsController(orderId, "feedback");
+      }
+      addFeedbackLoading.value = false;
+      return value;
+      // });
+    } catch (e) {
+      addFeedbackLoading.value = false;
+      update();
     }
   }
 }
