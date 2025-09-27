@@ -204,13 +204,25 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       Column(
                         children: [
                           Card(
-                            color: APPTHEME_COLOR,
+                            color: (controller.orderDetailsData.order!.status!
+                                            .toLowerCase() ==
+                                        "ordered") &&
+                                    (controller.orderDetailsData.order!
+                                            .isInspectionStarted !=
+                                        null)
+                                ? PACKING_ORDER_COLOR
+                                : (controller.orderDetailsData.order!.status!
+                                            .toLowerCase() ==
+                                        "dispatched")
+                                    ? DISPATCHED_COLOR
+                                    : ORDERED_COLOR,
                             margin: EdgeInsets.all(0),
                             shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadiusGeometry.circular(3.r)),
+                                    BorderRadiusGeometry.circular(30.r)),
                             child: Padding(
-                              padding: EdgeInsets.all(12.h),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w, vertical: 12.h),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

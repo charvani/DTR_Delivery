@@ -74,7 +74,7 @@ class CurrentTripResponseModel {
   CurrentTripResponseModel.fromJson(Map<String, dynamic> json) {
     tripOrderId = json['tripOrderId'];
     tripId = json['tripId'];
-    userId = json['userId'] ?? 22;
+    userId = json['userId'];
     checkoutDiscount = json['checkoutDiscount'];
     totalOrders = json['totalOrders'];
     orderId = json['orderId'];

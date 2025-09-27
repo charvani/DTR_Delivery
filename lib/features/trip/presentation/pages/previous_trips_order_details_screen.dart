@@ -214,12 +214,20 @@ class _PreviousTripsOrderDetailsScreenState
                     Column(
                       children: [
                         Card(
-                          color: APPTHEME_COLOR,
+                          color: controller.orderDetailsData.order!.status ==
+                                  "out for delivery"
+                              ? ORANGE_COLOR
+                              : controller.orderDetailsData.order!.status ==
+                                      "delivered"
+                                  ? GREEN_COLOR
+                                  : REDAPPTHEME_COLOR,
                           margin: EdgeInsets.all(0),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(3.r)),
+                              borderRadius:
+                                  BorderRadiusGeometry.circular(30.r)),
                           child: Padding(
-                            padding: EdgeInsets.all(12.h),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.w, vertical: 12.h),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -291,9 +299,9 @@ class _PreviousTripsOrderDetailsScreenState
           Expanded(
               child: Row(
             children: [
-              SpaceWidget(
-                width: 15,
-              ),
+              // SpaceWidget(
+              //   width: 15,
+              // ),
               Expanded(child: Text("qty", style: Get.textTheme.titleMedium)),
               Expanded(
                   child: Row(
@@ -328,33 +336,33 @@ class _PreviousTripsOrderDetailsScreenState
         },
         child: Row(
           children: [
-            Container(
-              width: 15.w,
-              height: 15.h,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: returnItems.contains(item)
-                          ? INDICATION_COLOR
-                          : APPTHEME_COLOR,
-                      width: 1.3.w),
-                  color: WHITE_COLOR),
-              child: returnItems.contains(item)
-                  ? Center(
-                      child: Container(
-                        width: 8.w,
-                        height: 8.h,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: INDICATION_COLOR,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            SpaceWidget(
-              width: 15.w,
-            ),
+            // Container(
+            //   width: 15.w,
+            //   height: 15.h,
+            //   decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       border: Border.all(
+            //           color: returnItems.contains(item)
+            //               ? INDICATION_COLOR
+            //               : APPTHEME_COLOR,
+            //           width: 1.3.w),
+            //       color: WHITE_COLOR),
+            //   child: returnItems.contains(item)
+            //       ? Center(
+            //           child: Container(
+            //             width: 8.w,
+            //             height: 8.h,
+            //             decoration: BoxDecoration(
+            //               shape: BoxShape.circle,
+            //               color: INDICATION_COLOR,
+            //             ),
+            //           ),
+            //         )
+            //       : null,
+            // ),
+            // SpaceWidget(
+            //   width: 15.w,
+            // ),
             Expanded(
                 // flex: 2,
                 child: Text(item,

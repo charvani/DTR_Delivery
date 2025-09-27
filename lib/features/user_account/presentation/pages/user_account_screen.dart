@@ -1,3 +1,4 @@
+import 'package:dtr_delivery/features/user_account/presentation/pages/change_password_page.dart';
 import 'package:dtr_delivery/utils/appbar.dart';
 import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
@@ -5,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../config/injector.dart';
+import '../../../../config/injector.dart';
+import '../../../log_in/presentation/pages/login_screen.dart';
 import 'help_center_screen.dart';
-import 'log_in/presentation/pages/login_screen.dart';
+import 'privacy_policy_page.dart';
 
 var getStore = getIt.get<GetStorage>();
 
@@ -26,8 +28,8 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      riderFullName =
-          await getStore.read("firstName") + await getStore.read("lastName");
+      riderFullName = await getStore.read("firstName") +
+          " ${await getStore.read("lastName")}";
 
       riderMobileNumber = await getStore.read("contactNumber");
       setState(() {});
@@ -73,26 +75,44 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
             ),
             Text("Account", style: Get.textTheme.titleLarge),
             profileWidget(
-              icondata: Icons.password_rounded,
-              title: "",
-              info: "Change Password",
-            ),
+                icondata: Icons.password_rounded,
+                title: "",
+                info: "Change Password",
+                onTapFun: () {
+                  Get.to(() => ChangePasswordPage());
+                }),
             profileWidget(
-              icondata: Icons.logout_rounded,
-              title: "",
-              info: "Logout",
-            ),
+                icondata: Icons.logout_rounded,
+                title: "",
+                info: "Logout",
+                onTapFun: () async {
+                  await getStore.remove(
+                    "accessToken",
+                  );
+                  Get.offAll(() => LoginScreen());
+                }),
             SpaceWidget(
               height: 15,
             ),
             Text("Support", style: Get.textTheme.titleLarge),
             profileWidget(
-              icondata: Icons.help_outline_rounded,
-              title: "",
-              info: "Help Center",
+                icondata: Icons.help_outline_rounded,
+                title: "",
+                info: "Help Center",
+                onTapFun: () {
+                  Get.to(() => HelpCenterScreen());
+                }),
+            SpaceWidget(
+              height: 15,
             ),
-
-            // Logout Button
+            Text("Policies", style: Get.textTheme.titleLarge),
+            profileWidget(
+                icondata: Icons.policy_outlined,
+                title: "",
+                info: "Privacy & Policy",
+                onTapFun: () {
+                  Get.to(() => PrivacyPolicyPage());
+                }),
           ],
         ),
       ),
@@ -106,16 +126,7 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
       Function()? onTapFun}) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () async {
-        if (info == "Logout") {
-          await getStore.remove(
-            "accessToken",
-          );
-          Get.offAll(() => LoginScreen());
-        } else {
-          Get.to(() => HelpCenterScreen());
-        }
-      },
+      onTap: onTapFun,
       child: Row(
         children: [
           Container(

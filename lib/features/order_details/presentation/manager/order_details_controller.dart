@@ -107,8 +107,9 @@ class OrderDetailsController extends GetxController {
 
 //for discount amount
           discountAmount = discountAmount +
-              (orderDetailsData.orderDetails![i].itemMrp! -
-                  orderDetailsData.orderDetails![i].price!);
+              ((orderDetailsData.orderDetails![i].itemMrp! -
+                      orderDetailsData.orderDetails![i].price!) *
+                  orderDetailsData.orderDetails![i].quantity!);
           print("<< discountAmount..$discountAmount");
 
 //for discount percentage

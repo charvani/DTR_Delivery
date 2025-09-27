@@ -173,10 +173,10 @@ class _TripsScreenState extends State<TripsScreen> {
                                   double.parse(controller.currentTripOrderTotal
                                           .toString())
                                       .toStringAsFixed(2)),
-                              buildInvoiceRow(
-                                  "Amount Collected",
-                                  controller.currentTripList[0].amountCollected
-                                      .toString()),
+                              // buildInvoiceRow(
+                              //     "Amount Collected",
+                              //     controller.currentTripList[0].amountCollected
+                              //         .toString()),
                             ],
                           ),
                           SpaceWidget(

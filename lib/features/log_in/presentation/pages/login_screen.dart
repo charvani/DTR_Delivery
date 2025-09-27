@@ -26,6 +26,20 @@ class LoginScreen extends StatelessWidget {
           backNavigation: false,
           actions: [],
           centerTitle: true),
+      bottomNavigationBar: SizedBox(
+        width: double.infinity,
+        height: 25.h,
+        child: Center(
+          child: Text(
+            "v 1.0.0",
+            style: TextStyle(
+              fontFamily: "Medium",
+              fontSize: 10.sp,
+              color: APPTHEME_COLOR,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(15.0.w),

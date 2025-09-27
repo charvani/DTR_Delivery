@@ -69,6 +69,7 @@ class AssignedOrdersController extends GetxController {
           attandanceVal.value = true;
           showAttandanceWidget.value = true;
           await getStore.write("punch", "punchin");
+          // getAssignedOrdersController();
         }
         if (value.message != null) {
           SnackBarUtil.successSnackBar(value.message!);

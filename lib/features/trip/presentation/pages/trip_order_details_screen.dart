@@ -206,12 +206,20 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Card(
-                          color: APPTHEME_COLOR,
+                          color: tripController.selectedTripDetails.status ==
+                                  "out for delivery"
+                              ? ORANGE_COLOR
+                              : tripController.selectedTripDetails.status ==
+                                      "delivered"
+                                  ? GREEN_COLOR
+                                  : REDAPPTHEME_COLOR,
                           margin: EdgeInsets.all(0),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(3.r)),
+                              borderRadius:
+                                  BorderRadiusGeometry.circular(30.r)),
                           child: Padding(
-                            padding: EdgeInsets.all(12.h),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.w, vertical: 12.h),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -676,7 +684,12 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                   style: TextStyle(color: BLACK_TEXT_COLOR, fontSize: 16.sp),
                   children: [
                 TextSpan(
-                    text: amount.toStringAsFixed(2),
+                    text: double.parse(tripController
+                            .selectedTripDetails.orderTotal
+                            .toString())
+                        .toStringAsFixed(2),
+
+                    // amount.toStringAsFixed(2),
                     style: Get.textTheme.headlineMedium!
                         .copyWith(fontWeight: FontWeight.bold))
               ])),

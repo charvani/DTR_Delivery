@@ -1,5 +1,4 @@
 import 'package:dtr_delivery/features/assigned_orders/presentation/pages/assigned_orders_screen.dart';
-import 'package:dtr_delivery/features/user_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +7,7 @@ import 'package:with_opacity/with_opacity.dart';
 import '../../../../utils/common_colors.dart';
 import '../../../trip/presentation/pages/trips_screen.dart';
 import '../../../unclaimed_orders/presentation/pages/unclaimed_orders_screen.dart';
+import '../../../user_account/presentation/pages/user_account_screen.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:medblooms_pharmacy/utils/theme.dart';
 
@@ -22,6 +22,8 @@ class BottomBarWidgetPage extends StatefulWidget {
 
 class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
   int selectedIndex = 0;
+  final List<int> _navigationHistory = [0];
+
   final List<Widget> _widgetOptions = <Widget>[
     AssignedOrdersScreen(),
     UnclaimedOrdersScreen(),
@@ -29,10 +31,39 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
     UserAccountScreen()
   ];
 
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
+
+      onPopInvoked: (didPop) async {
+        print(".....$didPop");
+        if (didPop) return; // system already popped
+
+        if (_navigationHistory.length > 1) {
+          setState(() {
+            _navigationHistory.removeLast();
+            selectedIndex = _navigationHistory.last;
+          });
+        } else {
+          final now = DateTime.now();
+          if (currentBackPressTime == null ||
+              now.difference(currentBackPressTime!) >
+                  const Duration(seconds: 2)) {
+            currentBackPressTime = now;
+            // Fluttertoast.showToast(msg: "Press back again to exit");
+          } else {
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+          }
+        }
+      },
       child: Scaffold(
         body: Center(child: _widgetOptions.elementAt(selectedIndex)),
         bottomNavigationBar: SizedBox(
@@ -139,6 +170,11 @@ class _BottomBarWidgetPageState extends State<BottomBarWidgetPage> {
                 setState(() {
                   selectedIndex = index;
                 });
+                if (_navigationHistory.isEmpty ||
+                    _navigationHistory.last != index) {
+                  _navigationHistory.add(index);
+                }
+                setState(() {});
               }
             },
           ),

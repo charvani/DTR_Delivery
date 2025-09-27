@@ -57,9 +57,22 @@ class OrderWidget extends StatelessWidget {
             style: Get.textTheme.labelSmall,
           ),
           if (statusOfOrder != "")
-            Text(
-              "Status: $statusOfOrder",
-              style: Get.textTheme.labelSmall,
+            Card(
+              color: statusOfOrder == "Ordered"
+                  ? ORDERED_COLOR
+                  : statusOfOrder == "Packing Started" ||
+                          statusOfOrder == "Out for delivery"
+                      ? PACKING_ORDER_COLOR
+                      : statusOfOrder == "cancelled"
+                          ? REDAPPTHEME_COLOR
+                          : DISPATCHED_COLOR,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
+                child: Text(
+                  "Status: $statusOfOrder",
+                  style: Get.textTheme.labelSmall!.copyWith(color: WHITE_COLOR),
+                ),
+              ),
             ),
         ],
       ),

@@ -23,6 +23,10 @@ import '../features/unclaimed_orders/data/data_sources/unclaimed_orders_data_sou
 import '../features/unclaimed_orders/data/repositories/unclaimed_orders_repository_impl.dart';
 import '../features/unclaimed_orders/domain/repositories/unclaimed_orders_repository.dart';
 import '../features/unclaimed_orders/domain/use_cases/unclaimed_orders_use_cases.dart';
+import '../features/user_account/data/data_source/user_account_data_sources.dart';
+import '../features/user_account/data/repository/user_account_repository_impl.dart';
+import '../features/user_account/domain/repository/user_account_repository.dart';
+import '../features/user_account/domain/use_cases/user_account_use_cases.dart';
 import '../routes/routes.dart';
 import '../utils/network_info.dart';
 import '../utils/snack_bar.dart';
@@ -75,7 +79,6 @@ OrderDetails Dependency Injection
   getIt.registerLazySingleton<OrderDetailsRepository>(
       () => OrderDetailsRepositoryImpl(getIt(), getIt()));
 
-
   /*
 Trips Dependency Injection
 */
@@ -84,7 +87,17 @@ Trips Dependency Injection
   getIt.registerLazySingleton<TripUseCase>(
       () => TripUseCase(getIt.get<TripRepository>()));
   getIt.registerLazySingleton<TripRepository>(
-      () => TripRepositoryImpl(getIt(), getIt()));     
+      () => TripRepositoryImpl(getIt(), getIt()));
+
+  /*
+ User Account Dependency Injection
+*/
+  getIt.registerLazySingleton<UserAccountDataSources>(
+      () => UserAccountDataSources(dio, getIt.get<AppConfig>().baseUrl));
+  getIt.registerLazySingleton<UserAccountUsecase>(
+      () => UserAccountUsecase(getIt.get<UserAccountRepository>()));
+  getIt.registerLazySingleton<UserAccountRepository>(
+      () => UserAccountRepositoryImpl(getIt(), getIt()));
 
 /*
     Project Network Info Impl

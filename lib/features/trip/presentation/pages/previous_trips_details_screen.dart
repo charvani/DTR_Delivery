@@ -128,11 +128,11 @@ class _PreviousTripsDetailsScreenState
                                   double.parse(controller.previousTripOrderTotal
                                           .toString())
                                       .toStringAsFixed(2)),
-                              buildInvoiceRow(
-                                  "Amount Collected",
-                                  controller
-                                      .previousTripOrdersList[0].amountCollected
-                                      .toString()),
+                              // buildInvoiceRow(
+                              //     "Amount Collected",
+                              //     controller
+                              //         .previousTripOrdersList[0].amountCollected
+                              //         .toString()),
                             ],
                           ),
                           SpaceWidget(

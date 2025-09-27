@@ -26,3 +26,7 @@ const BLACK_TEXT_COLOR2 = Colors.black87;
 
 //Button Colors
 const BUTTON_BG_COLOR = Color(0xFFEDEDED);
+
+const ORDERED_COLOR = Colors.deepPurpleAccent;
+const DISPATCHED_COLOR = Colors.green;
+const PACKING_ORDER_COLOR = Color(0xFFEE9516);

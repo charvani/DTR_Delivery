@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/appbar.dart';
-import '../utils/common_colors.dart';
+import '../../../../utils/appbar.dart';
+import '../../../../utils/common_colors.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});

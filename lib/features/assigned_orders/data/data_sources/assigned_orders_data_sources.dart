@@ -4,6 +4,7 @@ import 'package:dtr_delivery/features/assigned_orders/data/models/mark_attandanc
 import 'package:get_storage/get_storage.dart';
 
 import '../../../../config/injector.dart';
+import '../../../../utils/snack_bar.dart';
 
 class AssignedOrdersDataSource {
   String baseUrl;
@@ -20,6 +21,17 @@ class AssignedOrdersDataSource {
       );
       print("AssignedOrders get punch data response ${response.data}");
       return MarkAttandanceResponseModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return MarkAttandanceResponseModel(
+        message: "Agent has not punched in.",
+      );
     } catch (e) {
       print("cache error .... $e");
       return MarkAttandanceResponseModel(
@@ -55,6 +67,15 @@ class AssignedOrdersDataSource {
         dataList.add(AssignedOrdersResponseModel.fromJson(element));
       }
       return dataList;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return e.message;
     } catch (e) {
       print("get err >> $e");
     }
