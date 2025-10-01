@@ -19,7 +19,7 @@ class UserAccountDataSources {
         "newPassword": changePasswordRequestModel.newPassword,
       };
       print("singin b Data>> $bodyData");
-      Response response = await dio.post('$baseUrl/password', data: bodyData);
+      Response response = await dio.put('$baseUrl/password', data: bodyData);
       return response.data['message'];
     } on DioException catch (e) {
       if (e.response != null) {

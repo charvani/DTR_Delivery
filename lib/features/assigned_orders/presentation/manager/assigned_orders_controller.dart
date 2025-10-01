@@ -31,7 +31,7 @@ class AssignedOrdersController extends GetxController {
           showAttandanceWidget.value = true;
           attandance = ValueNotifier(false);
           attandanceVal.value = false;
-          SnackBarUtil.errorSnackBar(value.message!);
+          // SnackBarUtil.errorSnackBar(value.message!);
           getStore.write("punch", "notpunched");
         } else if ((value.punchOutTime == "" || value.punchOutTime == null) &&
             (value.punchInTime != "" || value.punchInTime != null)) {

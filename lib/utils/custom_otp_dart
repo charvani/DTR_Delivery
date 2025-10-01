@@ -1,0 +1,130 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dtr_delivery/utils/common_colors.dart';
+
+
+class CustomOtpField extends StatefulWidget {
+  final int length;
+  final void Function(String)? onCompleted;
+
+  const CustomOtpField({
+    super.key,
+    this.length = 6,
+    this.onCompleted,
+  });
+
+  @override
+  State<CustomOtpField> createState() => _CustomOtpFieldState();
+}
+
+class _CustomOtpFieldState extends State<CustomOtpField> {
+  late List<TextEditingController> _controllers;
+  late List<FocusNode> _focusNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers =
+        List.generate(widget.length, (_) => TextEditingController());
+    _focusNodes = List.generate(widget.length, (_) => FocusNode());
+  }
+
+  @override
+  void dispose() {
+    for (var c in _controllers) {
+      c.dispose();
+    }
+    for (var f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
+  String get _otp => _controllers.map((c) => c.text).join();
+
+  @override
+  Widget build(BuildContext context) {
+    return FormField<String>(
+      validator: (value) {
+        if (_otp.isEmpty) {
+          return "Please enter OTP";
+        } else if (_otp.length < widget.length) {
+          return "OTP must be ${widget.length} digits";
+        }
+        return null;
+      },
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(widget.length, (index) {
+                return Container(
+                  width: 45.w,
+                  height: 45.h,
+                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: TextFormField(
+                    controller: _controllers[index],
+                    focusNode: _focusNodes[index],
+                    textAlign: TextAlign.center,
+                    textAlignVertical: TextAlignVertical.center, // vertical center
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    style: TextStyle(fontSize: 20.sp),
+                    cursorHeight: 20.h, // reduce cursor height
+                    cursorColor: MEDIUM_BLACKTEXT_COLOR, // black cursor
+                    decoration: InputDecoration(
+                      counterText: "",
+                      contentPadding: EdgeInsets.zero, // remove extra padding
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3.r),
+                      ),
+                      // focusedBorder: OutlineInputBorder(
+                      //   borderRadius: BorderRadius.circular(3.r),
+                      //   borderSide: BorderSide(
+                      //     color: MEDIUM_BLACKTEXT_COLOR, // black focus border
+                      //     width: 2.w,
+                      //   ),
+                      // ),
+                      errorText: null, // handled below
+                    ),
+                    onChanged: (value) {
+                      if (value.isNotEmpty && index < widget.length - 1) {
+                        _focusNodes[index + 1].requestFocus();
+                      }
+                      if (value.isEmpty && index > 0) {
+                        _focusNodes[index - 1].requestFocus();
+                      }
+
+                      // completed
+                      if (_otp.length == widget.length &&
+                          !_otp.contains("")) {
+                        widget.onCompleted?.call(_otp);
+                      }
+
+                      // revalidate
+                      field.didChange(_otp);
+                    },
+                  ),
+                );
+              }),
+            ),
+            if (field.hasError)
+              Padding(
+                padding: EdgeInsets.only(top: 6.h),
+                child: Text(
+                  field.errorText!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12.sp,
+                    fontFamily: "Medium",
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}

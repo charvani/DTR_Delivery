@@ -184,16 +184,40 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                         "Discount"),
                     // _buildSummaryRow("Total Before Tax", "4166.67"),
                     _buildSummaryRow("Delivery Charges", "Free"),
-                    _discountTotalRow(
-                      num.parse(
-                          tripController.selectedTripDetails.checkoutDiscount!),
-                      // tripController.discountPercentage
-                      "Online Payment Discount",
-                    ),
-                    SpaceWidget(height: 10),
-                    _orderTotalRow(tripController.totalWithGst),
-                    SpaceWidget(height: 20),
+                    if (tripController.selectedTripDetails.checkoutDiscount !=
+                        null)
+                      _discountTotalRow(
+                        num.parse(tripController
+                            .selectedTripDetails.checkoutDiscount!),
+                        // tripController.discountPercentage
+                        "Online Payment Discount",
+                      ),
+                    returnTotalRow(
+                        orderPaidAmount: tripController
+                                .selectedTripDetails.orderAmountCollected /
+                            100,
+                        orderNowAmount:
+                            tripController.selectedTripDetails.orderTotal!),
 
+                    SpaceWidget(height: 10),
+
+                    // _orderTotalRow(tripController.totalWithGst),
+                    // _orderTotalRow((num.parse(tripController
+                    //         .selectedTripDetails.orderAmountCollected
+                    //         .toString()) /
+                    //     100)),
+
+                    _orderTotalRow(
+                        tripController.selectedTripDetails.orderTotal! < 0.5
+                            ? 0
+                            : num.parse(tripController
+                                .selectedTripDetails.orderTotal
+                                .toString())),
+                    SpaceWidget(height: 20),
+                    // _returnTotalRow(
+                    //     tripController.discountAmount,
+                    //     // tripController.discountPercentage
+                    //     "Return Amount"),
                     // Text("Notes", style: Get.textTheme.titleLarge),
                     // const SpaceWidget(height: 5),
                     // Text(
@@ -244,6 +268,31 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                             formKey: tripController.formKey,
                             otpController: tripController.otpController,
                           ),
+
+                        // Form(
+                        //   key: tripController.formKey,
+                        //   child: Column(
+                        //     mainAxisSize: MainAxisSize.min,
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Padding(
+                        //         padding: EdgeInsets.symmetric(vertical: 20.h),
+                        //         child: Text("Enter OTP",
+                        //             style: Get.textTheme.titleLarge),
+                        //       ),
+                        //       // SpaceWidget(
+                        //       //   height: 10,
+                        //       // ),
+                        //       CustomOtpField(
+                        //         onCompleted: (otp) {
+                        //           print("otp....")
+                        //           tripController.otpController.text = otp;
+                        //           tripController.update();
+                        //         },
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         if (tripController.selectedTripDetails.status
                                     .toString()
                                     .toLowerCase() !=
@@ -299,6 +348,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                                             if (tripController
                                                 .formKey.currentState!
                                                 .validate()) {
+                                              Get.focusScope!.unfocus();
                                               tripController
                                                   .getCompleteDeliveryController(
                                                       tripOrderId: tripController
@@ -483,7 +533,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
               Expanded(child: Text("qty", style: Get.textTheme.titleMedium)),
               Expanded(
                   child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text("Price", style: Get.textTheme.titleMedium),
                 ],
@@ -589,7 +639,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                   Expanded(
                     // flex: 1,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         RichText(
                             text: TextSpan(
@@ -623,18 +673,19 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                 tripController.selectedTripDetails.status != "cancelled")
               (returnEnable == 0)
                   ? SizedBox(
-                      height: 25,
+                      height: 21,
+                      width: 67.w,
                       child: ReturnButton(
                           onTapFun: () {
                             getReturnFun(titleText: "Return $item", id: id);
                           },
                           buttonTitle: "Return"))
                   : SizedBox(
-                      height: 25,
-                      child: ReturnButton(
-                          color: APPTHEME_COLOR,
+                      height: 21,
+                      child: ReturnDoneButton(
+                          color: GREEN_COLOR,
                           onTapFun: () {},
-                          buttonTitle: "Return Completed")),
+                          buttonTitle: "Returned")),
           ],
         ),
       ),
@@ -684,12 +735,13 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                   style: TextStyle(color: BLACK_TEXT_COLOR, fontSize: 16.sp),
                   children: [
                 TextSpan(
-                    text: double.parse(tripController
-                            .selectedTripDetails.orderTotal
-                            .toString())
-                        .toStringAsFixed(2),
+                    text:
+                        //  double.parse(tripController
+                        //         .selectedTripDetails.orderTotal
+                        //         .toString())
+                        //     .toStringAsFixed(2),
 
-                    // amount.toStringAsFixed(2),
+                        amount.toStringAsFixed(2),
                     style: Get.textTheme.headlineMedium!
                         .copyWith(fontWeight: FontWeight.bold))
               ])),
@@ -831,6 +883,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                           style: TextStyle(
                               color: APPTHEME_COLOR,
                               fontSize: 20.sp,
+                              fontWeight: FontWeight.w700,
                               fontFamily: "SemiBold"),
                         ),
                         CloseWidget(closeFun: () {

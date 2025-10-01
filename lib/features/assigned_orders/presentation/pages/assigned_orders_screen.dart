@@ -68,7 +68,9 @@ class _AssignedOrdersScreenState extends State<AssignedOrdersScreen> {
               // Text(controller.attandance.toString()),
               Obx(() {
                 return controller.attendanceLoading.value
-                    ? LoaderWidget()
+                    ? LoaderWidget(
+                        loaderColor: Colors.transparent,
+                      )
                     : controller.showAttandanceWidget.value
                         ? MarkAttendanceWidget(
                             title: "Mark Attendance",

@@ -128,6 +128,8 @@ class OtpCollectionWidget extends StatelessWidget {
             // in this example we are using the SmartAuth
             // smsRetriever: smsRetriever,
             controller: otpController,
+            showCursor: true,
+
             defaultPinTheme: defaultPinTheme,
             separatorBuilder: (index) => SpaceWidget(width: 8.w),
             validator: (value) {
@@ -138,7 +140,13 @@ class OtpCollectionWidget extends StatelessWidget {
                 return null;
               }
             },
-            hapticFeedbackType: HapticFeedbackType.lightImpact,
+            onTap: () {
+              debugPrint("OTP field tapped");
+              // You can add custom logic here
+              // Example: show a hint, clear field, start timer etc.
+            },
+            pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+            // hapticFeedbackType: HapticFeedbackType.lightImpact,
             onCompleted: (pin) {
               debugPrint('onCompleted: $pin');
               // _timer!.cancel();
@@ -227,6 +235,37 @@ class OtpCollectionWidget extends StatelessWidget {
   }
 }
 
+/*
+
+class OtpCollectionWidget extends StatelessWidget {
+  final Key formKey;
+  final TextEditingController otpController;
+  const OtpCollectionWidget(
+      {super.key, required this.formKey, required this.otpController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: Text("Enter OTP", style: Get.textTheme.titleLarge),
+          ),
+         
+          SpaceWidget(
+            height: 10,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+*/
 class ReturnButton extends StatelessWidget {
   final void Function()? onTapFun;
   final String buttonTitle;
@@ -243,16 +282,103 @@ class ReturnButton extends StatelessWidget {
     return FilledButton(
       onPressed: onTapFun,
       style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+        ),
         backgroundColor: WidgetStatePropertyAll(color ?? INDICATION_COLOR),
-        padding: WidgetStatePropertyAll(EdgeInsets.all(4.w)),
-        minimumSize: WidgetStatePropertyAll(Size(55.w, 10.h)),
+        padding: WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h)),
+        minimumSize: WidgetStatePropertyAll(Size(60.w, 0.h)),
       ),
       child: Text(
         buttonTitle,
-        style: TextStyle(color: WHITE_COLOR, fontSize: 13.sp),
+        style: TextStyle(color: WHITE_COLOR, fontSize: 12.sp),
       ),
     );
   }
 }
 
+class ReturnDoneButton extends StatelessWidget {
+  final void Function()? onTapFun;
+  final String buttonTitle;
+  final Color? color;
 
+  const ReturnDoneButton(
+      {super.key,
+      required this.onTapFun,
+      required this.buttonTitle,
+      this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: onTapFun,
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+        ),
+        backgroundColor: WidgetStatePropertyAll(color ?? INDICATION_COLOR),
+        padding: WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h)),
+        minimumSize: WidgetStatePropertyAll(Size(60.w, 0.h)),
+      ),
+      child: Row(
+        children: [
+          Text(
+            buttonTitle,
+            style: TextStyle(color: WHITE_COLOR, fontSize: 12.sp),
+          ),
+          SpaceWidget(
+            width: 2,
+          ),
+          // Icon(
+          //   Icons.done,
+          //   color: WHITE_COLOR,
+          //   size: 15.h,
+          // )
+        ],
+      ),
+    );
+  }
+}
+
+Widget returnTotalRow({
+ required num  orderPaidAmount,
+  required   num orderNowAmount
+}
+    
+    ) {
+  
+
+  num amount = orderPaidAmount - orderNowAmount;
+  return amount > 0 && amount > 0.5
+      ? Padding(
+          padding: EdgeInsets.symmetric(vertical: 2.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Return Amount",
+                  // (${percentage.toStringAsFixed(2)}%)",
+                  style: Get.textTheme.titleMedium!.copyWith(
+                      color: REDAPPTHEME_COLOR, fontWeight: FontWeight.w600)),
+              RichText(
+                  text: TextSpan(
+                      text: "- ₹",
+                      style:
+                          TextStyle(color: REDAPPTHEME_COLOR, fontSize: 16.sp),
+                      children: [
+                    TextSpan(
+                        text: amount.toStringAsFixed(2),
+                        style: Get.textTheme.titleMedium!.copyWith(
+                            color: REDAPPTHEME_COLOR,
+                            fontWeight: FontWeight.w600))
+                  ])),
+            ],
+          ),
+        )
+      : SizedBox.shrink();
+}

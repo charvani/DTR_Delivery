@@ -14,6 +14,7 @@ import '../../../../utils/close_widget.dart';
 import '../../../../utils/custom_action_button.dart';
 import '../../../../utils/multiLineTextField.dart';
 import '../../../../utils/order_widget.dart';
+import '../widgets/trips_widgets.dart';
 
 class PreviousTripsOrderDetailsScreen extends StatefulWidget {
   final String orderId;
@@ -194,11 +195,28 @@ class _PreviousTripsOrderDetailsScreenState
                           "Online Payment Discount",
                           num.parse(controller
                               .orderDetailsData.order!.checkoutDiscount!)),
+                    // returnTotalRow(
+                    //     controller.orderDetailsData.order!.total! < 0.5
+                    //         ? (controller.orderDetailsData.order!.paidAmount /
+                    //                 100) -
+                    //             num.parse(controller
+                    //                 .orderDetailsData.order!.total
+                    //                 .toString())
+                    //         : (controller.orderDetailsData.order!.paidAmount /
+                    //                 100) -
+                    //             controller.orderDetailsData.order!.total!,
+                    //     // tripController.discountPercentage
+                    //    ),
+
+                       returnTotalRow(orderPaidAmount: controller.orderDetailsData.order!.paidAmount /
+                                    100, orderNowAmount: controller.orderDetailsData.order!.total!),
                     SpaceWidget(height: 10),
                     if (controller.orderDetailsData.order != null)
                       _orderTotalRow(controller.orderDetailsData.order!.total!
                           // controller.totalWithGst
                           ),
+
+                    SpaceWidget(height: 10),
 
                     SpaceWidget(height: 20),
 

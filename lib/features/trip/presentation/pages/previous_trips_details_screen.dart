@@ -124,7 +124,7 @@ class _PreviousTripsDetailsScreenState
                                           .toString() ??
                                       "0"),
                               buildInvoiceRow(
-                                  "Order Total",
+                                  "Trip Orders Total",
                                   double.parse(controller.previousTripOrderTotal
                                           .toString())
                                       .toStringAsFixed(2)),

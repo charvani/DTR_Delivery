@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'common_colors.dart';
+import 'location_fetch.dart';
 import 'space_widget.dart';
 
 class OrderWidget extends StatelessWidget {
@@ -58,12 +59,12 @@ class OrderWidget extends StatelessWidget {
           ),
           if (statusOfOrder != "")
             Card(
-              color: statusOfOrder == "Ordered"
+              color: statusOfOrder.toLowerCase() == "ordered"
                   ? ORDERED_COLOR
-                  : statusOfOrder == "Packing Started" ||
-                          statusOfOrder == "Out for delivery"
+                  : statusOfOrder.toLowerCase() == "packing started" ||
+                          statusOfOrder.toLowerCase() == "out for delivery"
                       ? PACKING_ORDER_COLOR
-                      : statusOfOrder == "cancelled"
+                      : statusOfOrder.toLowerCase() == "cancelled"
                           ? REDAPPTHEME_COLOR
                           : DISPATCHED_COLOR,
               child: Padding(
@@ -77,13 +78,13 @@ class OrderWidget extends StatelessWidget {
         ],
       ),
       trailing: SizedBox(
-        width: 50.w,
+        width: 60.w,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (customerMobileNumber != "")
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
+              InkWell(
+                // behavior: HitTestBehavior.translucent,
                 onTap: () {
                   makePhoneCall(customerMobileNumber);
                 },
@@ -95,10 +96,10 @@ class OrderWidget extends StatelessWidget {
             SpaceWidget(
               width: 10,
             ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
+            InkWell(
+              // behavior: HitTestBehavior.translucent,
               onTap: () {
-                locationRoute(
+                singleLocationRoute(
                     totalAddress: location,
                     latitude: latitude,
                     longitude: longitude);
@@ -126,7 +127,7 @@ void makePhoneCall(String phoneNumber) async {
   }
 }
 
-void locationRoute(
+void singleLocationRoute(
     {required totalAddress, required latitude, required longitude}) async {
   print("address des ...$totalAddress");
   // final String origin = "Vizag Railway Station, Visakhapatnam";
@@ -160,3 +161,72 @@ void locationRoute(
     }
   }
 }
+
+doubleLocationRoute(
+    {required totalAddress, required latitude, required longitude}) async {
+  print("address des ...$totalAddress");
+  await LocationFetch().getCurrentLocation().then((val) async {
+    if (val != null) {
+      print("get add >> $val");
+      String agentAddress =
+          "${val.address1}${val.address2}${val.city}${val.state}${val.postalCode}";
+
+      final agentQuery = Uri.encodeComponent(agentAddress);
+      final userQuery = Uri.encodeComponent(totalAddress);
+      final googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
+          "&origin=$agentQuery"
+          "&destination=$userQuery"
+          "&travelmode=driving";
+      if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+        await launchUrl(Uri.parse(googleMapsUrl),
+            mode: LaunchMode.externalApplication);
+      } else {
+        throw 'Could not launch Google Maps';
+      }
+    }
+  });
+}
+
+/*
+doubleLocationRoute(
+    {required totalAddress, required latitude, required longitude}) async {
+  print("address des ...$totalAddress");
+  Position agentPosition = await LocationService.getCurrentLocation();
+  print(
+      "gettig positi ...${agentPosition.latitude}...${agentPosition.longitude}");
+
+  if (latitude != null && longitude != null) {
+    // final googleMapsUrl =
+    // "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+
+    final googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
+        "&origin=${agentPosition.latitude},${agentPosition.longitude}"
+        "&destination=$latitude,$longitude"
+        "&travelmode=driving";
+
+    final uri = Uri.parse(googleMapsUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
+  } else {
+    // final query = Uri.encodeComponent(totalAddress);
+    // final googleMapsUrl =
+    //     "https://www.google.com/maps/search/?api=1&query=$query";
+    final query = Uri.encodeComponent(totalAddress);
+
+    final googleMapsUrl = "https://www.google.com/maps/dir/?api=1"
+        "&origin=$agentPosition,$agentPosition"
+        "&destination=$query"
+        "&travelmode=driving";
+
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(Uri.parse(googleMapsUrl),
+          mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
+  }
+}
+*/

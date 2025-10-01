@@ -32,13 +32,9 @@ class UserAccountController extends GetxController {
           .getChangePasswordUseCase(changePasswordData)
           .then((value) async {
         print("contro....$value");
-        if (value == "Password Changed Successfully" ||
-            value == "Profile Data Updated Successfully" ||
-            value == "Password Updated Successfully") {
+        if (value.toString().toLowerCase().contains("success")) {
           SnackBarUtil.successSnackBar(value);
           refresh();
-        } else {
-          SnackBarUtil.errorSnackBar("Please try again.");
         }
       });
       loading.value = false;

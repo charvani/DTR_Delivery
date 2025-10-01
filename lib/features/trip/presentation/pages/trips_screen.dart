@@ -4,7 +4,6 @@ import 'package:dtr_delivery/utils/common_colors.dart';
 import 'package:dtr_delivery/utils/loader.dart';
 import 'package:dtr_delivery/utils/order_widget.dart';
 import 'package:dtr_delivery/utils/space_widget.dart';
-import 'package:dtr_delivery/utils/square_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -111,8 +110,16 @@ class _TripsScreenState extends State<TripsScreen> {
         ? LoaderWidget()
         : controller.currentTripList.isEmpty
             ? Center(
-                child: Text("Current Trip not available",
-                    style: Get.textTheme.titleSmall),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // SizedBox(
+                    //     height: 300.h,
+                    //     child: Lottie.asset('assets/delivery-location.json')),
+                    Text("Current Trip not available",
+                        style: Get.textTheme.titleSmall),
+                  ],
+                ),
               )
             : CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -168,11 +175,21 @@ class _TripsScreenState extends State<TripsScreen> {
                                           .toString() ??
                                       "0"),
                               buildInvoiceRow(
-                                  "Order Total",
+                                  "Trip Orders Total",
                                   // controller.currentTripList[0].orderTotal
+                                  //     .toString()
                                   double.parse(controller.currentTripOrderTotal
                                           .toString())
                                       .toStringAsFixed(2)),
+
+                              // buildInvoiceRow(
+                              //     "Order Total",
+                              //     (num.parse(controller.currentTripList[0]
+                              //                 .orderAmountCollected
+                              //                 .toString()) /
+                              //             100)
+                              //         .toStringAsFixed(2)),
+
                               // buildInvoiceRow(
                               //     "Amount Collected",
                               //     controller.currentTripList[0].amountCollected
@@ -336,13 +353,23 @@ class _TripsScreenState extends State<TripsScreen> {
                           //   ),
                           // ],
                           SpaceWidget(height: 20),
-                          if (controller.currentTripList.length >= 2)
-                            SquareActionButton(
-                              buttonTitle: "Trip Route",
-                              onTapFun: () {
-                                tripRouteFun();
-                              },
-                            ),
+
+                          // SquareActionButton(
+                          //   buttonTitle: "Trip Route",
+                          //   onTapFun: () {
+                          //     if (controller.currentTripList.length >= 2) {
+                          //       tripRouteFun();
+                          //     } else {
+                          //       locationRoute(
+                          //           totalAddress:
+                          //               "${controller.currentTripList[0].address!.address1}, ${controller.currentTripList[0].address!.address2}, ${controller.currentTripList[0].address!.city}, ${controller.currentTripList[0].address!.state}, ${controller.currentTripList[0].address!.postalCode}.",
+                          //           latitude: controller
+                          //               .currentTripList[0].address!.latitude,
+                          //           longitude: controller
+                          //               .currentTripList[0].address!.longitude);
+                          //     }
+                          //   },
+                          // ),
                           SpaceWidget(height: 30),
                         ],
                       ),
@@ -353,24 +380,17 @@ class _TripsScreenState extends State<TripsScreen> {
   }
 
   tripRouteFun() async {
-    List<LocationPoint> points = [
-      LocationPoint(
-          latitude: null,
-          longitude: null,
-          address: "Vizag Railway Station, Visakhapatnam")
-    ];
+    List<LocationPoint> points = [];
     for (int i = 0; i < controller.currentTripList.length; i++) {
-      if (controller.currentTripList[i].status == "out for delivery") {
-        points.add(LocationPoint(
-          latitude: controller.currentTripList[i].address!.latitude,
-          longitude: controller.currentTripList[i].address!.longitude,
-          address:
-              "${controller.currentTripList[i].address!.address1} ${controller.currentTripList[i].address!.address2} ${controller.currentTripList[i].address!.city} ${controller.currentTripList[i].address!.state} ${controller.currentTripList[i].address!.postalCode}",
-        ));
-      }
+      // if (controller.currentTripList[i].status == "out for delivery") {
+      points.add(LocationPoint(
+        latitude: controller.currentTripList[i].address!.latitude,
+        longitude: controller.currentTripList[i].address!.longitude,
+        address:
+            "${controller.currentTripList[i].address!.address1} ${controller.currentTripList[i].address!.address2} ${controller.currentTripList[i].address!.city} ${controller.currentTripList[i].address!.state} ${controller.currentTripList[i].address!.postalCode}",
+      ));
+      // }
     }
-    points.add(LocationPoint(
-        latitude: null, longitude: null, address: "RK Beach, Visakhapatnam"));
     print("points ....$points");
     openRouteInGoogleMaps(points);
     // openRouteInGoogleMaps(
