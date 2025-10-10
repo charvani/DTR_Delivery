@@ -10,7 +10,11 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../main.dart';
+import '../../../../utils/close_widget.dart';
+import '../../../../utils/custom_action_button.dart';
+import '../../../../utils/multiLineTextField.dart';
 import '../../../../utils/snack_bar.dart';
+import '../../../../utils/square_action_button.dart';
 import '../../../../utils/trip_route.dart';
 import '../manager/trip_controller.dart';
 import '../widgets/trips_widgets.dart';
@@ -92,9 +96,10 @@ class _TripsScreenState extends State<TripsScreen> {
         body: GetBuilder<TripController>(builder: (context) {
           return controller.punch.value == "notpunched"
               ? Center(
-                  child: Text("Please punch In",
-                      style: Get.textTheme.titleSmall!
-                          .copyWith(color: INDICATION_COLOR)),
+                  child: Text("Please Punch In",
+                      style: Get.textTheme.titleSmall!.copyWith(
+                          color: INDICATION_COLOR,
+                          fontWeight: FontWeight.w600)),
                 )
               :
               // controller.currentTripList.isNotEmpty &&
@@ -370,6 +375,38 @@ class _TripsScreenState extends State<TripsScreen> {
                           //     }
                           //   },
                           // ),
+
+                          if (controller.currentTripList[0].cancelledAt ==
+                                  null &&
+                              controller.currentTripList[0].cancelledReason ==
+                                  null)
+                            SquareActionButton(
+                              buttonTitle: "Report Vehicle Breakdown",
+                              onTapFun: () {
+                                getReportBreakdownFun(
+                                    titleText: "Report Vehicle Breakdown",
+                                    tripId:
+                                        controller.currentTripList[0].tripId);
+                              },
+                            ),
+
+                          if (controller.currentTripList[0].cancelledAt ==
+                                  null &&
+                              controller.currentTripList[0].cancelledReason !=
+                                  null)
+                            Obx(() {
+                              return controller.breakdownLoading.value
+                                  ? LoaderWidget()
+                                  : SquareActionButton(
+                                      buttonTitle: "Withdraw Vehicle Breakdown",
+                                      onTapFun: () {
+                                        controller
+                                            .getWithdrawVehicleBreakdownController(
+                                                tripId: controller
+                                                    .currentTripList[0].tripId);
+                                      },
+                                    );
+                            }),
                           SpaceWidget(height: 30),
                         ],
                       ),
@@ -420,5 +457,83 @@ class _TripsScreenState extends State<TripsScreen> {
     } else {
       throw 'Could not launch Google Maps';
     }
+  }
+
+  final _formKey = GlobalKey<FormState>();
+
+  getReportBreakdownFun({required titleText, required tripId}) {
+    controller.breakDwonReasonTextEditingController.clear();
+    controller.breakdownLoading.value = false;
+    Get.dialog(
+        barrierDismissible: false,
+        Dialog(
+          backgroundColor: WHITE_BG_COLOR,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(3.r)),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 25..h),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          titleText,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: APPTHEME_COLOR,
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "SemiBold"),
+                        ),
+                        CloseWidget(closeFun: () {
+                          Get.back();
+                        })
+                      ],
+                    ),
+                    SpaceWidget(height: 20),
+                    Text(
+                      "Reason *",
+                      style: TextStyle(
+                          color: APPTHEME_COLOR,
+                          fontSize: 14.sp,
+                          fontFamily: "Medium"),
+                    ),
+                    SpaceWidget(height: 13),
+                    Multilinetextfield(
+                        textEditingController:
+                            controller.breakDwonReasonTextEditingController,
+                        maxlines: 7,
+                        keyboardType: TextInputType.multiline,
+                        validationFun: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter reason";
+                          } else {
+                            return null;
+                          }
+                        }),
+                    SpaceWidget(height: 20),
+                    Obx(() {
+                      return controller.breakdownLoading.value
+                          ? SizedBox(height: 40, child: LoaderWidget())
+                          : CustomActionButton(
+                              buttonTitle: "SUBMIT",
+                              onTapFun: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                if (_formKey.currentState!.validate()) {
+                                  controller
+                                      .getReportVehicleBreakdownController(
+                                          tripId: tripId);
+                                }
+                              });
+                    })
+                  ],
+                ),
+              )),
+        ));
   }
 }

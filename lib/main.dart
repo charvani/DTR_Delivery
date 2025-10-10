@@ -18,6 +18,14 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white, // 🔴 your status bar color
+      statusBarIconBrightness: Brightness.light, // white icons
+      systemNavigationBarColor: Colors.white, // navigation bar color
+      systemNavigationBarIconBrightness: Brightness.dark, // dark nav bar icons
+    ),
+  );
   print("char..kDebugMode");
   Flavour.appFlavour = FlavorEnum.demo;
   await init(FlavorEnum.demo);
@@ -28,15 +36,17 @@ void main() async {
     ensureScreenSize: true,
     splitScreenMode: true,
     builder: (context, child) {
-      return GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'DTR Delivery App',
-        theme: ThemeDataForApp.lightTheme,
-        // initialRoute:  getInitialRoute(),
-        getPages: Routes.routes,
-        home:  getStore.read("accessToken") != null
-            ? BottomBarWidgetPage()
-            : LoginScreen(),
+      return SafeArea(
+        child: GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'DTR Delivery App',
+          theme: ThemeDataForApp.lightTheme,
+          // initialRoute:  getInitialRoute(),
+          getPages: Routes.routes,
+          home: getStore.read("accessToken") != null
+              ? BottomBarWidgetPage()
+              : LoginScreen(),
+        ),
       );
     },
   ));

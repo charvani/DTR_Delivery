@@ -10,6 +10,7 @@ import '../../../../utils/logger.dart';
 import '../../../../utils/snack_bar.dart';
 import '../../../unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
 import '../../data/models/addfeedback_request_model.dart';
+import '../../data/models/report_vehicle_breakdown_model.dart';
 import '../repositories/trip_repository.dart';
 
 class TripUseCase {
@@ -120,6 +121,35 @@ class TripUseCase {
     try {
       return await tripRepository
           .getAddFeedbackRequestRepo(addFeedbackRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      smartLogger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+
+      throw Exception(e);
+    }
+  }
+
+  Future<dynamic> getReportVehicleBreakdownUseCase(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    try {
+      return await tripRepository.getReportVehicleBreakdownRequestRepo(
+          reportVehicleBreakdownRequestModel);
+    } on DioException catch (e) {
+      Logger().i(e);
+      smartLogger().i(e);
+      SnackBarUtil.errorSnackBar(e.response!.data['message']);
+
+      throw Exception(e);
+    }
+  }
+  Future<dynamic> getWithdrawVehicleBreakdownUseCase(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    try {
+      return await tripRepository.getWithdrawVehicleBreakdownRequestRepo(
+          reportVehicleBreakdownRequestModel);
     } on DioException catch (e) {
       Logger().i(e);
       smartLogger().i(e);

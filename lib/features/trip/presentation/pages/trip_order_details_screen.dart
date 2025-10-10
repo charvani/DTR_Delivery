@@ -893,7 +893,7 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
                     ),
                     SpaceWidget(height: 20),
                     Text(
-                      "Reason",
+                      "Reason *",
                       style: TextStyle(
                           color: APPTHEME_COLOR,
                           fontSize: 14.sp,

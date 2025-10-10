@@ -1,6 +1,7 @@
 import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
+import 'package:dtr_delivery/features/trip/data/models/report_vehicle_breakdown_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/return_order_request_model.dart';
 import 'package:dtr_delivery/features/unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class TripController extends GetxController {
   RxBool orderDetailsLoading = false.obs;
   RxBool buttonLoading = false.obs;
   RxBool returnLoading = false.obs;
+  RxBool breakdownLoading = false.obs;
   RxBool addFeedbackLoading = false.obs;
 
   RxBool isDamagedVal = false.obs;
@@ -49,6 +51,8 @@ class TripController extends GetxController {
   num discountPercentage = 0;
   TextEditingController otpController = TextEditingController();
   TextEditingController reasonTextEditingController = TextEditingController();
+  TextEditingController breakDwonReasonTextEditingController =
+      TextEditingController();
   final formKey = GlobalKey<FormState>();
   RxBool enableOtpWidget = false.obs;
   RxBool enableReturnOrderWidget = false.obs;
@@ -424,6 +428,93 @@ class TripController extends GetxController {
       // });
     } catch (e) {
       addFeedbackLoading.value = false;
+      update();
+    }
+  }
+
+  Future<dynamic> getReportVehicleBreakdownController({required tripId}) async {
+    try {
+      breakdownLoading.value = true;
+      update();
+      print("ad fed ...at ${breakdownLoading.value}");
+
+      print("ad val4 ...${feedbackController.text}");
+
+      final reportVehicleBreakdownRequestModel =
+          ReportVehicleBreakdownRequestModel(
+              tripId: tripId,
+              cancelledReason:
+                  breakDwonReasonTextEditingController.text.trim());
+      print("ad fed ...$reportVehicleBreakdownRequestModel");
+      dynamic value = await tripsUseCase
+          .getReportVehicleBreakdownUseCase(reportVehicleBreakdownRequestModel);
+      // .then((value) async {
+      print("contro....$value");
+      if (value != null) {
+        if (value == "Raised Vehicle Breakdown request"
+            // value.toString().contains("success")
+            ) {
+          Get.back();
+          SnackBarUtil.successSnackBar(
+              "Successfully reported your vehicle breakdown.");
+
+          currentTripList[0].cancelledReason = "cancelled";
+          loading.value = true;
+          update();
+          // getCurrentTripController();
+        }
+      } else {
+        SnackBarUtil.errorSnackBar("Please try again..");
+      }
+
+      breakdownLoading.value = false;
+      loading.value = false;
+      return value;
+      // });
+    } catch (e) {
+      breakdownLoading.value = false;
+      update();
+    }
+  }
+
+  Future<dynamic> getWithdrawVehicleBreakdownController(
+      {required tripId}) async {
+    try {
+      breakdownLoading.value = true;
+      update();
+      print("ad fed ...at ${breakdownLoading.value}");
+
+      final reportVehicleBreakdownRequestModel =
+          ReportVehicleBreakdownRequestModel(
+        tripId: tripId,
+      );
+      print("ad fed ...$reportVehicleBreakdownRequestModel");
+      dynamic value = await tripsUseCase.getWithdrawVehicleBreakdownUseCase(
+          reportVehicleBreakdownRequestModel);
+      // .then((value) async {
+      print("contro....$value");
+      if (value != null) {
+        if (value == "Cancelled Vehicle Breakdown request") {
+          Get.back();
+          SnackBarUtil.successSnackBar(value);
+          currentTripList[0].cancelledReason = null;
+          loading.value = true;
+
+          update();
+
+          // getCurrentTripController();
+        }
+      } else {
+        SnackBarUtil.errorSnackBar("Please try again..");
+      }
+
+      breakdownLoading.value = false;
+      loading.value = false;
+
+      return value;
+      // });
+    } catch (e) {
+      breakdownLoading.value = false;
       update();
     }
   }

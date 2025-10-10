@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dtr_delivery/features/trip/data/models/complete_delivery_request_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/current_trip_response_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/reached_location_request_model.dart';
+import 'package:dtr_delivery/features/trip/data/models/report_vehicle_breakdown_model.dart';
 import 'package:dtr_delivery/features/trip/data/models/return_order_request_model.dart';
 import 'package:dtr_delivery/features/unclaimed_orders/data/models/unclaimed_orders_request_model.dart';
 import 'package:dtr_delivery/utils/snack_bar.dart';
@@ -268,6 +269,59 @@ class TripDataSources {
       print("recieved response: $response");
 
       return response.data;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return e.message;
+    } catch (e) {
+      print("get error >>> $e");
+    }
+  }
+
+  Future<dynamic> getReportVehicleBreakdownDataSouce(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    try {
+      Map<String, dynamic> mapData = {
+        "tripId": reportVehicleBreakdownRequestModel.tripId,
+        "cancelledReason": reportVehicleBreakdownRequestModel.cancelledReason,
+      };
+      print("body data...$mapData");
+      Response response =
+          await dio.post('$baseUrl/vehicle-breakdown', data: mapData);
+      print("recieved response: $response");
+
+      return response.data['message'];
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print("Status code: ${e.response?.statusCode}");
+        print("Error body: ${e.response?.data}");
+        SnackBarUtil.errorSnackBar(e.response?.data['message'] ?? "");
+      } else {
+        print("Request error: ${e.message}");
+      }
+      return e.message;
+    } catch (e) {
+      print("get error >>> $e");
+    }
+  }
+
+  Future<dynamic> getWithdrawVehicleBreakdownDataSouce(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    try {
+      print("withdraw ...${reportVehicleBreakdownRequestModel.tripId}");
+      Response response = await dio.patch(
+        '$baseUrl/cancel-vehicle-breakdown/${reportVehicleBreakdownRequestModel.tripId}',
+      );
+      print("recieved response: $response");
+
+      return response.data['message'];
     } on DioException catch (e) {
       if (e.response != null) {
         print("Status code: ${e.response?.statusCode}");

@@ -69,9 +69,10 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
               ? LoaderWidget()
               : controller.punch == "notpunched"
                   ? Center(
-                      child: Text("Please punch In",
-                          style: Get.textTheme.titleSmall!
-                              .copyWith(color: INDICATION_COLOR)),
+                      child: Text("Please Punch In",
+                          style: Get.textTheme.titleSmall!.copyWith(
+                              color: INDICATION_COLOR,
+                              fontWeight: FontWeight.w600)),
                     )
                   : controller.unclaimedOrdersList.isEmpty
                       ? Center(
@@ -128,7 +129,6 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
                                           .longitude,
                                       location:
                                           "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
-                                    
                                     );
                                   }),
                             ),

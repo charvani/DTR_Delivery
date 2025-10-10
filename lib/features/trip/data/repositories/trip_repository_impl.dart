@@ -10,6 +10,7 @@ import '../models/complete_delivery_request_model.dart';
 import '../models/current_trip_response_model.dart';
 import '../models/previous_trips_response_model.dart';
 import '../models/reached_location_request_model.dart';
+import '../models/report_vehicle_breakdown_model.dart';
 import '../models/return_order_request_model.dart';
 
 class TripRepositoryImpl extends TripRepository {
@@ -128,6 +129,33 @@ class TripRepositoryImpl extends TripRepository {
     if (await networkInfoImpl.isConnected) {
       return await tripDataSource
           .getAddFeedbackDataSouce(addFeedbackRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+
+  @override
+  Future<dynamic> getReportVehicleBreakdownRequestRepo(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource.getReportVehicleBreakdownDataSouce(
+          reportVehicleBreakdownRequestModel);
+    }
+    SnackBarUtil.errorSnackBar("No Internet Connection");
+    throw Exception("No Internet Connection");
+  }
+  @override
+  Future<dynamic> getWithdrawVehicleBreakdownRequestRepo(
+      ReportVehicleBreakdownRequestModel
+          reportVehicleBreakdownRequestModel) async {
+    Logger().i(networkInfoImpl.isConnected);
+    Logger().i('networkInfoImpl');
+    if (await networkInfoImpl.isConnected) {
+      return await tripDataSource.getWithdrawVehicleBreakdownDataSouce(
+          reportVehicleBreakdownRequestModel);
     }
     SnackBarUtil.errorSnackBar("No Internet Connection");
     throw Exception("No Internet Connection");
