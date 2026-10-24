@@ -206,7 +206,7 @@ class ThemeDataForApp {
           secondaryHeaderColor: Color(0xffD8DADF),
           primaryColorLight: Colors.white,
           primaryColorDark: Color.fromARGB(255, 181, 60, 36),
-          colorScheme: ColorScheme.light(primary: APPTHEME_COLOR),
+          // colorScheme: ColorScheme.light(primary: WHITE_COLOR),
           buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
           fontFamily: "Poppins",
           textTheme: TextTheme(

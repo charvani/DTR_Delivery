@@ -191,9 +191,9 @@ class OrderDetails {
   int? productId;
   int? isCancelled;
   String? productName;
-  int? pricePerUnit;
+  num? pricePerUnit;
   String? orderDetailId;
-  int? originalPrice;
+  num? originalPrice;
 
   OrderDetails(
       {this.cgst,

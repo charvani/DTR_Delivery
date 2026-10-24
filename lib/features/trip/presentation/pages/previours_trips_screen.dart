@@ -51,9 +51,11 @@ class _PrevioursTripsScreenState extends State<PrevioursTripsScreen> {
             backNavigation: true,
             actions: [],
             centerTitle: true),
-        body: GetBuilder<TripController>(builder: (context) {
-          return previousTripsWidget();
-        }));
+        body: SafeArea(
+          child: GetBuilder<TripController>(builder: (context) {
+            return previousTripsWidget();
+          }),
+        ));
   }
 
   previousTripsWidget() {

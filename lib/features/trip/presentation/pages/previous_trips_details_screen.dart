@@ -39,20 +39,22 @@ class _PreviousTripsDetailsScreenState
             backNavigation: true,
             actions: [],
             centerTitle: true),
-        body: GetBuilder<TripController>(builder: (context) {
-          return controller.punch.value == "notpunched"
-              ? Center(
-                  child: Text("Please punch In",
-                      style: Get.textTheme.titleSmall!
-                          .copyWith(color: INDICATION_COLOR)),
-                )
-              :
-              // controller.previousTripOrdersList.isNotEmpty &&
-              //         (controller.previousTrips == false)
-              //     ?
-              tripWidget();
-          // : previousTripsWidget();
-        }));
+        body: SafeArea(
+          child: GetBuilder<TripController>(builder: (context) {
+            return controller.punch.value == "notpunched"
+                ? Center(
+                    child: Text("Please punch In",
+                        style: Get.textTheme.titleSmall!
+                            .copyWith(color: INDICATION_COLOR)),
+                  )
+                :
+                // controller.previousTripOrdersList.isNotEmpty &&
+                //         (controller.previousTrips == false)
+                //     ?
+                tripWidget();
+            // : previousTripsWidget();
+          }),
+        ));
   }
 
   tripWidget() {

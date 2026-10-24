@@ -64,79 +64,82 @@ class _UnclaimedOrdersScreenState extends State<UnclaimedOrdersScreen> {
             backNavigation: false,
             actions: [],
             centerTitle: true),
-        body: GetBuilder<UnclaimedOrdersController>(builder: (context) {
-          return controller.loading.value
-              ? LoaderWidget()
-              : controller.punch == "notpunched"
-                  ? Center(
-                      child: Text("Please Punch In",
-                          style: Get.textTheme.titleSmall!.copyWith(
-                              color: INDICATION_COLOR,
-                              fontWeight: FontWeight.w600)),
-                    )
-                  : controller.unclaimedOrdersList.isEmpty
-                      ? Center(
-                          child: Text("Unclaimed Orders not available",
-                              style: Get.textTheme.titleSmall),
-                        )
-                      : Column(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                  controller: controller
-                                      .unclaimedOrdersListScrollController,
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  itemCount:
-                                      controller.unclaimedOrdersList.length,
-                                  itemBuilder: (context, i) {
-                                    return OrderWidget(
-                                      statusOfOrder: "",
-                                      onTapFun: () async {
-                                        dynamic val = await getStore.read(
-                                          "punch",
-                                        );
-                                        print("punn....$val");
-                                        if (val == "notpunched") {
-                                          SnackBarUtil.errorSnackBar(
-                                              "Please punch in");
-                                        } else {
-                                          Get.to(() => OrderDetailsScreen(
-                                                orderId: controller
-                                                    .unclaimedOrdersList[i]
-                                                    .orderId!,
-                                                fromScreen: "unclaimed_orders",
-                                              ));
-                                        }
-                                      },
-                                      customerMobileNumber: controller
-                                              .unclaimedOrdersList[i]
-                                              .customerMobileNumber ??
-                                          "",
-                                      customerName: controller
-                                              .unclaimedOrdersList[i]
-                                              .customerName ??
-                                          "",
-                                      order: controller
-                                              .unclaimedOrdersList[i].orderId ??
-                                          "",
-                                      latitude: controller
-                                          .unclaimedOrdersList[i]
-                                          .orderAddress!
-                                          .latitude,
-                                      longitude: controller
-                                          .unclaimedOrdersList[i]
-                                          .orderAddress!
-                                          .longitude,
-                                      location:
-                                          "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
-                                    );
-                                  }),
-                            ),
-                            controller.paginationLoading.value
-                                ? LoaderWidget()
-                                : SizedBox.shrink()
-                          ],
-                        );
-        }));
+        body: SafeArea(
+          child: GetBuilder<UnclaimedOrdersController>(builder: (context) {
+            return controller.loading.value
+                ? LoaderWidget()
+                : controller.punch == "notpunched"
+                    ? Center(
+                        child: Text("Please Punch In",
+                            style: Get.textTheme.titleSmall!.copyWith(
+                                color: INDICATION_COLOR,
+                                fontWeight: FontWeight.w600)),
+                      )
+                    : controller.unclaimedOrdersList.isEmpty
+                        ? Center(
+                            child: Text("Unclaimed Orders not available",
+                                style: Get.textTheme.titleSmall),
+                          )
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                    controller: controller
+                                        .unclaimedOrdersListScrollController,
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    itemCount:
+                                        controller.unclaimedOrdersList.length,
+                                    itemBuilder: (context, i) {
+                                      return OrderWidget(
+                                        statusOfOrder: "",
+                                        onTapFun: () async {
+                                          dynamic val = await getStore.read(
+                                            "punch",
+                                          );
+                                          print("punn....$val");
+                                          if (val == "notpunched") {
+                                            SnackBarUtil.errorSnackBar(
+                                                "Please punch in");
+                                          } else {
+                                            Get.to(() => OrderDetailsScreen(
+                                                  orderId: controller
+                                                      .unclaimedOrdersList[i]
+                                                      .orderId!,
+                                                  fromScreen:
+                                                      "unclaimed_orders",
+                                                ));
+                                          }
+                                        },
+                                        customerMobileNumber: controller
+                                                .unclaimedOrdersList[i]
+                                                .customerMobileNumber ??
+                                            "",
+                                        customerName: controller
+                                                .unclaimedOrdersList[i]
+                                                .customerName ??
+                                            "",
+                                        order: controller.unclaimedOrdersList[i]
+                                                .orderId ??
+                                            "",
+                                        latitude: controller
+                                            .unclaimedOrdersList[i]
+                                            .orderAddress!
+                                            .latitude,
+                                        longitude: controller
+                                            .unclaimedOrdersList[i]
+                                            .orderAddress!
+                                            .longitude,
+                                        location:
+                                            "${controller.unclaimedOrdersList[i].orderAddress!.address1},${controller.unclaimedOrdersList[i].orderAddress!.address2},${controller.unclaimedOrdersList[i].orderAddress!.city},${controller.unclaimedOrdersList[i].orderAddress!.state},${controller.unclaimedOrdersList[i].orderAddress!.postalCode}",
+                                      );
+                                    }),
+                              ),
+                              controller.paginationLoading.value
+                                  ? LoaderWidget()
+                                  : SizedBox.shrink()
+                            ],
+                          );
+          }),
+        ));
   }
 }

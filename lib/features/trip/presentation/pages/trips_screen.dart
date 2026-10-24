@@ -14,7 +14,6 @@ import '../../../../utils/close_widget.dart';
 import '../../../../utils/custom_action_button.dart';
 import '../../../../utils/multiLineTextField.dart';
 import '../../../../utils/snack_bar.dart';
-import '../../../../utils/square_action_button.dart';
 import '../../../../utils/trip_route.dart';
 import '../manager/trip_controller.dart';
 import '../widgets/trips_widgets.dart';
@@ -93,21 +92,23 @@ class _TripsScreenState extends State<TripsScreen> {
               )
             ],
             centerTitle: true),
-        body: GetBuilder<TripController>(builder: (context) {
-          return controller.punch.value == "notpunched"
-              ? Center(
-                  child: Text("Please Punch In",
-                      style: Get.textTheme.titleSmall!.copyWith(
-                          color: INDICATION_COLOR,
-                          fontWeight: FontWeight.w600)),
-                )
-              :
-              // controller.currentTripList.isNotEmpty &&
-              //         (controller.previousTrips == false)
-              //     ?
-              tripWidget();
-          // : previousTripsWidget();
-        }));
+        body: SafeArea(
+          child: GetBuilder<TripController>(builder: (context) {
+            return controller.punch.value == "notpunched"
+                ? Center(
+                    child: Text("Please Punch In",
+                        style: Get.textTheme.titleSmall!.copyWith(
+                            color: INDICATION_COLOR,
+                            fontWeight: FontWeight.w600)),
+                  )
+                :
+                // controller.currentTripList.isNotEmpty &&
+                //         (controller.previousTrips == false)
+                //     ?
+                tripWidget();
+            // : previousTripsWidget();
+          }),
+        ));
   }
 
   tripWidget() {
@@ -376,6 +377,8 @@ class _TripsScreenState extends State<TripsScreen> {
                           //   },
                           // ),
 
+                          //                ************************* vehicle breakdown *******************
+/*
                           if (controller.currentTripList[0].cancelledAt ==
                                   null &&
                               controller.currentTripList[0].cancelledReason ==
@@ -407,6 +410,8 @@ class _TripsScreenState extends State<TripsScreen> {
                                       },
                                     );
                             }),
+*/
+
                           SpaceWidget(height: 30),
                         ],
                       ),

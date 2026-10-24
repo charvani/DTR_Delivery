@@ -18,17 +18,20 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // 🔴 your status bar color
-      statusBarIconBrightness: Brightness.light, // white icons
-      systemNavigationBarColor: Colors.white, // navigation bar color
-      systemNavigationBarIconBrightness: Brightness.dark, // dark nav bar icons
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.white, // 🔴 your status bar color
+  //     statusBarIconBrightness: Brightness.light, // white icons
+  //     systemNavigationBarColor: Colors.white, // navigation bar color
+  //     systemNavigationBarIconBrightness: Brightness.dark, // dark nav bar icons
+  //   ),
+  // );
   print("char..kDebugMode");
   Flavour.appFlavour = FlavorEnum.demo;
   await init(FlavorEnum.demo);
+
+  // Flavour.appFlavour = FlavorEnum.prod;
+  // await init(FlavorEnum.prod);
 
   runApp(ScreenUtilInit(
     designSize: const Size(430, 896),
@@ -36,17 +39,16 @@ void main() async {
     ensureScreenSize: true,
     splitScreenMode: true,
     builder: (context, child) {
-      return SafeArea(
-        child: GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'DTR Delivery App',
-          theme: ThemeDataForApp.lightTheme,
-          // initialRoute:  getInitialRoute(),
-          getPages: Routes.routes,
-          home: getStore.read("accessToken") != null
-              ? BottomBarWidgetPage()
-              : LoginScreen(),
-        ),
+      return GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'DTR Delivery App',
+        theme: ThemeDataForApp.lightTheme,
+        // darkTheme: ThemeDataForApp.darkTheme,
+        // initialRoute:  getInitialRoute(),
+        getPages: Routes.routes,
+        home: getStore.read("accessToken") != null
+            ? BottomBarWidgetPage()
+            : LoginScreen(),
       );
     },
   ));

@@ -58,227 +58,218 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           backNavigation: true,
           actions: [],
           centerTitle: true),
-      body: GetBuilder<OrderDetailsController>(builder: (context) {
-        return controller.loading.value
-            ? LoaderWidget()
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        controller.orderDetailsData.order != null
-                            ? "Order ID: ${controller.orderDetailsData.order!.id}"
-                            : "",
-                        style: Get.textTheme.titleLarge),
-                    SpaceWidget(height: 12),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 32.r,
-                          backgroundColor: LIGHT_BLACK_SHADE_COLOR,
-                          child: Icon(
-                            Icons.person_2_outlined,
-                            color: BLACK_COLOR,
-                          ),
-                          // Replace with actual image asset
-                        ),
-                        SpaceWidget(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  controller.orderDetailsData.user != null
-                                      ? "Customer: ${controller.orderDetailsData.user!.firstName} ${controller.orderDetailsData.user!.lastName}"
-                                      : "",
-                                  style: Get.textTheme.titleMedium),
-                              Text(
-                                  controller.orderDetailsData.address != null
-                                      ? "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}."
-                                      : "",
-                                  style: Get.textTheme.labelSmall),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SpaceWidget(height: 10),
-                    Row(
-                      children: [
-                        Container(
-                          height: 50.h,
-                          width: 60.w,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: LIGHT_BLACK_SHADE_COLOR),
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0.h),
-                            child: Icon(Icons.call_outlined),
-                          ),
-                        ),
-                        SpaceWidget(
-                          width: 10,
-                        ),
-                        Text(
-                            controller.orderDetailsData.user != null
-                                ? "Contact: +91 ${controller.orderDetailsData.user!.mobileNumber}"
-                                : "",
-                            style: Get.textTheme.titleMedium),
-                      ],
-                    ),
-                    SpaceWidget(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Order Details", style: Get.textTheme.titleLarge),
-                        // returnSelected
-                        //     ? SizedBox(
-                        //         width: 120.w,
-                        //         child: RedOutlineButton(
-                        //           buttonText: "Return",
-                        //           onTapFun: () {
-                        //             returnSelected = !returnSelected;
-                        //             setState(() {});
-                        //           },
-                        //         ),
-                        //       )
-                        //     : BlackOutlineButton(
-                        //         buttonText: "Select for Return",
-                        //         onTapFun: () {
-                        //           returnSelected = !returnSelected;
-                        //           setState(() {});
-                        //         },
-                        //       )
-                      ],
-                    ),
-                    SpaceWidget(height: 10),
-                    _buildInvoiceHeadingRow(),
-                    SpaceWidget(height: 10),
-                    if (controller.orderDetailsData.orderDetails != null)
-                      for (int i = 0;
-                          i < controller.orderDetailsData.orderDetails!.length;
-                          i++)
-                        _buildInvoiceRow(
-                            controller
-                                .orderDetailsData.orderDetails![i].productName!,
-                            controller
-                                .orderDetailsData.orderDetails![i].quantity!,
-                            controller
-                                .orderDetailsData.orderDetails![i].price!),
-
-                    Divider(
-                      height: 30.h,
-                      color: LIGHT_BLACK_SHADE_COLOR,
-                    ),
-                    _buildSummaryRow(
-                        "Total Amount", controller.totalWithoutGst),
-                    _buildSummaryRow("Gst",
-                        controller.totalWithGst - controller.totalWithoutGst),
-                    _discountTotalRow(
-                      "Discount", controller.discountAmount,
-                      // controller.discountPercentage
-                    ),
-                    // _buildSummaryRow("Total Before Tax", "4166.67"),
-                    _buildSummaryRow("Delivery Charges", "Free"),
-                    _discountTotalRow(
-                        "Online Payment Discount",
-                        num.parse(controller
-                            .orderDetailsData.order!.checkoutDiscount!)),
-                    SpaceWidget(height: 10),
-
-                    _orderTotalRow(controller.orderDetailsData.order!.total!
-                        // controller.totalWithGst
-                        ),
-                    SpaceWidget(height: 20),
-
-                    // Text("Notes", style: Get.textTheme.titleLarge),
-                    // const SpaceWidget(height: 5),
-                    // Text(
-                    //   "Leave at the front door. Ring the doorbell twice.",
-                    //   style: Get.textTheme.labelSmall,
-                    // ),
-
-                    SpaceWidget(height: 20),
-                    if (widget.fromScreen == "assigned_orders")
-                      Column(
+      body: SafeArea(
+        child: GetBuilder<OrderDetailsController>(builder: (context) {
+          return controller.loading.value
+              ? LoaderWidget()
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(16.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          controller.orderDetailsData.order != null
+                              ? "Order ID: ${controller.orderDetailsData.order!.id}"
+                              : "",
+                          style: Get.textTheme.titleLarge),
+                      SpaceWidget(height: 12),
+                      Row(
                         children: [
-                          Card(
-                            color: (controller.orderDetailsData.order!.status!
-                                            .toLowerCase() ==
-                                        "ordered") &&
-                                    (controller.orderDetailsData.order!
-                                            .isInspectionStarted !=
-                                        null)
-                                ? PACKING_ORDER_COLOR
-                                : (controller.orderDetailsData.order!.status!
-                                            .toLowerCase() ==
-                                        "dispatched")
-                                    ? DISPATCHED_COLOR
-                                    : ORDERED_COLOR,
-                            margin: EdgeInsets.all(0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadiusGeometry.circular(30.r)),
+                          CircleAvatar(
+                            radius: 32.r,
+                            backgroundColor: LIGHT_BLACK_SHADE_COLOR,
+                            child: Icon(
+                              Icons.person_2_outlined,
+                              color: BLACK_COLOR,
+                            ),
+                            // Replace with actual image asset
+                          ),
+                          SpaceWidget(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    controller.orderDetailsData.user != null
+                                        ? "Customer: ${controller.orderDetailsData.user!.firstName} ${controller.orderDetailsData.user!.lastName}"
+                                        : "",
+                                    style: Get.textTheme.titleMedium),
+                                Text(
+                                    controller.orderDetailsData.address != null
+                                        ? "${controller.orderDetailsData.address!.address1}, ${controller.orderDetailsData.address!.address2}, ${controller.orderDetailsData.address!.city}, ${controller.orderDetailsData.address!.state}, ${controller.orderDetailsData.address!.postalCode}."
+                                        : "",
+                                    style: Get.textTheme.labelSmall),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SpaceWidget(height: 10),
+                      Row(
+                        children: [
+                          Container(
+                            height: 50.h,
+                            width: 60.w,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: LIGHT_BLACK_SHADE_COLOR),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20.w, vertical: 12.h),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Order Status:",
-                                      style: Get.textTheme.headlineMedium!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: WHITE_COLOR)),
-                                  if (controller.orderDetailsData.order != null)
-                                    Text(
-                                        (controller.orderDetailsData.order!
-                                                        .status!
-                                                        .toLowerCase() ==
-                                                    "ordered") &&
-                                                (controller
-                                                        .orderDetailsData
-                                                        .order!
-                                                        .isInspectionStarted !=
-                                                    null)
-                                            ? "Packing Started"
-                                            : "${controller.orderDetailsData.order!.status}"
-                                                .capitalizeFirst!,
+                              padding: EdgeInsets.all(8.0.h),
+                              child: Icon(Icons.call_outlined),
+                            ),
+                          ),
+                          SpaceWidget(
+                            width: 10,
+                          ),
+                          Text(
+                              controller.orderDetailsData.user != null
+                                  ? "Contact: +91 ${controller.orderDetailsData.user!.mobileNumber}"
+                                  : "",
+                              style: Get.textTheme.titleMedium),
+                        ],
+                      ),
+                      SpaceWidget(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Order Details",
+                              style: Get.textTheme.titleLarge),
+                          // returnSelected
+                          //     ? SizedBox(
+                          //         width: 120.w,
+                          //         child: RedOutlineButton(
+                          //           buttonText: "Return",
+                          //           onTapFun: () {
+                          //             returnSelected = !returnSelected;
+                          //             setState(() {});
+                          //           },
+                          //         ),
+                          //       )
+                          //     : BlackOutlineButton(
+                          //         buttonText: "Select for Return",
+                          //         onTapFun: () {
+                          //           returnSelected = !returnSelected;
+                          //           setState(() {});
+                          //         },
+                          //       )
+                        ],
+                      ),
+                      SpaceWidget(height: 10),
+                      _buildInvoiceHeadingRow(),
+                      SpaceWidget(height: 10),
+                      if (controller.orderDetailsData.orderDetails != null)
+                        for (int i = 0;
+                            i <
+                                controller
+                                    .orderDetailsData.orderDetails!.length;
+                            i++)
+                          _buildInvoiceRow(
+                              controller.orderDetailsData.orderDetails![i]
+                                  .productName!,
+                              controller
+                                  .orderDetailsData.orderDetails![i].quantity!,
+                              controller
+                                  .orderDetailsData.orderDetails![i].price!),
+
+                      Divider(
+                        height: 30.h,
+                        color: LIGHT_BLACK_SHADE_COLOR,
+                      ),
+                      _buildSummaryRow(
+                          "Total Amount", controller.totalWithoutGst),
+                      _buildSummaryRow("Gst",
+                          controller.totalWithGst - controller.totalWithoutGst),
+                      _discountTotalRow(
+                        "Discount", controller.discountAmount,
+                        // controller.discountPercentage
+                      ),
+                      // _buildSummaryRow("Total Before Tax", "4166.67"),
+                      _buildSummaryRow("Delivery Charges", "Free"),
+                      _discountTotalRow(
+                          "Online Payment Discount",
+                          num.parse(controller
+                              .orderDetailsData.order!.checkoutDiscount!)),
+                      SpaceWidget(height: 10),
+
+                      _orderTotalRow(controller.orderDetailsData.order!.total!
+                          // controller.totalWithGst
+                          ),
+                      SpaceWidget(height: 20),
+
+                      // Text("Notes", style: Get.textTheme.titleLarge),
+                      // const SpaceWidget(height: 5),
+                      // Text(
+                      //   "Leave at the front door. Ring the doorbell twice.",
+                      //   style: Get.textTheme.labelSmall,
+                      // ),
+
+                      SpaceWidget(height: 20),
+                      if (widget.fromScreen == "assigned_orders")
+                        Column(
+                          children: [
+                            Card(
+                              color: (controller.orderDetailsData.order!.status!
+                                              .toLowerCase() ==
+                                          "ordered") &&
+                                      (controller.orderDetailsData.order!
+                                              .isInspectionStarted !=
+                                          null)
+                                  ? PACKING_ORDER_COLOR
+                                  : (controller.orderDetailsData.order!.status!
+                                              .toLowerCase() ==
+                                          "dispatched")
+                                      ? DISPATCHED_COLOR
+                                      : ORDERED_COLOR,
+                              margin: EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadiusGeometry.circular(30.r)),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 12.h),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Order Status:",
                                         style: Get.textTheme.headlineMedium!
                                             .copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: WHITE_COLOR))
-                                ],
+                                                color: WHITE_COLOR)),
+                                    if (controller.orderDetailsData.order !=
+                                        null)
+                                      Text(
+                                          (controller.orderDetailsData.order!
+                                                          .status!
+                                                          .toLowerCase() ==
+                                                      "ordered") &&
+                                                  (controller
+                                                          .orderDetailsData
+                                                          .order!
+                                                          .isInspectionStarted !=
+                                                      null)
+                                              ? "Packing Started"
+                                              : "${controller.orderDetailsData.order!.status}"
+                                                  .capitalizeFirst!,
+                                          style: Get.textTheme.headlineMedium!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: WHITE_COLOR))
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          if (controller.orderDetailsData.order != null)
-                            if (controller.orderDetailsData.order!.status !=
-                                "dispatched")
-                              Column(
-                                children: [
-                                  SpaceWidget(height: 20),
-                                  Obx(() {
-                                    return controller.packingLoading.value
-                                        ? LoaderWidget()
-                                        : SquareActionButton(
-                                            buttonTitle: controller
-                                                            .orderDetailsData
-                                                            .order!
-                                                            .status!
-                                                            .toLowerCase() ==
-                                                        "ordered" &&
-                                                    controller
-                                                            .orderDetailsData
-                                                            .order!
-                                                            .isInspectionStarted ==
-                                                        null
-                                                ? "Start Order Packing"
-                                                : "Packing Completed",
-                                            onTapFun: () {
-                                              controller.getPackOrderController(controller
+                            if (controller.orderDetailsData.order != null)
+                              if (controller.orderDetailsData.order!.status !=
+                                  "dispatched")
+                                Column(
+                                  children: [
+                                    SpaceWidget(height: 20),
+                                    Obx(() {
+                                      return controller.packingLoading.value
+                                          ? LoaderWidget()
+                                          : SquareActionButton(
+                                              buttonTitle: controller
                                                               .orderDetailsData
                                                               .order!
                                                               .status!
@@ -289,52 +280,67 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               .order!
                                                               .isInspectionStarted ==
                                                           null
-                                                  ? true
-                                                  : false);
-                                            },
-                                          );
-                                  }),
-                                ],
-                              ),
-                          SpaceWidget(height: 10),
-                          orderStatus[index] == "Delivered"
-                              ? CustomActionButton(
-                                  buttonTitle: "Give Feedback",
-                                  onTapFun: () {},
-                                  titleColor: APPTHEME_COLOR,
-                                  backgroundColor: BUTTON_BG_COLOR,
-                                )
-                              : CustomActionButton(
-                                  buttonTitle: "Call Customer",
-                                  onTapFun: () {
-                                    makePhoneCall(controller.orderDetailsData
-                                            .user!.mobileNumber ??
-                                        "");
-                                  },
-                                  titleColor: APPTHEME_COLOR,
-                                  backgroundColor: BUTTON_BG_COLOR,
+                                                  ? "Start Order Packing"
+                                                  : "Packing Completed",
+                                              onTapFun: () {
+                                                controller.getPackOrderController(controller
+                                                                .orderDetailsData
+                                                                .order!
+                                                                .status!
+                                                                .toLowerCase() ==
+                                                            "ordered" &&
+                                                        controller
+                                                                .orderDetailsData
+                                                                .order!
+                                                                .isInspectionStarted ==
+                                                            null
+                                                    ? true
+                                                    : false);
+                                              },
+                                            );
+                                    }),
+                                  ],
                                 ),
-                        ],
-                      ),
-                    if (widget.fromScreen == "unclaimed_orders")
-                      Obx(() {
-                        return controller.claimLoading.value
-                            ? LoaderWidget()
-                            : Column(
-                                children: [
-                                  SquareActionButton(
-                                    buttonTitle: "Assign To Me",
+                            SpaceWidget(height: 10),
+                            orderStatus[index] == "Delivered"
+                                ? CustomActionButton(
+                                    buttonTitle: "Give Feedback",
+                                    onTapFun: () {},
+                                    titleColor: APPTHEME_COLOR,
+                                    backgroundColor: BUTTON_BG_COLOR,
+                                  )
+                                : CustomActionButton(
+                                    buttonTitle: "Call Customer",
                                     onTapFun: () {
-                                      controller.getClaimOrderController();
+                                      makePhoneCall(controller.orderDetailsData
+                                              .user!.mobileNumber ??
+                                          "");
                                     },
+                                    titleColor: APPTHEME_COLOR,
+                                    backgroundColor: BUTTON_BG_COLOR,
                                   ),
-                                ],
-                              );
-                      })
-                  ],
-                ),
-              );
-      }),
+                          ],
+                        ),
+                      if (widget.fromScreen == "unclaimed_orders")
+                        Obx(() {
+                          return controller.claimLoading.value
+                              ? LoaderWidget()
+                              : Column(
+                                  children: [
+                                    SquareActionButton(
+                                      buttonTitle: "Assign To Me",
+                                      onTapFun: () {
+                                        controller.getClaimOrderController();
+                                      },
+                                    ),
+                                  ],
+                                );
+                        })
+                    ],
+                  ),
+                );
+        }),
+      ),
     );
   }
 

@@ -14,21 +14,23 @@ class HelpCenterScreen extends StatelessWidget {
           backNavigation: true,
           actions: [],
           centerTitle: true),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              bulletPoint(
-                  "📍 H.NO: 5-9-262/35, 1st & 2nd Floor, Prashanth Nagar IDA, Hyderabad - 500037",
-                  highlight: ".",
-                  dot: false),
-              bulletPoint("📧 Email: connect@viswahita.com",
-                  highlight: ".", dot: false),
-              bulletPoint("📞 Phone: +91 8686955626",
-                  highlight: ":", dot: false),
-              bulletPoint("🌐 Website: https://viswahita.com", dot: false),
-            ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                bulletPoint(
+                    "📍 H.NO: 5-9-262/35, 1st & 2nd Floor, Prashanth Nagar IDA, Hyderabad - 500037",
+                    highlight: ".",
+                    dot: false),
+                bulletPoint("📧 Email: connect@viswahita.com",
+                    highlight: ".", dot: false),
+                bulletPoint("📞 Phone: +91 7386281105",
+                    highlight: ":", dot: false),
+                bulletPoint("🌐 Website: https://viswahita.com", dot: false),
+              ],
+            ),
           ),
         ),
       ),

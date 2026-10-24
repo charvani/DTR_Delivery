@@ -52,350 +52,358 @@ class _TripOrderDetailsScreenState extends State<TripOrderDetailsScreen> {
           backNavigation: true,
           actions: [],
           centerTitle: true),
-      body: GetBuilder<TripController>(builder: (controller) {
-        return tripController.orderDetailsLoading.value
-            ? LoaderWidget()
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        "Order ID: ${tripController.selectedTripDetails.orderId}",
-                        style: Get.textTheme.titleLarge),
-                    SpaceWidget(height: 12),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 32.r,
-                          backgroundColor: LIGHT_BLACK_SHADE_COLOR,
-                          child: Icon(
-                            Icons.person_2_outlined,
-                            color: BLACK_COLOR,
-                          ),
-                          // Replace with actual image asset
-                        ),
-                        SpaceWidget(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  "Customer: ${tripController.selectedTripDetails.customerName}",
-                                  style: Get.textTheme.titleMedium),
-                              Text(
-                                  tripController.selectedTripDetails.address !=
-                                          null
-                                      ? "${tripController.selectedTripDetails.address!.address1}, ${tripController.selectedTripDetails.address!.address2}, ${tripController.selectedTripDetails.address!.city}, ${tripController.selectedTripDetails.address!.state}, ${tripController.selectedTripDetails.address!.postalCode}."
-                                      : "",
-                                  style: Get.textTheme.labelSmall),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SpaceWidget(height: 10),
-                    Row(
-                      children: [
-                        Container(
-                          height: 50.h,
-                          width: 60.w,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: LIGHT_BLACK_SHADE_COLOR),
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0.h),
-                            child: Icon(Icons.call_outlined),
-                          ),
-                        ),
-                        SpaceWidget(
-                          width: 10,
-                        ),
-                        Text(
-                            "Contact: +91 ${tripController.selectedTripDetails.customerPhone}",
-                            style: Get.textTheme.titleMedium),
-                      ],
-                    ),
-                    SpaceWidget(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Order Details", style: Get.textTheme.titleLarge),
-                        // returnSelected
-                        //     ?
-                        if (tripController.enableReturnOrderWidget.value &&
-                            tripController.selectedTripDetails.status !=
-                                "delivered")
-                          SizedBox(
-                            width: 120.w,
-                            child: RedOutlineButton(
-                              buttonText: "Return All",
-                              onTapFun: () {
-                                getReturnFun(
-                                    titleText: "Return All Items",
-                                    id: tripController
-                                        .selectedTripDetails.orderId);
-                              },
+      body: SafeArea(
+        child: GetBuilder<TripController>(builder: (controller) {
+          return tripController.orderDetailsLoading.value
+              ? LoaderWidget()
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(16.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          "Order ID: ${tripController.selectedTripDetails.orderId}",
+                          style: Get.textTheme.titleLarge),
+                      SpaceWidget(height: 12),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 32.r,
+                            backgroundColor: LIGHT_BLACK_SHADE_COLOR,
+                            child: Icon(
+                              Icons.person_2_outlined,
+                              color: BLACK_COLOR,
                             ),
-                          )
-                        // : BlackOutlineButton(
-                        //     buttonText: "Select for Return",
-                        //     onTapFun: () {
-                        //       returnSelected = !returnSelected;
-                        //       setState(() {});
-                        //     },
-                        //   )
-                      ],
-                    ),
-                    SpaceWidget(height: 10),
-                    _buildInvoiceHeadingRow(),
-                    SpaceWidget(height: 10),
-                    if (tripController.selectedTripDetails.orderDetails != null)
-                      for (int i = 0;
-                          i <
-                              tripController
-                                  .selectedTripDetails.orderDetails!.length;
-                          i++)
-                        _buildInvoiceRow(
-                            tripController.selectedTripDetails.orderDetails![i]
-                                .productName!,
-                            tripController
-                                .selectedTripDetails.orderDetails![i].quantity!,
-                            tripController.selectedTripDetails.orderDetails![i]
-                                .pricePerUnit!,
-                            tripController.selectedTripDetails.orderDetails![i]
-                                .orderDetailId!,
-                            tripController.selectedTripDetails.orderDetails![i]
-                                .isCancelled!),
-
-                    Divider(
-                      height: 30.h,
-                      color: LIGHT_BLACK_SHADE_COLOR,
-                    ),
-                    _buildSummaryRow(
-                        "Total Amount", tripController.totalWithoutGst),
-                    _buildSummaryRow(
-                        "Gst",
-                        tripController.totalWithGst -
-                            tripController.totalWithoutGst),
-                    _discountTotalRow(
-                        tripController.discountAmount,
-                        // tripController.discountPercentage
-                        "Discount"),
-                    // _buildSummaryRow("Total Before Tax", "4166.67"),
-                    _buildSummaryRow("Delivery Charges", "Free"),
-                    if (tripController.selectedTripDetails.checkoutDiscount !=
-                        null)
-                      _discountTotalRow(
-                        num.parse(tripController
-                            .selectedTripDetails.checkoutDiscount!),
-                        // tripController.discountPercentage
-                        "Online Payment Discount",
-                      ),
-                    returnTotalRow(
-                        orderPaidAmount: tripController
-                                .selectedTripDetails.orderAmountCollected /
-                            100,
-                        orderNowAmount:
-                            tripController.selectedTripDetails.orderTotal!),
-
-                    SpaceWidget(height: 10),
-
-                    // _orderTotalRow(tripController.totalWithGst),
-                    // _orderTotalRow((num.parse(tripController
-                    //         .selectedTripDetails.orderAmountCollected
-                    //         .toString()) /
-                    //     100)),
-
-                    _orderTotalRow(
-                        tripController.selectedTripDetails.orderTotal! < 0.5
-                            ? 0
-                            : num.parse(tripController
-                                .selectedTripDetails.orderTotal
-                                .toString())),
-                    SpaceWidget(height: 20),
-                    // _returnTotalRow(
-                    //     tripController.discountAmount,
-                    //     // tripController.discountPercentage
-                    //     "Return Amount"),
-                    // Text("Notes", style: Get.textTheme.titleLarge),
-                    // const SpaceWidget(height: 5),
-                    // Text(
-                    //   "Leave at the front door. Ring the doorbell twice.",
-                    //   style: Get.textTheme.labelSmall,
-                    // ),
-
-                    SpaceWidget(height: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Card(
-                          color: tripController.selectedTripDetails.status ==
-                                  "out for delivery"
-                              ? ORANGE_COLOR
-                              : tripController.selectedTripDetails.status ==
-                                      "delivered"
-                                  ? GREEN_COLOR
-                                  : REDAPPTHEME_COLOR,
-                          margin: EdgeInsets.all(0),
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadiusGeometry.circular(30.r)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20.w, vertical: 12.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // Replace with actual image asset
+                          ),
+                          SpaceWidget(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Order Status:",
-                                    style: Get.textTheme.headlineMedium!
-                                        .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: WHITE_COLOR)),
                                 Text(
-                                    "${tripController.selectedTripDetails.status}"
-                                        .capitalizeFirst!,
-                                    style: Get.textTheme.headlineMedium!
-                                        .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: WHITE_COLOR))
+                                    "Customer: ${tripController.selectedTripDetails.customerName}",
+                                    style: Get.textTheme.titleMedium),
+                                Text(
+                                    tripController
+                                                .selectedTripDetails.address !=
+                                            null
+                                        ? "${tripController.selectedTripDetails.address!.address1}, ${tripController.selectedTripDetails.address!.address2}, ${tripController.selectedTripDetails.address!.city}, ${tripController.selectedTripDetails.address!.state}, ${tripController.selectedTripDetails.address!.postalCode}."
+                                        : "",
+                                    style: Get.textTheme.labelSmall),
                               ],
                             ),
                           ),
-                        ),
-                        if (tripController.enableOtpWidget.value)
-                          OtpCollectionWidget(
-                            formKey: tripController.formKey,
-                            otpController: tripController.otpController,
+                        ],
+                      ),
+                      SpaceWidget(height: 10),
+                      Row(
+                        children: [
+                          Container(
+                            height: 50.h,
+                            width: 60.w,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: LIGHT_BLACK_SHADE_COLOR),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0.h),
+                              child: Icon(Icons.call_outlined),
+                            ),
                           ),
+                          SpaceWidget(
+                            width: 10,
+                          ),
+                          Text(
+                              "Contact: +91 ${tripController.selectedTripDetails.customerPhone}",
+                              style: Get.textTheme.titleMedium),
+                        ],
+                      ),
+                      SpaceWidget(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Order Details",
+                              style: Get.textTheme.titleLarge),
+                          // returnSelected
+                          //     ?
+                          if (tripController.enableReturnOrderWidget.value &&
+                              tripController.selectedTripDetails.status !=
+                                  "delivered")
+                            SizedBox(
+                              width: 120.w,
+                              child: RedOutlineButton(
+                                buttonText: "Return All",
+                                onTapFun: () {
+                                  getReturnFun(
+                                      titleText: "Return All Items",
+                                      id: tripController
+                                          .selectedTripDetails.orderId);
+                                },
+                              ),
+                            )
+                          // : BlackOutlineButton(
+                          //     buttonText: "Select for Return",
+                          //     onTapFun: () {
+                          //       returnSelected = !returnSelected;
+                          //       setState(() {});
+                          //     },
+                          //   )
+                        ],
+                      ),
+                      SpaceWidget(height: 10),
+                      _buildInvoiceHeadingRow(),
+                      SpaceWidget(height: 10),
+                      if (tripController.selectedTripDetails.orderDetails !=
+                          null)
+                        for (int i = 0;
+                            i <
+                                tripController
+                                    .selectedTripDetails.orderDetails!.length;
+                            i++)
+                          _buildInvoiceRow(
+                              tripController.selectedTripDetails
+                                  .orderDetails![i].productName!,
+                              tripController.selectedTripDetails
+                                  .orderDetails![i].quantity!,
+                              tripController.selectedTripDetails
+                                  .orderDetails![i].pricePerUnit!,
+                              tripController.selectedTripDetails
+                                  .orderDetails![i].orderDetailId!,
+                              tripController.selectedTripDetails
+                                  .orderDetails![i].isCancelled!),
 
-                        // Form(
-                        //   key: tripController.formKey,
-                        //   child: Column(
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       Padding(
-                        //         padding: EdgeInsets.symmetric(vertical: 20.h),
-                        //         child: Text("Enter OTP",
-                        //             style: Get.textTheme.titleLarge),
-                        //       ),
-                        //       // SpaceWidget(
-                        //       //   height: 10,
-                        //       // ),
-                        //       CustomOtpField(
-                        //         onCompleted: (otp) {
-                        //           print("otp....")
-                        //           tripController.otpController.text = otp;
-                        //           tripController.update();
-                        //         },
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        if (tripController.selectedTripDetails.status
-                                    .toString()
-                                    .toLowerCase() !=
-                                "delivered" &&
-                            tripController.selectedTripDetails.status
-                                    .toString()
-                                    .toLowerCase() !=
-                                "cancelled")
-                          Column(
-                            children: [
-                              SpaceWidget(height: 20),
-                              Obx(() {
-                                return tripController.buttonLoading.value
-                                    ? LoaderWidget()
-                                    : SquareActionButton(
-                                        buttonTitle: tripController
+                      Divider(
+                        height: 30.h,
+                        color: LIGHT_BLACK_SHADE_COLOR,
+                      ),
+                      _buildSummaryRow(
+                          "Total Amount", tripController.totalWithoutGst),
+                      _buildSummaryRow(
+                          "Gst",
+                          tripController.totalWithGst -
+                              tripController.totalWithoutGst),
+                      _discountTotalRow(
+                          tripController.discountAmount,
+                          // tripController.discountPercentage
+                          "Discount"),
+                      // _buildSummaryRow("Total Before Tax", "4166.67"),
+                      _buildSummaryRow("Delivery Charges", "Free"),
+                      if (tripController.selectedTripDetails.checkoutDiscount !=
+                          null)
+                        _discountTotalRow(
+                          num.parse(tripController
+                              .selectedTripDetails.checkoutDiscount!),
+                          // tripController.discountPercentage
+                          "Online Payment Discount",
+                        ),
+                      returnTotalRow(
+                          orderPaidAmount: tripController
+                                  .selectedTripDetails.orderAmountCollected /
+                              100,
+                          orderNowAmount:
+                              tripController.selectedTripDetails.orderTotal!),
+
+                      SpaceWidget(height: 10),
+
+                      // _orderTotalRow(tripController.totalWithGst),
+                      // _orderTotalRow((num.parse(tripController
+                      //         .selectedTripDetails.orderAmountCollected
+                      //         .toString()) /
+                      //     100)),
+
+                      _orderTotalRow(
+                          tripController.selectedTripDetails.orderTotal! < 0.5
+                              ? 0
+                              : num.parse(tripController
+                                  .selectedTripDetails.orderTotal
+                                  .toString())),
+                      SpaceWidget(height: 20),
+                      // _returnTotalRow(
+                      //     tripController.discountAmount,
+                      //     // tripController.discountPercentage
+                      //     "Return Amount"),
+                      // Text("Notes", style: Get.textTheme.titleLarge),
+                      // const SpaceWidget(height: 5),
+                      // Text(
+                      //   "Leave at the front door. Ring the doorbell twice.",
+                      //   style: Get.textTheme.labelSmall,
+                      // ),
+
+                      SpaceWidget(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Card(
+                            color: tripController.selectedTripDetails.status ==
+                                    "out for delivery"
+                                ? ORANGE_COLOR
+                                : tripController.selectedTripDetails.status ==
+                                        "delivered"
+                                    ? GREEN_COLOR
+                                    : REDAPPTHEME_COLOR,
+                            margin: EdgeInsets.all(0),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadiusGeometry.circular(30.r)),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w, vertical: 12.h),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Order Status:",
+                                      style: Get.textTheme.headlineMedium!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: WHITE_COLOR)),
+                                  Text(
+                                      "${tripController.selectedTripDetails.status}"
+                                          .capitalizeFirst!,
+                                      style: Get.textTheme.headlineMedium!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: WHITE_COLOR))
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (tripController.enableOtpWidget.value)
+                            OtpCollectionWidget(
+                              formKey: tripController.formKey,
+                              otpController: tripController.otpController,
+                            ),
+
+                          // Form(
+                          //   key: tripController.formKey,
+                          //   child: Column(
+                          //     mainAxisSize: MainAxisSize.min,
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Padding(
+                          //         padding: EdgeInsets.symmetric(vertical: 20.h),
+                          //         child: Text("Enter OTP",
+                          //             style: Get.textTheme.titleLarge),
+                          //       ),
+                          //       // SpaceWidget(
+                          //       //   height: 10,
+                          //       // ),
+                          //       CustomOtpField(
+                          //         onCompleted: (otp) {
+                          //           print("otp....")
+                          //           tripController.otpController.text = otp;
+                          //           tripController.update();
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          if (tripController.selectedTripDetails.status
+                                      .toString()
+                                      .toLowerCase() !=
+                                  "delivered" &&
+                              tripController.selectedTripDetails.status
+                                      .toString()
+                                      .toLowerCase() !=
+                                  "cancelled")
+                            Column(
+                              children: [
+                                SpaceWidget(height: 20),
+                                Obx(() {
+                                  return tripController.buttonLoading.value
+                                      ? LoaderWidget()
+                                      : SquareActionButton(
+                                          buttonTitle: tripController
+                                                      .selectedTripDetails
+                                                      .reachedTime ==
+                                                  null
+                                              ? "Reached Location"
+                                              : (tripController
+                                                              .selectedTripDetails
+                                                              .otpVerifiedAt ==
+                                                          null &&
+                                                      tripController
+                                                              .enableOtpWidget
+                                                              .value ==
+                                                          false)
+                                                  ? "Collect OTP"
+                                                  : "Complete Delivery",
+                                          onTapFun: () async {
+                                            if (tripController
                                                     .selectedTripDetails
                                                     .reachedTime ==
-                                                null
-                                            ? "Reached Location"
-                                            : (tripController
-                                                            .selectedTripDetails
-                                                            .otpVerifiedAt ==
-                                                        null &&
-                                                    tripController
-                                                            .enableOtpWidget
-                                                            .value ==
-                                                        false)
-                                                ? "Collect OTP"
-                                                : "Complete Delivery",
-                                        onTapFun: () async {
-                                          if (tripController.selectedTripDetails
-                                                  .reachedTime ==
-                                              null) {
-                                            tripController
-                                                .getReachedloactionController(
-                                                    tripController
-                                                        .selectedTripDetails
-                                                        .tripOrderId);
-                                          } else if (tripController
-                                                      .selectedTripDetails
-                                                      .otpVerifiedAt ==
-                                                  null &&
+                                                null) {
                                               tripController
-                                                      .enableOtpWidget.value ==
-                                                  false) {
-                                            await tripController
-                                                .getSendOtpController(
-                                                    tripController
-                                                        .selectedTripDetails
-                                                        .tripOrderId);
-                                          } else {
-                                            if (tripController
-                                                .formKey.currentState!
-                                                .validate()) {
-                                              Get.focusScope!.unfocus();
-                                              tripController
-                                                  .getCompleteDeliveryController(
-                                                      tripOrderId: tripController
+                                                  .getReachedloactionController(
+                                                      tripController
                                                           .selectedTripDetails
-                                                          .tripOrderId,
-                                                      otp: tripController
-                                                          .otpController.text);
+                                                          .tripOrderId);
+                                            } else if (tripController
+                                                        .selectedTripDetails
+                                                        .otpVerifiedAt ==
+                                                    null &&
+                                                tripController.enableOtpWidget
+                                                        .value ==
+                                                    false) {
+                                              await tripController
+                                                  .getSendOtpController(
+                                                      tripController
+                                                          .selectedTripDetails
+                                                          .tripOrderId);
+                                            } else {
+                                              if (tripController
+                                                  .formKey.currentState!
+                                                  .validate()) {
+                                                Get.focusScope!.unfocus();
+                                                tripController
+                                                    .getCompleteDeliveryController(
+                                                        tripOrderId: tripController
+                                                            .selectedTripDetails
+                                                            .tripOrderId,
+                                                        otp: tripController
+                                                            .otpController
+                                                            .text);
+                                              }
                                             }
-                                          }
-                                        },
-                                      );
-                              }),
-                            ],
-                          ),
-                        SpaceWidget(height: 10),
-                        CustomActionButton(
-                          buttonTitle: "Call Customer",
-                          onTapFun: () {
-                            makePhoneCall(tripController
-                                    .selectedTripDetails.customerPhone ??
-                                "");
-                          },
-                          titleColor: APPTHEME_COLOR,
-                          backgroundColor: BUTTON_BG_COLOR,
-                        ),
-                        SpaceWidget(height: 10),
-                        if ((tripController.selectedTripDetails.status ==
-                                    "cancelled" ||
-                                tripController.selectedTripDetails.status ==
-                                    "delivered") &&
-                            tripController
-                                    .selectedTripDetails.isFeedbackGiven ==
-                                0)
+                                          },
+                                        );
+                                }),
+                              ],
+                            ),
+                          SpaceWidget(height: 10),
                           CustomActionButton(
-                            buttonTitle: "Give Feedback",
+                            buttonTitle: "Call Customer",
                             onTapFun: () {
-                              getFeedbackFun(context);
+                              makePhoneCall(tripController
+                                      .selectedTripDetails.customerPhone ??
+                                  "");
                             },
-                            titleColor: BUTTON_BG_COLOR,
-                            backgroundColor: APPTHEME_COLOR,
+                            titleColor: APPTHEME_COLOR,
+                            backgroundColor: BUTTON_BG_COLOR,
                           ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-      }),
+                          SpaceWidget(height: 10),
+                          if ((tripController.selectedTripDetails.status ==
+                                      "cancelled" ||
+                                  tripController.selectedTripDetails.status ==
+                                      "delivered") &&
+                              tripController
+                                      .selectedTripDetails.isFeedbackGiven ==
+                                  0)
+                            CustomActionButton(
+                              buttonTitle: "Give Feedback",
+                              onTapFun: () {
+                                getFeedbackFun(context);
+                              },
+                              titleColor: BUTTON_BG_COLOR,
+                              backgroundColor: APPTHEME_COLOR,
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+        }),
+      ),
     );
   }
 
